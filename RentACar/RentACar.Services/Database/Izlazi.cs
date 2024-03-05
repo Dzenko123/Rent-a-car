@@ -5,11 +5,6 @@ namespace RentACar.Services.Database
 {
     public partial class Izlazi
     {
-        public Izlazi()
-        {
-            Narudzbas = new HashSet<Narudzba>();
-        }
-
         public int IzlazId { get; set; }
         public string? BrojRacuna { get; set; }
         public DateTime? Datum { get; set; }
@@ -21,6 +16,6 @@ namespace RentACar.Services.Database
         public virtual Korisnici? Korisnik { get; set; }
         public virtual Narudzba? Narudba { get; set; }
 
-        public virtual ICollection<Narudzba> Narudzbas { get; set; }
+        public virtual ICollection<Narudzba> Narudzbas { get; } = new List<Narudzba>();
     }
 }

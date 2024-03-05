@@ -5,15 +5,6 @@ namespace RentACar.Services.Database
 {
     public partial class Korisnici
     {
-        public Korisnici()
-        {
-            Izlazis = new HashSet<Izlazi>();
-            Kontakts = new HashSet<Kontakt>();
-            KorisniciUloges = new HashSet<KorisniciUloge>();
-            Ocjenes = new HashSet<Ocjene>();
-            Ulazis = new HashSet<Ulazi>();
-        }
-
         public int KorisnikId { get; set; }
         public string? Ime { get; set; }
         public string? Prezime { get; set; }
@@ -24,10 +15,10 @@ namespace RentACar.Services.Database
         public string? LozinkaSalt { get; set; }
         public bool? Status { get; set; }
 
-        public virtual ICollection<Izlazi> Izlazis { get; set; }
-        public virtual ICollection<Kontakt> Kontakts { get; set; }
-        public virtual ICollection<KorisniciUloge> KorisniciUloges { get; set; }
-        public virtual ICollection<Ocjene> Ocjenes { get; set; }
-        public virtual ICollection<Ulazi> Ulazis { get; set; }
+        public virtual ICollection<Izlazi> Izlazis { get; } = new List<Izlazi>();
+        public virtual ICollection<Kontakt> Kontakts { get; } = new List<Kontakt>();
+        public virtual ICollection<KorisniciUloge> KorisniciUloges { get; } = new List<KorisniciUloge>();
+        public virtual ICollection<Ocjene> Ocjenes { get; } = new List<Ocjene>();
+        public virtual ICollection<Ulazi> Ulazis { get; } = new List<Ulazi>();
     }
 }

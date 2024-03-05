@@ -5,14 +5,10 @@ namespace RentACar.Services.Database
 {
     public partial class TipVozila
     {
-        public TipVozila()
-        {
-            Vozilos = new HashSet<Vozilo>();
-        }
 
         public int TipVozilaId { get; set; }
         public string? Naziv { get; set; }
 
-        public virtual ICollection<Vozilo> Vozilos { get; set; }
+        public virtual ICollection<Vozilo> Vozilos { get; } = new List<Vozilo>();
     }
 }

@@ -5,12 +5,6 @@ namespace RentACar.Services.Database
 {
     public partial class Kupci
     {
-        public Kupci()
-        {
-            Narudzbas = new HashSet<Narudzba>();
-            Ocjenes = new HashSet<Ocjene>();
-        }
-
         public int KupacId { get; set; }
         public string? Ime { get; set; }
         public string? Prezime { get; set; }
@@ -21,7 +15,7 @@ namespace RentACar.Services.Database
         public string? LozinkaSalt { get; set; }
         public bool? Status { get; set; }
 
-        public virtual ICollection<Narudzba> Narudzbas { get; set; }
-        public virtual ICollection<Ocjene> Ocjenes { get; set; }
+        public virtual ICollection<Narudzba> Narudzbas { get; } = new List<Narudzba>();
+        public virtual ICollection<Ocjene> Ocjenes { get; } = new List<Ocjene>();
     }
 }
