@@ -18,7 +18,7 @@ namespace RentACar.Controllers
         }
 
         [HttpGet()]
-        public IEnumerable<Vozila> Get()
+        public IEnumerable<Vozilo> Get()
         {
             return _vozilaService.Get();
         }

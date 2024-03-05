@@ -4,15 +4,15 @@ namespace RentACar.Services
 {
     public class VozilaService : IVozilaService
     {
-        List<Vozila> vozilas = new List<Vozila>()
+        List<Vozilo> vozilas = new List<Vozilo>()
         {
-            new Vozila()
+            new Vozilo()
             {
                 VoziloId = 1,
                 Naziv="Mercedes-Benz"
             }
         };
-        public IList<Vozila> Get()
+        public IList<Vozilo> Get()
         {
             return vozilas;
         }

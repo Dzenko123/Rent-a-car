@@ -9,6 +9,6 @@ namespace RentACar.Services
 {
     public interface IVozilaService
     {
-        IList<Vozila> Get();
+        IList<Vozilo> Get();
     }
 }

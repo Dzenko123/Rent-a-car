@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RentACar.Model
 {
-    public partial class Vozila
+    public partial class Vozilo
     {
         public int VoziloId { get; set; }
         public string Naziv { get; set; }
