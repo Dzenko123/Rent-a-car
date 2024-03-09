@@ -8,21 +8,21 @@ using System.Threading.Tasks;
 
 namespace RentACar.Services.Database
 {
-    [Table("Kontakt")]
-    public class Kontakt
+    [Table("Recenzije")]
+    public class Recenzije
     {
         [Key]
         public int Id { get; set; }
 
         [ForeignKey("Korisnici")]
-        public int KorisnikId { get; set; }
+        public int KorisniciId { get; set; }
 
-        public Korisnici Korisnik { get; set; } = null!;
+        public Korisnici Korisnici { get; set; } = null!;
 
-        public string Poruka { get; set; } = null!;
+        public int Ocjena { get; set; }
 
-        public string Telefon { get; set; } = null!;
+        public string Komentar { get; set; } = null!;
 
-        public string Email { get; set; } = null!;
+        public DateTime DatumVrijeme { get; set; }
     }
 }

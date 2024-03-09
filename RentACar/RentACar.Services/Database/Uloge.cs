@@ -8,14 +8,16 @@ using System.Threading.Tasks;
 
 namespace RentACar.Services.Database
 {
-    [Table("Lokacija")]
-    public class Lokacija
+    [Table("Uloge")]
+    public class Uloge
     {
         [Key]
-        public int Id { get; set; }
+        public int UlogaId { get; set; }
 
-        public string Adresa { get; set; } = null!;
+        public string Naziv { get; set; } = null!;
 
-        public List<Grad> Gradovi { get; set; } = new List<Grad>();
+        public string? Opis { get; set; }
+
+        public List<KorisniciUloge> KorisniciUloges { get; set; } = new List<KorisniciUloge>();
     }
 }

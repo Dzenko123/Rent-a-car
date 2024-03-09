@@ -1,5 +1,4 @@
 ﻿using RentACar.Model;
-using RentACar.Services.Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace RentACar.Services
 {
-    public interface IVozilaService
+    public interface IService<T, TSearch> where TSearch : class
     {
-        IList<Vozilo> Get();
+        Task<PagedResult<T>> Get(TSearch? search=null);
+        Task<T> GetById(int id);
     }
 }
