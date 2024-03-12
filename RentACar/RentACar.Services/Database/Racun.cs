@@ -21,6 +21,6 @@ namespace RentACar.Services.Database
 
         public decimal UkupnaCijena { get; set; }
 
-        public List<Transakcija> Transakcije { get; set; } = new List<Transakcija>();
+        public virtual ICollection<Transakcija> Transakcije { get; } = new List<Transakcija>();
     }
 }

@@ -12,7 +12,7 @@ using RentACar.Services;
 namespace RentACar.Services.Migrations
 {
     [DbContext(typeof(RentACarDBContext))]
-    [Migration("20240309184719_test")]
+    [Migration("20240310155753_test")]
     partial class test
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -251,14 +251,14 @@ namespace RentACar.Services.Migrations
                     b.Property<int>("Ocjena")
                         .HasColumnType("int");
 
-                    b.Property<int?>("VozilaId")
+                    b.Property<int>("VoziloId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("KorisniciId");
 
-                    b.HasIndex("VozilaId");
+                    b.HasIndex("VoziloId");
 
                     b.ToTable("Recenzije");
                 });
@@ -406,9 +406,8 @@ namespace RentACar.Services.Migrations
                     b.Property<int>("GodinaProizvodnje")
                         .HasColumnType("int");
 
-                    b.Property<string>("Slika")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("Slika")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int>("TipVozilaId")
                         .HasColumnType("int");
@@ -491,11 +490,15 @@ namespace RentACar.Services.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RentACar.Services.Database.Vozila", null)
+                    b.HasOne("RentACar.Services.Database.Vozila", "Vozilo")
                         .WithMany("Recenzije")
-                        .HasForeignKey("VozilaId");
+                        .HasForeignKey("VoziloId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Korisnici");
+
+                    b.Navigation("Vozilo");
                 });
 
             modelBuilder.Entity("RentACar.Services.Database.Rezervacija", b =>

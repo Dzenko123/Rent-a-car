@@ -33,7 +33,7 @@ namespace RentACar.Services.Database
 
         public DateTime ZavrsniDatum { get; set; }
 
-        public List<Racun> Racuni { get; set; } = new List<Racun>();
-        public List<RezervacijaDodatnaUsluga> DodatneUsluge { get; set; } = new List<RezervacijaDodatnaUsluga>();
+        public virtual ICollection<Racun> Racuni { get; } = new List<Racun>();
+        public virtual ICollection<RezervacijaDodatnaUsluga> DodatneUsluge { get; } = new List<RezervacijaDodatnaUsluga>();
     }
 }

@@ -1,40 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RentACar.Model.Requests;
 using RentACar.Services;
-using RentACar.Services.Database;
+using RentACar.Model;
 
 namespace RentACar.Controllers
 {
     [ApiController]
     [Route("[controller]")]
 
-    public class KorisniciController : ControllerBase
+    public class KorisniciController : BaseCRUDController<Model.Korisnici, Model.SearchObject.KorisniciSearchObject, Model.Requests.KorisniciInsertRequest, Model.Requests.KorisniciUpdateRequest>
     {
-        private readonly IKorisniciService _service;
-        private readonly ILogger<WeatherForecastController> _logger;
-
-        public KorisniciController(ILogger<WeatherForecastController> logger, IKorisniciService service)
+        public KorisniciController(ILogger<BaseController<Korisnici, Model.SearchObject.KorisniciSearchObject>> logger,
+                IKorisniciService service) : base(logger, service)
         {
-            _logger = logger;
-            _service = service;
-        }
-
-        [HttpGet]
-        public async Task<IEnumerable<Model.Korisnici>> Get()
-        {
-            return await _service.Get();
-        }
-
-        [HttpPost]
-        public Model.Korisnici Insert(KorisniciInsertRequest request)
-        {
-            return _service.Insert(request);
-        }
-
-        [HttpPut("{id}")]
-        public Model.Korisnici Update(int id, KorisniciUpdateRequest request)
-        { 
-            return _service.Update(id, request);
         }
     }
 }

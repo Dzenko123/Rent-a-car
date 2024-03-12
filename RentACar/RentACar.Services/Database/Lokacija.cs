@@ -16,6 +16,6 @@ namespace RentACar.Services.Database
 
         public string Adresa { get; set; } = null!;
 
-        public List<Grad> Gradovi { get; set; } = new List<Grad>();
+        public virtual ICollection<Grad> Gradovi { get; } = new List<Grad>();
     }
 }

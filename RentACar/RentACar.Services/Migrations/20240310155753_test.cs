@@ -135,7 +135,7 @@ namespace RentACar.Services.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TipVozilaId = table.Column<int>(type: "int", nullable: false),
-                    Slika = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Slika = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     Dostupan = table.Column<bool>(type: "bit", nullable: false),
                     Cijena = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     GodinaProizvodnje = table.Column<int>(type: "int", nullable: false)
@@ -206,10 +206,10 @@ namespace RentACar.Services.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     KorisniciId = table.Column<int>(type: "int", nullable: false),
+                    VoziloId = table.Column<int>(type: "int", nullable: false),
                     Ocjena = table.Column<int>(type: "int", nullable: false),
                     Komentar = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DatumVrijeme = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    VozilaId = table.Column<int>(type: "int", nullable: true)
+                    DatumVrijeme = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -221,10 +221,11 @@ namespace RentACar.Services.Migrations
                         principalColumn: "KorisnikId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Recenzije_Vozila_VozilaId",
-                        column: x => x.VozilaId,
+                        name: "FK_Recenzije_Vozila_VoziloId",
+                        column: x => x.VoziloId,
                         principalTable: "Vozila",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -365,9 +366,9 @@ namespace RentACar.Services.Migrations
                 column: "KorisniciId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Recenzije_VozilaId",
+                name: "IX_Recenzije_VoziloId",
                 table: "Recenzije",
-                column: "VozilaId");
+                column: "VoziloId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Rezervacija_KorisnikId",

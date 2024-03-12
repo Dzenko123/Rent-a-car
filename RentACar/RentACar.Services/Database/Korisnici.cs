@@ -30,7 +30,7 @@ namespace RentACar.Services.Database
 
         public bool? Status { get; set; }
 
-        public List<KorisniciUloge> KorisniciUloge { get; set; } = new List<KorisniciUloge>();
+        public virtual ICollection<KorisniciUloge> KorisniciUloge { get; } = new List<KorisniciUloge>();
 
     }
 }

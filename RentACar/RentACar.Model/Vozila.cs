@@ -6,18 +6,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RentACar.Services.Database
+namespace RentACar.Model
 {
-    [Table("DodatnaUsluga")]
-    public class DodatnaUsluga
+    public class Vozila
     {
         [Key]
         public int Id { get; set; }
 
-        public string Naziv { get; set; } = null!;
+        [ForeignKey("TipVozila")]
+        public int TipVozilaId { get; set; }
+
+
+        public byte[]? Slika { get; set; }
+
+        public bool Dostupan { get; set; }
 
         public decimal Cijena { get; set; }
 
-        public virtual ICollection<RezervacijaDodatnaUsluga> Rezervacije { get;} = new List<RezervacijaDodatnaUsluga>();
+        public int GodinaProizvodnje { get; set; }
+        public string StateMachine { get; set; }
+
     }
 }

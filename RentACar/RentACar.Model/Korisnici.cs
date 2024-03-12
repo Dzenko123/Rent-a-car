@@ -23,5 +23,8 @@ namespace RentACar.Model
         public string KorisnickoIme { get; set; } = null!;
 
         public bool? Status { get; set; }
+
+        public virtual ICollection<KorisniciUloge> KorisniciUloge { get; } = new List<KorisniciUloge>();
+
     }
 }

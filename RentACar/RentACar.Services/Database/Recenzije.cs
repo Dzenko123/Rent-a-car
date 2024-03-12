@@ -16,8 +16,12 @@ namespace RentACar.Services.Database
 
         [ForeignKey("Korisnici")]
         public int KorisniciId { get; set; }
-
         public Korisnici Korisnici { get; set; } = null!;
+
+        [ForeignKey("Vozilo")]
+        public int VoziloId { get; set; }
+
+        public Vozila Vozilo { get; set; } = null!;
 
         public int Ocjena { get; set; }
 

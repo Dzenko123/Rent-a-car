@@ -26,7 +26,7 @@ namespace RentACar.Services
             PagedResult<T> result = new PagedResult<T>();
 
             query = AddFilter(query, search);
-
+            query=AddInclude(query, search);
             result.Count = await query.CountAsync();
 
             if(search?.Page.HasValue==true && search?.PageSize.HasValue==true)
@@ -41,10 +41,15 @@ namespace RentACar.Services
             return result;
 
         }
+        public virtual IQueryable<TDb> AddInclude(IQueryable<TDb> query, TSearch? search = null)
+        {
+            return query;
+        }
         public virtual IQueryable<TDb> AddFilter(IQueryable<TDb> query, TSearch? search = null)
         {
             return query;
         }
+
         public virtual async Task<T> GetById(int id)
         {
             var entity= await _context.Set<TDb>().FindAsync(id);
