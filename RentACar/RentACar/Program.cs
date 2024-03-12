@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using RentACar.Filters;
 using RentACar.Model.SearchObject;
 using RentACar.Services;
 using RentACar.Services.VozilaStateMachine;
@@ -19,7 +20,10 @@ builder.Services.AddTransient<ActiveVozilaState>();
 
 
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(x =>
+{
+    x.Filters.Add<ErrorFilter>();
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

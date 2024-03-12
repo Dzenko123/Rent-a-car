@@ -18,5 +18,18 @@ namespace RentACar.Controllers
         {
             return await (_service as IVozilaService).Activate(id);
         }
+
+        [HttpPut("{id}/hide")]
+        public virtual async Task<Model.Vozila> Hide(int id)
+        {
+            return await (_service as IVozilaService).Hide(id);
+        }
+
+        [HttpGet("{id}/allowedActions")]
+        public virtual async Task<List<string>> AllowedActions(int id)
+        {
+            return await (_service as IVozilaService).AllowedActions(id);
+
+        }
     }
 }

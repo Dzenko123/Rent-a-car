@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
+using RentACar.Model;
 using RentACar.Model.Requests;
 using System;
 using System.Collections.Generic;
@@ -24,27 +25,27 @@ namespace RentACar.Services.VozilaStateMachine
 
         public virtual Task<Model.Vozila> Insert(VozilaInsertRequest request)
         {
-            throw new Exception("Not allowed");
+            throw new UserException("Not allowed");
         }
 
         public virtual Task<Model.Vozila> Update(int id, VozilaUpdateRequest request)
         {
-            throw new Exception("Not allowed");
+            throw new UserException("Not allowed");
         }
 
         public virtual Task<Model.Vozila> Activate(int id)
         {
-            throw new Exception("Not allowed");
+            throw new UserException("Not allowed");
         }
 
         public virtual Task<Model.Vozila> Hide(int id)
         {
-            throw new Exception("Not allowed");
+            throw new UserException("Not allowed");
         }
 
         public virtual Task<Model.Vozila> Delete(int id)
         {
-            throw new Exception("Not allowed");
+            throw new UserException("Not allowed");
         }
 
         public BaseState CreateState(string stateName)
@@ -52,6 +53,7 @@ namespace RentACar.Services.VozilaStateMachine
             switch (stateName)
             {
                 case "initial":
+                    case null:
                     return _serviceProvider.GetService<InitialVozilaState>();
                     break;
                 case "draft":
@@ -61,8 +63,13 @@ namespace RentACar.Services.VozilaStateMachine
                     return _serviceProvider.GetService<ActiveVozilaState>();
                     break;
                 default:
-                    throw new Exception("Not allowed");
+                    throw new UserException("Not allowed");
             }
+        }
+
+        public virtual async Task<List<string>> AllowedActions()
+        {
+            return new List<string>();
         }
     }
 }
