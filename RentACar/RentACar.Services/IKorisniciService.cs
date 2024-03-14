@@ -10,6 +10,6 @@ namespace RentACar.Services
 {
     public interface IKorisniciService : ICRUDService<Model.Korisnici, Model.SearchObject.KorisniciSearchObject, Model.Requests.KorisniciInsertRequest, Model.Requests.KorisniciUpdateRequest>
     {
-
+        public Task<Model.Korisnici> Login(string username,  string password);
     }
 }

@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using EasyNetQ;
 using Microsoft.Extensions.Logging;
+using RabbitMQ.Client;
 using RentACar.Model;
 using RentACar.Model.Requests;
 using System;
@@ -49,7 +51,27 @@ namespace RentACar.Services.VozilaStateMachine
 
             entity.StateMachine = "active";
             await _context.SaveChangesAsync();
-            return _mapper.Map<Model.Vozila>(entity);
+
+
+            //var factory = new ConnectionFactory { HostName = "localhost" };
+            //using var connection = factory.CreateConnection();
+            //using var channel = connection.CreateModel();
+
+            //const string message = "Hello World";
+            //var body = Encoding.UTF8.GetBytes(message);
+            //channel.BasicPublish(exchange: string.Empty,
+            //                     routingKey: "vozilo_added",
+            //                     basicProperties: null,
+            //                     body: body);
+
+
+
+            var mappedEntity = _mapper.Map<Model.Vozila>(entity);
+
+            using var bus = RabbitHutch.CreateBus("host=localhost");
+            bus.PubSub.Publish(mappedEntity);
+
+            return mappedEntity;
         }
 
         public override async Task<List<string>> AllowedActions()

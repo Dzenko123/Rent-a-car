@@ -132,17 +132,18 @@ namespace RentACar.Services.Migrations
                 name: "Vozila",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    VoziloId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TipVozilaId = table.Column<int>(type: "int", nullable: false),
                     Slika = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     Dostupan = table.Column<bool>(type: "bit", nullable: false),
                     Cijena = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    GodinaProizvodnje = table.Column<int>(type: "int", nullable: false)
+                    GodinaProizvodnje = table.Column<int>(type: "int", nullable: false),
+                    StateMachine = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Vozila", x => x.Id);
+                    table.PrimaryKey("PK_Vozila", x => x.VoziloId);
                     table.ForeignKey(
                         name: "FK_Vozila_TipVozila_TipVozilaId",
                         column: x => x.TipVozilaId,
@@ -195,7 +196,7 @@ namespace RentACar.Services.Migrations
                         name: "FK_CijenePoVremenskomPeriodu_Vozila_VoziloId",
                         column: x => x.VoziloId,
                         principalTable: "Vozila",
-                        principalColumn: "Id",
+                        principalColumn: "VoziloId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -224,7 +225,7 @@ namespace RentACar.Services.Migrations
                         name: "FK_Recenzije_Vozila_VoziloId",
                         column: x => x.VoziloId,
                         principalTable: "Vozila",
-                        principalColumn: "Id",
+                        principalColumn: "VoziloId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -259,7 +260,7 @@ namespace RentACar.Services.Migrations
                         name: "FK_Rezervacija_Vozila_VoziloId",
                         column: x => x.VoziloId,
                         principalTable: "Vozila",
-                        principalColumn: "Id",
+                        principalColumn: "VoziloId",
                         onDelete: ReferentialAction.Cascade);
                 });
 

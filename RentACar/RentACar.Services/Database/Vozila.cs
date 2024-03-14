@@ -12,7 +12,7 @@ namespace RentACar.Services.Database
     public class Vozila
     {
         [Key]
-        public int Id { get; set; }
+        public int VoziloId { get; set; }
 
         [ForeignKey("TipVozila")]
         public int TipVozilaId { get; set; }

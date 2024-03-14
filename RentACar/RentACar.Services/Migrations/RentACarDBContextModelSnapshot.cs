@@ -389,11 +389,11 @@ namespace RentACar.Services.Migrations
 
             modelBuilder.Entity("RentACar.Services.Database.Vozila", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("VoziloId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VoziloId"), 1L, 1);
 
                     b.Property<decimal>("Cijena")
                         .HasColumnType("decimal(18,2)");
@@ -413,7 +413,7 @@ namespace RentACar.Services.Migrations
                     b.Property<int>("TipVozilaId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("VoziloId");
 
                     b.HasIndex("TipVozilaId");
 
