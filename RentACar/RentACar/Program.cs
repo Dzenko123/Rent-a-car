@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddTransient<IKorisniciService, KorisniciService>();
 builder.Services.AddTransient<ITipVozilaService, TipVozilaService>();
 builder.Services.AddTransient<IVozilaService, VozilaService>();
-builder.Services.AddTransient<IService<RentACar.Model.DodatnaUsluga, BaseSearchObject>, 
+builder.Services.AddTransient<IService<RentACar.Model.DodatnaUsluga, BaseSearchObject>,
     BaseService<RentACar.Model.DodatnaUsluga, RentACar.Services.Database.DodatnaUsluga, BaseSearchObject>>();
 
 builder.Services.AddTransient<BaseState>();
@@ -35,7 +35,7 @@ builder.Services.AddSwaggerGen(c =>
     c.AddSecurityDefinition("basicAuth", new Microsoft.OpenApi.Models.OpenApiSecurityScheme()
     {
         Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
-        Scheme="basic"
+        Scheme = "basic"
     });
 
     c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement()
@@ -47,12 +47,12 @@ builder.Services.AddSwaggerGen(c =>
             },
             new string[]{}
 
-    }   
+    }
     });
 });
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<RentACarDBContext>(options => 
+builder.Services.AddDbContext<RentACarDBContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddAutoMapper(typeof(IKorisniciService));
@@ -76,5 +76,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dataContext = scope.ServiceProvider.GetRequiredService<RentACarDBContext>();
+    var conn = dataContext.Database.GetConnectionString();
+    dataContext.Database.Migrate();
+}
 
 app.Run();

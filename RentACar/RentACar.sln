@@ -9,7 +9,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RentACar.Model", "RentACar.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RentACar.Services", "RentACar.Services\RentACar.Services.csproj", "{DABB42F8-CFB3-4F03-B857-C379F48F0BB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentACar.Subscriber", "RentACar.Subscriber\RentACar.Subscriber.csproj", "{0CF72922-665F-4885-8EB1-F2FFE1E55FC9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RentACar.Subscriber", "RentACar.Subscriber\RentACar.Subscriber.csproj", "{0CF72922-665F-4885-8EB1-F2FFE1E55FC9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CFD3EB3B-35A6-4FCC-AFEB-314DF697F8ED}"
+	ProjectSection(SolutionItems) = preProject
+		Dockerfile = Dockerfile
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
