@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:rentacar_admin/providers/vozila_provider.dart';
+import 'package:rentacar_admin/utils/util.dart';
+import './screens/vozila_list_screen.dart';
 
 void main() {
-  runApp(const MyMaterialApp());
+  runApp(MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => VozilaProvider())],
+      child: const MyMaterialApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -138,10 +144,16 @@ class MyMaterialApp extends StatelessWidget {
 }
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  LoginPage({super.key});
+
+  TextEditingController _usernameController = new TextEditingController();
+  TextEditingController _passwordController = new TextEditingController();
+
+  late VozilaProvider _vozilaProvider;
 
   @override
   Widget build(BuildContext context) {
+    _vozilaProvider = context.read<VozilaProvider>();
     return Scaffold(
         appBar: AppBar(
           title: Text("Login"),
@@ -153,13 +165,13 @@ class LoginPage extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(children: [
-                  Image.network(
-                      "https://www.fit.ba/content/public/images/og-image.jpg",
-                      height: 100,
-                      width: 100),
+                  // Image.network(
+                  //     "https://www.fit.ba/content/public/images/og-image.jpg",
+                  Image.asset("assets/images/fit.jpg", height: 100, width: 100),
                   TextField(
                     decoration: InputDecoration(
                         labelText: "Username", prefixIcon: Icon(Icons.email)),
+                    controller: _usernameController,
                   ),
                   SizedBox(
                     height: 8,
@@ -168,13 +180,40 @@ class LoginPage extends StatelessWidget {
                     decoration: InputDecoration(
                         labelText: "Password",
                         prefixIcon: Icon(Icons.password)),
+                    controller: _passwordController,
                   ),
                   SizedBox(
                     height: 56,
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      print("Login uspješan");
+                    onPressed: () async {
+                      var username = _usernameController.text;
+                      var password = _passwordController.text;
+                      print("Login uspješan $username $password");
+
+                      Authorization.username = username;
+                      Authorization.password = password;
+
+                      try {
+                        await _vozilaProvider.get();
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const VozilaListScreen(),
+                          ),
+                        );
+                      } on Exception catch (e) {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                                  title: Text("Error"),
+                                  content: Text(e.toString()),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: Text("OK"))
+                                  ],
+                                ));
+                      }
                     },
                     child: Text("Login"),
                   )

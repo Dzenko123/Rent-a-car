@@ -7,7 +7,6 @@ using RentACar.Services;
 namespace RentACar.Controllers
 {
     [ApiController]
-    [AllowAnonymous]
     public class DodatnaUslugaController : BaseController<Model.DodatnaUsluga, BaseSearchObject>
     {
         public DodatnaUslugaController(ILogger<BaseController<Model.DodatnaUsluga, BaseSearchObject>> logger, 
