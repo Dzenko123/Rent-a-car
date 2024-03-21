@@ -20,6 +20,16 @@ namespace RentACar.Services
         {
             _baseState = baseState;
         }
+        public override IQueryable<Database.Vozila> AddFilter(IQueryable<Database.Vozila> query, VozilaSearchObject? search = null)
+        {
+            var filteredQuery =  base.AddFilter(query, search);
+            if(!string.IsNullOrWhiteSpace(search?.FTS))
+            {
+                filteredQuery = filteredQuery.Where(x => x.StateMachine.Contains(search.FTS));
+            }
+
+            return filteredQuery;
+        }
 
         public override Task<Vozila> Insert(VozilaInsertRequest insert)
         {

@@ -8,6 +8,7 @@ namespace RentACar.Model.SearchObject
 {
     public class VozilaSearchObject : BaseSearchObject
     {
-
+        public string? FTS { get; set; }
+        //public int GodinaProizvodnje { get; set; }
     }
 }
