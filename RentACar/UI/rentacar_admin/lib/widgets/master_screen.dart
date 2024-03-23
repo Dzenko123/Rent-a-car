@@ -25,7 +25,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
         child: ListView(
           children: [
             ListTile(
-              title: Text("Back"),
+              title: const Text("Back"),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -35,7 +35,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               },
             ),
             ListTile(
-              title: Text("Vozila"),
+              title: const Text("Vozila"),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -45,7 +45,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               },
             ),
             ListTile(
-              title: Text("Detalji"),
+              title: const Text("Detalji"),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(

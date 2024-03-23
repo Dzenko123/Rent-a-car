@@ -19,7 +19,7 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
   late VozilaProvider _vozilaProvider;
   SearchResult<Vozilo>? result;
 
-  TextEditingController _ftsController = new TextEditingController();
+  final TextEditingController _ftsController = TextEditingController();
 
   @override
   void didChangeDependencies() {
@@ -31,7 +31,7 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      title_widget: Text("Vozila list"),
+      title_widget: const Text("Vozila list"),
       child: Container(
         child: Column(
           children: [_buildSearch(), _buildDataListView()],
@@ -47,11 +47,11 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
         children: [
           Expanded(
             child: TextField(
-              decoration: InputDecoration(labelText: "FTS"),
+              decoration: const InputDecoration(labelText: "FTS"),
               controller: _ftsController,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 8,
           ),
           ElevatedButton(
@@ -67,7 +67,7 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
               });
               print("data: ${data.result[0].dostupan}");
             },
-            child: Text("Pretraga"),
+            child: const Text("Pretraga"),
           )
         ],
       ),
@@ -78,60 +78,60 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
     return Expanded(
         child: SingleChildScrollView(
             child: DataTable(
-                columns: [
-          const DataColumn(
-            label: const Expanded(
-              child: const Text(
+                columns: const [
+          DataColumn(
+            label: Expanded(
+              child: Text(
                 'ID',
-                style: const TextStyle(fontStyle: FontStyle.italic),
+                style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
           ),
-          const DataColumn(
-            label: const Expanded(
-              child: const Text(
+          DataColumn(
+            label: Expanded(
+              child: Text(
                 'Tip vozila ID',
-                style: const TextStyle(fontStyle: FontStyle.italic),
+                style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
           ),
-          const DataColumn(
-            label: const Expanded(
-              child: const Text(
+          DataColumn(
+            label: Expanded(
+              child: Text(
                 'Dostupan',
-                style: const TextStyle(fontStyle: FontStyle.italic),
+                style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
           ),
-          const DataColumn(
-            label: const Expanded(
-              child: const Text(
+          DataColumn(
+            label: Expanded(
+              child: Text(
                 'GodinaProizvodnje',
-                style: const TextStyle(fontStyle: FontStyle.italic),
+                style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
           ),
-          const DataColumn(
-            label: const Expanded(
-              child: const Text(
+          DataColumn(
+            label: Expanded(
+              child: Text(
                 'Cijena',
-                style: const TextStyle(fontStyle: FontStyle.italic),
+                style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
           ),
-          const DataColumn(
-            label: const Expanded(
-              child: const Text(
+          DataColumn(
+            label: Expanded(
+              child: Text(
                 'State machine',
-                style: const TextStyle(fontStyle: FontStyle.italic),
+                style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
           ),
-          const DataColumn(
-            label: const Expanded(
-              child: const Text(
+          DataColumn(
+            label: Expanded(
+              child: Text(
                 'Slika',
-                style: const TextStyle(fontStyle: FontStyle.italic),
+                style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
           ),
@@ -160,12 +160,12 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
                               ),
                               DataCell(Text(e.stateMachine?.toString() ?? "")),
                               DataCell(e.slika != null
-                                  ? Container(
-                                      width: 100,
-                                      height: 100,
+                                  ? SizedBox(
+                                      width: 150,
+                                      height: 150,
                                       child: imageFromBase64String(e.slika!),
                                     )
-                                  : Text("")),
+                                  : const Text("")),
                             ],
                           ),
                         )
