@@ -10,7 +10,7 @@ namespace RentACar.Model.Requests
 {
     public class VozilaUpdateRequest
     {
-
+        public int? TipVozilaId { get; set; }
         public byte[]? Slika { get; set; }
 
         public bool Dostupan { get; set; }

@@ -65,9 +65,23 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
               setState(() {
                 result = data;
               });
-              print("data: ${data.result[0].dostupan}");
+              //  print("data: ${data.result[0].dostupan}");
             },
             child: const Text("Pretraga"),
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              //Navigator.of(context).pop();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => VozilaDetailScreen(vozilo: null),
+                ),
+              );
+            },
+            child: const Text("Dodaj"),
           )
         ],
       ),
@@ -95,14 +109,7 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
               ),
             ),
           ),
-          DataColumn(
-            label: Expanded(
-              child: Text(
-                'Dostupan',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
-          ),
+
           DataColumn(
             label: Expanded(
               child: Text(
@@ -119,14 +126,7 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
               ),
             ),
           ),
-          DataColumn(
-            label: Expanded(
-              child: Text(
-                'State machine',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
-          ),
+
           DataColumn(
             label: Expanded(
               child: Text(
@@ -144,7 +144,8 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
                                 print('selected: ${e.voziloId}');
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: (context) => VozilaDetailScreen(vozilo: e),
+                                    builder: (context) =>
+                                        VozilaDetailScreen(vozilo: e),
                                   ),
                                 );
                               }
@@ -152,15 +153,15 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
                             cells: [
                               DataCell(Text(e.voziloId?.toString() ?? "")),
                               DataCell(Text(e.tipVozilaId?.toString() ?? "")),
-                              DataCell(Text(e.dostupan?.toString() ?? "")),
+                              //DataCell(Text(e.dostupan?.toString() ?? "")),
                               DataCell(
                                   Text(e.godinaProizvodnje?.toString() ?? "")),
                               DataCell(
                                 Text(formatNumber(e.cijena)),
                               ),
-                              DataCell(Text(e.stateMachine?.toString() ?? "")),
-                              DataCell(e.slika != null
-                                  ? SizedBox(
+                              //DataCell(Text(e.stateMachine?.toString() ?? "")),
+                              DataCell(e.slika != ""
+                                  ? Container(
                                       width: 150,
                                       height: 150,
                                       child: imageFromBase64String(e.slika!),

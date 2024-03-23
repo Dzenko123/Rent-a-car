@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:rentacar_admin/providers/tip_vozila_provider.dart';
 import 'package:rentacar_admin/providers/vozila_provider.dart';
 import 'package:rentacar_admin/utils/util.dart';
 import './screens/vozila_list_screen.dart';
 
 void main() {
-  runApp(MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => VozilaProvider())],
-      child: const MyMaterialApp()));
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => VozilaProvider()),
+    ChangeNotifierProvider(create: (_) => TipVozilaProvider())
+  ], child: const MyMaterialApp()));
 }
 
 class MyApp extends StatelessWidget {

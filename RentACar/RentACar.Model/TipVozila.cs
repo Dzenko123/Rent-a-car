@@ -10,7 +10,7 @@ namespace RentACar.Model
     public class TipVozila
     {
         [Key]
-        public int Id { get; set; }
+        public int TipVozilaId { get; set; }
 
         public string Tip { get; set; } = null!;
 
