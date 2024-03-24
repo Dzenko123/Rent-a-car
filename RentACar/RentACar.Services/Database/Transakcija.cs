@@ -8,19 +8,15 @@ using System.Threading.Tasks;
 
 namespace RentACar.Services.Database
 {
-    [Table("Transakcija")]
     public class Transakcija
     {
-        [Key]
-        public int Id { get; set; }
+        public int TransakcijaId { get; set; }
 
-        [ForeignKey("Racun")]
         public int RacunId { get; set; }
 
         public Racun Racun { get; set; } = null!;
-
-        public string? TipPlacanja { get; set; }
-
+        public double Iznos { get; set; }
+        public bool Status { get; set; }
         public DateTime DatumVrijeme { get; set; }
     }
 }

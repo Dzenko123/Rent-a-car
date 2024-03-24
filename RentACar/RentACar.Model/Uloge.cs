@@ -9,7 +9,6 @@ namespace RentACar.Model
 {
     public class Uloge
     {
-        [Key]
         public int UlogaId { get; set; }
 
         public string Naziv { get; set; } = null!;

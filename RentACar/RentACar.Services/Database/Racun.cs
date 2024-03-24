@@ -8,16 +8,12 @@ using System.Threading.Tasks;
 
 namespace RentACar.Services.Database
 {
-    [Table("Racun")]
     public class Racun
     {
-        [Key]
-        public int Id { get; set; }
+        public int RacunId { get; set; }
 
-        [ForeignKey("Rezervacija")]
-        public int RezervacijaId { get; set; }
+        public string TipPlacanja { get; set; }
 
-        public Rezervacija Rezervacija { get; set; } = null!;
 
         public decimal UkupnaCijena { get; set; }
 

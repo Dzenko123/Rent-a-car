@@ -14,8 +14,10 @@ class Vozilo {
 
   String? slika;
 
-  Vozilo(this.voziloId, this.godinaProizvodnje, this.cijena, 
-      this.tipVozilaId,  this.slika);
+  String? stateMachine;
+
+  Vozilo(this.voziloId, this.godinaProizvodnje, this.cijena, this.tipVozilaId,
+      this.slika, this.stateMachine);
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.

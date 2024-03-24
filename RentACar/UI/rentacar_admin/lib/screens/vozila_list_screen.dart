@@ -126,6 +126,14 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
               ),
             ),
           ),
+          DataColumn(
+            label: Expanded(
+              child: Text(
+                'StateMachine',
+                style: TextStyle(fontStyle: FontStyle.italic),
+              ),
+            ),
+          ),
 
           DataColumn(
             label: Expanded(
@@ -158,6 +166,9 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
                                   Text(e.godinaProizvodnje?.toString() ?? "")),
                               DataCell(
                                 Text(formatNumber(e.cijena)),
+                              ),
+                              DataCell(
+                                (Text(e.stateMachine?.toString() ?? "")),
                               ),
                               //DataCell(Text(e.stateMachine?.toString() ?? "")),
                               DataCell(e.slika != ""

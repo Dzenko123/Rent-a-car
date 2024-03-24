@@ -8,13 +8,12 @@ using System.Threading.Tasks;
 
 namespace RentACar.Services.Database
 {
-    [Table("DodatnaUsluga")]
     public class DodatnaUsluga
     {
-        [Key]
-        public int Id { get; set; }
+        public int DodatnaUslugaId { get; set; }
 
         public string Naziv { get; set; } = null!;
+        public string Opis { get; set; }
 
         public decimal Cijena { get; set; }
 

@@ -12,6 +12,7 @@ Vozilo _$VoziloFromJson(Map<String, dynamic> json) => Vozilo(
       (json['cijena'] as num?)?.toDouble(),
       json['tipVozilaId'] as int?,
       json['slika'] as String?,
+      json['stateMachine'] as String?,
     );
 
 Map<String, dynamic> _$VoziloToJson(Vozilo instance) => <String, dynamic>{
@@ -20,4 +21,5 @@ Map<String, dynamic> _$VoziloToJson(Vozilo instance) => <String, dynamic>{
       'godinaProizvodnje': instance.godinaProizvodnje,
       'cijena': instance.cijena,
       'slika': instance.slika,
+      'stateMachine': instance.stateMachine,
     };

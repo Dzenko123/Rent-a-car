@@ -10,10 +10,8 @@ namespace RentACar.Model
 {
     public class Vozila
     {
-        [Key]
         public int VoziloId { get; set; }
 
-        [ForeignKey("TipVozila")]
         public int TipVozilaId { get; set; }
 
 
@@ -24,7 +22,9 @@ namespace RentACar.Model
         public decimal Cijena { get; set; }
 
         public int GodinaProizvodnje { get; set; }
+        public double Kilometraza { get; set; }
         public string StateMachine { get; set; }
+
 
     }
 }

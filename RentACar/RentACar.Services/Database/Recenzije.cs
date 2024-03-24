@@ -8,17 +8,13 @@ using System.Threading.Tasks;
 
 namespace RentACar.Services.Database
 {
-    [Table("Recenzije")]
     public class Recenzije
     {
-        [Key]
-        public int Id { get; set; }
+        public int RecenzijaId { get; set; }
 
-        [ForeignKey("Korisnici")]
         public int KorisniciId { get; set; }
         public Korisnici Korisnici { get; set; } = null!;
 
-        [ForeignKey("Vozilo")]
         public int VoziloId { get; set; }
 
         public Vozila Vozilo { get; set; } = null!;
@@ -28,5 +24,7 @@ namespace RentACar.Services.Database
         public string Komentar { get; set; } = null!;
 
         public DateTime DatumVrijeme { get; set; }
+        public int Like { get; set; }
+        public int Dislike { get; set; }
     }
 }

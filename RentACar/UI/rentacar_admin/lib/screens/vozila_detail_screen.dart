@@ -86,9 +86,13 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                       _formKey.currentState?.saveAndValidate();
                       print(_formKey.currentState?.value);
                       var request = new Map.from(_formKey.currentState!.value);
-                      request['slika'] = _base64Image;
+                      if (_base64Image != null) {
+                        request['slika'] = _base64Image;
+                      } else {
+                        request['slika'] = widget.vozilo?.slika;
+                      }
 
-                      print(request['slika']);
+                      //print(request['slika']);
 
                       try {
                         if (widget.vozilo == null) {

@@ -8,10 +8,8 @@ using System.Threading.Tasks;
 
 namespace RentACar.Services.Database
 {
-    [Table("TipVozila")]
     public class TipVozila
     {
-        [Key]
         public int TipVozilaId { get; set; }
 
         public string Tip { get; set; } = null!;

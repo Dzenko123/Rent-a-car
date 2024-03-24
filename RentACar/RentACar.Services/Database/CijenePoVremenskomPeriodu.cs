@@ -8,19 +8,16 @@ using System.Threading.Tasks;
 
 namespace RentACar.Services.Database
 {
-    [Table("CijenePoVremenskomPeriodu")]
     public class CijenePoVremenskomPeriodu
     {
-        [Key]
-        public int Id { get; set; }
+        public int CijenePoVremenskomPerioduId { get; set; }
 
-        [ForeignKey("Vozilo")]
         public int VoziloId { get; set; }
 
         public Vozila Vozilo { get; set; } = null!;
+        public DateTime DatumPocetak { get; set; }
+        public DateTime DatumKraj { get; set; }
 
         public decimal Cijena { get; set; }
-
-        public int BrojDana { get; set; }
     }
 }

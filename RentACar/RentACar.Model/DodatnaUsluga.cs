@@ -9,7 +9,6 @@ namespace RentACar.Model
 {
     public class DodatnaUsluga
     {
-        [Key]
         public int Id { get; set; }
 
         public string Naziv { get; set; } = null!;

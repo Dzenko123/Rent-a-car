@@ -3,11 +3,8 @@ using RentACar.Services.Database;
 
 namespace RentACar.Services
 {
-    public class RentACarDBContext : DbContext
-    {
-        public RentACarDBContext(DbContextOptions<RentACarDBContext> options) : base(options)
-        {
-        }
+    public partial class RentACarDBContext : DbContext
+    { 
 
         public DbSet<Korisnici> Korisnicis { get; set; }
         public DbSet<CijenePoVremenskomPeriodu> CijenePoVremenskomPeriodu { get; set; }
@@ -25,5 +22,19 @@ namespace RentACar.Services
         public DbSet<Uloge> Uloge { get; set; }
         public DbSet<Vozila> Vozila { get; set; }
 
+
+
+        public RentACarDBContext(DbContextOptions<RentACarDBContext> options) : base(options)
+        {
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            SeedData(modelBuilder);
+
+            ApplyConfigurations(modelBuilder);
+        }
     }
 }

@@ -8,17 +8,14 @@ using System.Threading.Tasks;
 
 namespace RentACar.Services.Database
 {
-    [Table("Kontakt")]
     public class Kontakt
     {
-        [Key]
-        public int Id { get; set; }
+        public int KontaktId { get; set; }
 
-        [ForeignKey("Korisnici")]
         public int KorisnikId { get; set; }
 
         public Korisnici Korisnik { get; set; } = null!;
-
+        public string ImePrezime { get; set; }
         public string Poruka { get; set; } = null!;
 
         public string Telefon { get; set; } = null!;

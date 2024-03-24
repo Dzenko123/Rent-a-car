@@ -10,12 +10,9 @@ namespace RentACar.Model
 {
     public class KorisniciUloge
     {
-        [Key]
         public int KorisnikUlogaId { get; set; }
 
-        [ForeignKey("Korisnik")]
         public int KorisnikId { get; set; }
-        [ForeignKey("Uloga")]
         public int UlogaId { get; set; }
 
         public DateTime DatumIzmjene { get; set; }

@@ -8,13 +8,10 @@ using System.Threading.Tasks;
 
 namespace RentACar.Services.Database
 {
-    [Table("Vozila")]
     public class Vozila
     {
-        [Key]
         public int VoziloId { get; set; }
 
-        [ForeignKey("TipVozila")]
         public int TipVozilaId { get; set; }
 
         public TipVozila TipVozila { get; set; } = null!;
@@ -26,10 +23,13 @@ namespace RentACar.Services.Database
         public decimal Cijena { get; set; }
 
         public int GodinaProizvodnje { get; set; }
+        public double Kilometraza { get; set; }
         public string? StateMachine { get; set; }
 
         public virtual ICollection<Recenzije> Recenzije { get; } = new List<Recenzije>();
         public virtual ICollection<CijenePoVremenskomPeriodu> CijenePoVremenskomPeriodu { get; } = new List<CijenePoVremenskomPeriodu>();
+        public virtual ICollection<KalendarRezervacija> KalendarRezervacije { get; set; } = new List<KalendarRezervacija>();
+
 
     }
 }

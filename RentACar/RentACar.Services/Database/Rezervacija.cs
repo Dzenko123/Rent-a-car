@@ -8,32 +8,34 @@ using System.Threading.Tasks;
 
 namespace RentACar.Services.Database
 {
-    [Table("Rezervacija")]
     public class Rezervacija
     {
-        [Key]
-        public int Id { get; set; }
+        public int RezervacijaId { get; set; }
 
-        [ForeignKey("Korisnici")]
         public int KorisnikId { get; set; }
 
         public Korisnici Korisnik { get; set; } = null!;
 
-        [ForeignKey("Vozila")]
         public int VoziloId { get; set; }
 
         public Vozila Vozilo { get; set; } = null!;
 
-        [ForeignKey("Lokacija")]
+
+        public int RacunId { get; set; }
+
+        public Racun Racun { get; set; } = null!;
+
         public int LokacijaId { get; set; }
 
         public Lokacija Lokacija { get; set; } = null!;
+
+        public int KalendarRezervacijaId { get; set; }
+        public KalendarRezervacija KalendarRezervacija { get; set; }
 
         public DateTime PocetniDatum { get; set; }
 
         public DateTime ZavrsniDatum { get; set; }
 
-        public virtual ICollection<Racun> Racuni { get; } = new List<Racun>();
         public virtual ICollection<RezervacijaDodatnaUsluga> DodatneUsluge { get; } = new List<RezervacijaDodatnaUsluga>();
     }
 }
