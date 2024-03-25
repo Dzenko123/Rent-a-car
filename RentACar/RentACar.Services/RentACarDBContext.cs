@@ -21,7 +21,7 @@ namespace RentACar.Services
         public DbSet<Transakcija> Transkacija { get; set; }
         public DbSet<Uloge> Uloge { get; set; }
         public DbSet<Vozila> Vozila { get; set; }
-
+        public DbSet<Lajkovi> Lajkovi { get; set; }
 
 
         public RentACarDBContext(DbContextOptions<RentACarDBContext> options) : base(options)

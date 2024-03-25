@@ -24,7 +24,6 @@ namespace RentACar.Services.Database
         public string Komentar { get; set; } = null!;
 
         public DateTime DatumVrijeme { get; set; }
-        public int Like { get; set; }
-        public int Dislike { get; set; }
+
     }
 }

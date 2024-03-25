@@ -33,6 +33,7 @@ namespace RentACar.Services
             SeedDodatnaUsluga(modelBuilder);
             SeedRezervacija(modelBuilder);
             SeedRezervacijaDodatnaUsluga(modelBuilder);
+            SeedLajkovi(modelBuilder);
         }
 
         private void SeedKorisnici(ModelBuilder modelBuilder) 
@@ -49,28 +50,80 @@ namespace RentACar.Services
                     LozinkaHash= "JfJzsL3ngGWki+Dn67C+8WLy73I=",
                     LozinkaSalt= "7TUJfmgkkDvcY3PB/M4fhg==",
                     Status=true
+                },
+                new Korisnici
+                {
+                    KorisnikId = 2,
+                    Ime = "user1",
+                    Prezime = "user1",
+                    Email = "user1@gmail.com",
+                    Telefon = "060000001",
+                    KorisnickoIme = "test",
+                    LozinkaHash = "KnHtwSBaEBRQ4kirxu8qLLU+20BraHV95Aj4JJcTZyQ=", //Plain text: test
+                    LozinkaSalt = "0dUI00v6BWmtxp8JCAyw9w==",
+                    Status = true
+                },
+                new Korisnici
+                {
+                    KorisnikId = 3,
+                    Ime = "user2",
+                    Prezime = "user2",
+                    Email = "user2@gmail.com",
+                    Telefon = "060000002",
+                    KorisnickoIme = "test",
+                    LozinkaHash = "KnHtwSBaEBRQ4kirxu8qLLU+20BraHV95Aj4JJcTZyQ=", //Plain text: test
+                    LozinkaSalt = "0dUI00v6BWmtxp8JCAyw9w==",
+                    Status = true
                 });
         }
 
         private void SeedUloge(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Uloge>().HasData(new Uloge
-            {
-                UlogaId=1,
-                Naziv="administrator",
-                Opis="administrator"
-            });
+            modelBuilder.Entity<Uloge>().HasData(
+                new Uloge
+                {
+                    UlogaId = 1,
+                    Naziv = "admin",
+                    Opis = "admin"
+                },
+                new Uloge
+                {
+                    UlogaId=2,
+                    Naziv = "user1",
+                    Opis="user1"
+                },
+                new Uloge
+                {
+                    UlogaId = 3,
+                    Naziv = "user2",
+                    Opis = "user2"
+                });
         }
         private void SeedKorisniciUloge(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<KorisniciUloge>().HasData(
                 new KorisniciUloge
                 {
-                    KorisnikUlogaId=1,
-                    KorisnikId=1,
-                    UlogaId=1,
-                    DatumIzmjene=_dateTime
-                });
+                    KorisnikUlogaId = 1,
+                    KorisnikId = 1,
+                    UlogaId = 1,
+                    DatumIzmjene = _dateTime
+                },
+                new KorisniciUloge
+                {
+                    KorisnikUlogaId = 2,
+                    KorisnikId = 2,
+                    UlogaId = 2,
+                    DatumIzmjene = _dateTime
+                },
+                new KorisniciUloge
+                {
+                    KorisnikUlogaId = 3,
+                    KorisnikId = 3,
+                    UlogaId = 3,
+                    DatumIzmjene = _dateTime
+                }
+                );
         }
         private void SeedKontakt(ModelBuilder modelBuilder)
         {
@@ -78,12 +131,39 @@ namespace RentACar.Services
                 new Kontakt
                 {
                     KontaktId = 1,
-                    KorisnikId = 1,
+                    KorisnikId = 2,
                     ImePrezime = "TestTest1",
                     Poruka = "test1",
                     Telefon = "060000000",
                     Email = "test1@mail.com"
-                });
+                },
+                 new Kontakt
+                 {
+                     KontaktId = 2,
+                     KorisnikId = 2,
+                     ImePrezime = "TestTest2",
+                     Poruka = "test2",
+                     Telefon = "060000001",
+                     Email = "test2@mail.com"
+                 },
+                  new Kontakt
+                  {
+                      KontaktId = 3,
+                      KorisnikId = 3,
+                      ImePrezime = "TestTest3",
+                      Poruka = "test3",
+                      Telefon = "060000002",
+                      Email = "test3@mail.com"
+                  },
+                   new Kontakt
+                   {
+                       KontaktId = 4,
+                       KorisnikId = 3,
+                       ImePrezime = "TestTest4",
+                       Poruka = "test4",
+                       Telefon = "060000003",
+                       Email = "test4@mail.com"
+                   });
         }
         private void SeedTipVozila(ModelBuilder modelBuilder)
         {
@@ -94,6 +174,27 @@ namespace RentACar.Services
                 Tip="Limuzina",
                 Marka="test1",
                 Model="test1"
+            },
+            new TipVozila
+            {
+                TipVozilaId = 2,
+                Tip = "Malo auto",
+                Marka = "test2",
+                Model = "test2"
+            },
+            new TipVozila
+            {
+                TipVozilaId = 3,
+                Tip = "Karavan",
+                Marka = "test3",
+                Model = "test3"
+            },
+            new TipVozila
+            {
+                TipVozilaId = 4,
+                Tip = "Kabriolet",
+                Marka = "test4",
+                Model = "test4"
             });
         }
         private void SeedVozila(ModelBuilder modelBuilder)
@@ -109,6 +210,83 @@ namespace RentACar.Services
                 GodinaProizvodnje=2000,
                 Kilometraza=100,
                 StateMachine="draft"
+            },
+            new Vozila
+            {
+                VoziloId = 2,
+                TipVozilaId = 1,
+                Slika = imageData,
+                Dostupan = true,
+                Cijena = 2,
+                GodinaProizvodnje = 2001,
+                Kilometraza = 101,
+                StateMachine = "draft"
+            },
+            new Vozila
+            {
+                VoziloId = 3,
+                TipVozilaId = 2,
+                Slika = imageData,
+                Dostupan = true,
+                Cijena = 3,
+                GodinaProizvodnje = 2002,
+                Kilometraza = 102,
+                StateMachine = "draft"
+            },
+            new Vozila
+            {
+                VoziloId = 4,
+                TipVozilaId = 2,
+                Slika = imageData,
+                Dostupan = true,
+                Cijena = 4,
+                GodinaProizvodnje = 2003,
+                Kilometraza = 103,
+                StateMachine = "draft"
+            },
+            new Vozila
+            {
+                VoziloId = 5,
+                TipVozilaId = 3,
+                Slika = imageData,
+                Dostupan = true,
+                Cijena = 5,
+                GodinaProizvodnje = 2004,
+                Kilometraza = 104,
+                StateMachine = "draft"
+            },
+            new Vozila
+            {
+                VoziloId = 6,
+                TipVozilaId = 3,
+                Slika = imageData,
+                Dostupan = true,
+                Cijena = 6,
+                GodinaProizvodnje = 2005,
+                Kilometraza = 105,
+                StateMachine = "draft"
+            },
+            new Vozila
+            {
+                VoziloId = 7,
+                TipVozilaId = 4,
+                Slika = imageData,
+                Dostupan = true,
+                Cijena = 7,
+                GodinaProizvodnje = 2006,
+                Kilometraza = 106,
+                StateMachine = "draft"
+            },
+            new Vozila
+            {
+                VoziloId = 8,
+                TipVozilaId = 4,
+                Slika = imageData,
+                Dostupan = true,
+                Cijena = 8,
+                GodinaProizvodnje = 2007,
+                Kilometraza = 107,
+                StateMachine = "draft"
             });
         }
         private void SeedRecenzije(ModelBuilder modelBuilder)
@@ -117,14 +295,85 @@ namespace RentACar.Services
                 new Recenzije
                 {
                     RecenzijaId=1,
-                    KorisniciId=1,
+                    KorisniciId=2,
                     VoziloId=1,
                     Ocjena=1,
                     Komentar="test1",
                     DatumVrijeme=_dateTime,
-                    Like=1,
-                    Dislike=1
+                },
+                new Recenzije
+                {
+                    RecenzijaId = 2,
+                    KorisniciId = 2,
+                    VoziloId = 1,
+                    Ocjena = 3,
+                    Komentar = "test2",
+                    DatumVrijeme = _dateTime,
+                },
+                new Recenzije
+                {
+                    RecenzijaId = 3,
+                    KorisniciId = 3,
+                    VoziloId = 2,
+                    Ocjena = 4,
+                    Komentar = "test3",
+                    DatumVrijeme = _dateTime,
+                },
+                new Recenzije
+                {
+                    RecenzijaId = 4,
+                    KorisniciId = 3,
+                    VoziloId = 2,
+                    Ocjena = 1,
+                    Komentar = "test4",
+                    DatumVrijeme = _dateTime,
                 });
+        }
+        private void SeedLajkovi(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Lajkovi>().HasData(
+                new Lajkovi
+                {
+                    LajkId = 1,
+                    KorisnikId = 2,
+                    VoziloId = 1,
+                    Tip = true
+                },
+                 new Lajkovi
+                 {
+                     LajkId = 2,
+                     KorisnikId = 2,
+                     VoziloId = 2,
+                     Tip = false
+                 },
+                  new Lajkovi
+                  {
+                      LajkId = 3,
+                      KorisnikId = 3,
+                      VoziloId = 1,
+                      Tip = true
+                  },
+                   new Lajkovi
+                   {
+                       LajkId = 4,
+                       KorisnikId = 3,
+                       VoziloId = 2,
+                       Tip = true
+                   },
+                    new Lajkovi
+                    {
+                        LajkId = 5,
+                        KorisnikId = 2,
+                        VoziloId = 3,
+                        Tip = false
+                    },
+                     new Lajkovi
+                     {
+                         LajkId = 6,
+                         KorisnikId = 3,
+                         VoziloId = 3,
+                         Tip = false
+                     });
         }
         private void SeedCijenePoVremenskomPeriodu(ModelBuilder modelBuilder)
         {
@@ -178,6 +427,18 @@ namespace RentACar.Services
                     GradId=1,
                     Naziv="test",
                     PostanskiBroj="test"
+                },
+                new Grad
+                {
+                    GradId = 2,
+                    Naziv = "test2",
+                    PostanskiBroj = "test2"
+                },
+                new Grad
+                {
+                    GradId = 3,
+                    Naziv = "test3",
+                    PostanskiBroj = "test3"
                 });
         }
         private void SeedLokacija(ModelBuilder modelBuilder)
@@ -189,6 +450,20 @@ namespace RentACar.Services
                     GradId=1,
                     Naziv="test",
                     Adresa="test"
+                },
+                new Lokacija
+                {
+                    LokacijaId = 2,
+                    GradId = 2,
+                    Naziv = "test2",
+                    Adresa = "test2"
+                },
+                new Lokacija
+                {
+                    LokacijaId = 3,
+                    GradId = 3,
+                    Naziv = "test3",
+                    Adresa = "test3"
                 });
         }
         private void SeedDodatnaUsluga(ModelBuilder modelBuilder)
@@ -199,6 +474,20 @@ namespace RentACar.Services
                 Naziv="test",
                 Opis="test",
                 Cijena=100
+            },
+            new DodatnaUsluga
+            {
+                DodatnaUslugaId = 2,
+                Naziv = "test2",
+                Opis = "test2",
+                Cijena = 101
+            },
+            new DodatnaUsluga
+            {
+                DodatnaUslugaId = 3,
+                Naziv = "test3",
+                Opis = "test3",
+                Cijena = 102
             });
         }
         private void SeedRezervacija(ModelBuilder modelBuilder)
@@ -207,13 +496,24 @@ namespace RentACar.Services
                 new Rezervacija
                 {
                     RezervacijaId=1,
-                    KorisnikId=1,
+                    KorisnikId=2,
                     VoziloId=1,
                     RacunId=1,
                     LokacijaId=1,
                     KalendarRezervacijaId=1,
                     PocetniDatum=_dateTime,
                     ZavrsniDatum=_dateTime2
+                },
+                new Rezervacija
+                {
+                    RezervacijaId = 2,
+                    KorisnikId = 3,
+                    VoziloId = 2,
+                    RacunId = 1,
+                    LokacijaId = 2,
+                    KalendarRezervacijaId = 1,
+                    PocetniDatum = _dateTime,
+                    ZavrsniDatum = _dateTime2
                 });
         }
 
@@ -224,7 +524,22 @@ namespace RentACar.Services
                 {
                     RezervacijaId=1,
                     DodatnaUslugaId=1
-                });
+                },
+                new RezervacijaDodatnaUsluga
+                {
+                    RezervacijaId = 1,
+                    DodatnaUslugaId = 2
+                }, new RezervacijaDodatnaUsluga
+                {
+                    RezervacijaId = 2,
+                    DodatnaUslugaId = 1
+                },
+                new RezervacijaDodatnaUsluga
+                {
+                    RezervacijaId = 2,
+                    DodatnaUslugaId = 2
+                }
+                );
         }
     }
 }
