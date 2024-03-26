@@ -58,9 +58,9 @@ namespace RentACar.Services
                     Prezime = "user1",
                     Email = "user1@gmail.com",
                     Telefon = "060000001",
-                    KorisnickoIme = "test",
-                    LozinkaHash = "KnHtwSBaEBRQ4kirxu8qLLU+20BraHV95Aj4JJcTZyQ=", //Plain text: test
-                    LozinkaSalt = "0dUI00v6BWmtxp8JCAyw9w==",
+                    KorisnickoIme = "test1",
+                    LozinkaHash = "PEPuXC0FRTDz8Ep3LtkrCzwN0Kw=", //Plain text: test
+                    LozinkaSalt = "1wQEjdSFeZttx6dlvEDjOg==",
                     Status = true
                 },
                 new Korisnici
@@ -70,9 +70,9 @@ namespace RentACar.Services
                     Prezime = "user2",
                     Email = "user2@gmail.com",
                     Telefon = "060000002",
-                    KorisnickoIme = "test",
-                    LozinkaHash = "KnHtwSBaEBRQ4kirxu8qLLU+20BraHV95Aj4JJcTZyQ=", //Plain text: test
-                    LozinkaSalt = "0dUI00v6BWmtxp8JCAyw9w==",
+                    KorisnickoIme = "test2",
+                    LozinkaHash = "PEPuXC0FRTDz8Ep3LtkrCzwN0Kw=", //Plain text: test
+                    LozinkaSalt = "1wQEjdSFeZttx6dlvEDjOg==",
                     Status = true
                 });
         }

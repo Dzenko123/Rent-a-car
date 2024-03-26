@@ -9,11 +9,14 @@ import 'package:rentacar_admin/utils/util.dart';
 import 'package:rentacar_admin/widgets/master_screen.dart';
 
 class VozilaListScreen extends StatefulWidget {
-  const VozilaListScreen({super.key});
+  final bool showBackButton;
+
+  const VozilaListScreen({Key? key, this.showBackButton = true}) : super(key: key);
 
   @override
   State<VozilaListScreen> createState() => _VozilaListScreenState();
 }
+
 
 class _VozilaListScreenState extends State<VozilaListScreen> {
   late VozilaProvider _vozilaProvider;
@@ -109,7 +112,6 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
               ),
             ),
           ),
-
           DataColumn(
             label: Expanded(
               child: Text(
@@ -129,12 +131,27 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
           DataColumn(
             label: Expanded(
               child: Text(
+                'Dostupan',
+                style: TextStyle(fontStyle: FontStyle.italic),
+              ),
+            ),
+          ),
+          DataColumn(
+            label: Expanded(
+              child: Text(
                 'StateMachine',
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
           ),
-
+          DataColumn(
+            label: Expanded(
+              child: Text(
+                'Kilometraža',
+                style: TextStyle(fontStyle: FontStyle.italic),
+              ),
+            ),
+          ),
           DataColumn(
             label: Expanded(
               child: Text(
@@ -161,16 +178,16 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
                             cells: [
                               DataCell(Text(e.voziloId?.toString() ?? "")),
                               DataCell(Text(e.tipVozilaId?.toString() ?? "")),
-                              //DataCell(Text(e.dostupan?.toString() ?? "")),
                               DataCell(
                                   Text(e.godinaProizvodnje?.toString() ?? "")),
                               DataCell(
                                 Text(formatNumber(e.cijena)),
                               ),
+                              DataCell(Text(e.dostupan?.toString() ?? "")),
                               DataCell(
                                 (Text(e.stateMachine?.toString() ?? "")),
                               ),
-                              //DataCell(Text(e.stateMachine?.toString() ?? "")),
+                              DataCell(Text(e.kilometraza?.toString() ?? "")),
                               DataCell(e.slika != ""
                                   ? Container(
                                       width: 150,

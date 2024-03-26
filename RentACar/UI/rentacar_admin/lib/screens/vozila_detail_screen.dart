@@ -39,7 +39,9 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
     _initialValue = {
       'godinaProizvodnje': widget.vozilo?.godinaProizvodnje.toString(),
       'cijena': widget.vozilo?.cijena.toString(),
-      'tipVozilaId': widget.vozilo?.tipVozilaId.toString()
+      'tipVozilaId': widget.vozilo?.tipVozilaId.toString(),
+      'dostupan':widget.vozilo?.dostupan.toString(),
+      'kilometraza':widget.vozilo?.kilometraza.toString()
     };
     _tipVozilaProvider = context.read<TipVozilaProvider>();
     _vozilaProvider = context.read<VozilaProvider>();
@@ -147,6 +149,20 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                 child: FormBuilderTextField(
                   decoration: const InputDecoration(labelText: "Cijena"),
                   name: "cijena",
+                ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: FormBuilderTextField(
+                  decoration: const InputDecoration(labelText: "Dostupan"),
+                  name: "dostupan",
+                ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: FormBuilderTextField(
+                  decoration: const InputDecoration(labelText: "Kilometraza"),
+                  name: "kilometraza",
                 ),
               ),
             ],
