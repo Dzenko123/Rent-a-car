@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:rentacar_admin/models/tip_vozila.dart';
 
 /// This allows the `User` class to access private members in
 /// the generated file. The value for this is *.g.dart, where
@@ -11,13 +12,25 @@ class Vozilo {
   int? tipVozilaId;
   int? godinaProizvodnje;
   double? cijena;
-  bool? dostupan;
-  String? slika;
   double? kilometraza;
+  String? slika;
   String? stateMachine;
+  String? gorivo;
+  String? model;
+  String? marka;
+  TipVozila? tipVozila;
 
-  Vozilo(this.voziloId, this.godinaProizvodnje, this.cijena, this.tipVozilaId,
-      this.slika, this.stateMachine, this.dostupan, this.kilometraza);
+  Vozilo(
+      this.voziloId,
+      this.godinaProizvodnje,
+      this.cijena,
+      this.tipVozilaId,
+      this.slika,
+      this.kilometraza,
+      this.stateMachine,
+      this.gorivo,
+      this.marka,
+      this.model, this.tipVozila);
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.
@@ -29,13 +42,3 @@ class Vozilo {
   /// helper method `_$UserToJson`.
   Map<String, dynamic> toJson() => _$VoziloToJson(this);
 }
-
-    // {
-    //   "voziloId": 1,
-    //   "tipVozilaId": 1,
-    //   "slika": "",
-    //   "dostupan": true,
-    //   "cijena": 9,
-    //   "godinaProizvodnje": 2005,
-    //   "stateMachine": "draft"
-    // }

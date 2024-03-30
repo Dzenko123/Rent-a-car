@@ -11,12 +11,19 @@ namespace RentACar.Model.Requests
     public class VozilaUpdateRequest
     {
         public int? TipVozilaId { get; set; }
+
+        public string? Marka { get; set; }
+
+        public string? Model { get; set; }
         public byte[]? Slika { get; set; }
 
-        public bool Dostupan { get; set; }
 
         public decimal Cijena { get; set; }
 
         public int GodinaProizvodnje { get; set; }
+        public string Gorivo { get; set; }
+
+        public double Kilometraza { get; set; }
+
     }
 }

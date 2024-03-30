@@ -11,10 +11,9 @@ namespace RentACar.Model
     {
         public int TipVozilaId { get; set; }
 
-        public string Tip { get; set; } = null!;
+        public string? Tip { get; set; }
 
-        public string Marka { get; set; } = null!;
+        public string? Opis { get; set; }
 
-        public string Model { get; set; } = null!;
     }
 }

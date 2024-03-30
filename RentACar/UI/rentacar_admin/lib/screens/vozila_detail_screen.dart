@@ -12,6 +12,7 @@ import 'package:rentacar_admin/models/tip_vozila.dart';
 import 'package:rentacar_admin/models/vozila.dart';
 import 'package:rentacar_admin/providers/tip_vozila_provider.dart';
 import 'package:rentacar_admin/providers/vozila_provider.dart';
+import 'package:rentacar_admin/screens/tip_opis_screen.dart';
 import 'package:rentacar_admin/widgets/master_screen.dart';
 
 class VozilaDetailScreen extends StatefulWidget {
@@ -30,18 +31,23 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
   late VozilaProvider _vozilaProvider;
   late TipVozilaProvider _tipVozilaProvider;
   SearchResult<TipVozila>? tipVozilaResult;
+  SearchResult<Vozilo>? voziloResult;
+
   bool isLoading = true;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _initialValue = {
       'godinaProizvodnje': widget.vozilo?.godinaProizvodnje.toString(),
       'cijena': widget.vozilo?.cijena.toString(),
       'tipVozilaId': widget.vozilo?.tipVozilaId.toString(),
-      'dostupan':widget.vozilo?.dostupan.toString(),
-      'kilometraza':widget.vozilo?.kilometraza.toString()
+      'kilometraza': widget.vozilo?.kilometraza.toString(),
+      'stateMachine': widget.vozilo?.stateMachine,
+      'gorivo': widget.vozilo?.gorivo,
+      'marka': widget.vozilo?.marka,
+      'model': widget.vozilo?.model,
+      'slika': widget.vozilo?.slika,
     };
     _tipVozilaProvider = context.read<TipVozilaProvider>();
     _vozilaProvider = context.read<VozilaProvider>();
@@ -51,81 +57,66 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-
-    // if (widget.vozilo != null) {
-    //   setState(() {
-    //     _formKey.currentState?.patchValue(
-    //         {'godinaProizvodnje': widget.vozilo?.godinaProizvodnje});
-    //   });
-    //}
   }
 
   Future initForm() async {
     tipVozilaResult = await _tipVozilaProvider.get();
+    voziloResult = await _vozilaProvider.get();
+
     setState(() {
       isLoading = false;
     });
 
-    print(tipVozilaResult);
+    //print(tipVozilaResult);
   }
 
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      // ignore: sort_child_properties_last
-      child: Column(
-        children: [
-          isLoading ? Container() : _buildForm(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
-                padding: EdgeInsets.all(10),
-                child: ElevatedButton(
-                    onPressed: () async {
-                      _formKey.currentState?.saveAndValidate();
-                      print(_formKey.currentState?.value);
-                      var request = new Map.from(_formKey.currentState!.value);
-                      if (_base64Image != null) {
-                        request['slika'] = _base64Image;
-                      } else {
-                        request['slika'] = widget.vozilo?.slika;
-                      }
-
-                      //print(request['slika']);
-
-                      try {
-                        if (widget.vozilo == null) {
-                          await _vozilaProvider.insert(request);
-                        } else {
-                          await _vozilaProvider.update(
-                              widget.vozilo!.voziloId!, request);
-                        }
-                      } on Exception catch (e) {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) => AlertDialog(
-                                  title: Text("Error"),
-                                  content: Text(e.toString()),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: Text("OK"))
-                                  ],
-                                ));
-                      }
-                    },
-                    child: Text("Sačuvaj")),
-              )
-            ],
-          )
-        ],
+      child: Padding(
+        padding: EdgeInsets.all(10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    isLoading ? Container() : _buildForm(),
+                    SizedBox(height: 20),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(width: 20),
+            _buildImagePreview(),
+          ],
+        ),
       ),
       title: this.widget.vozilo != null
           ? '${this.widget.vozilo?.voziloId}, ${this.widget.vozilo?.godinaProizvodnje}'
           : "Vozila details",
+    );
+  }
+
+  Widget _buildImagePreview() {
+    return Center(
+      child: Container(
+        height: 500,
+        width: 500,
+        decoration: BoxDecoration(
+          image: widget.vozilo?.slika != null
+              ? DecorationImage(
+                  image: MemoryImage(base64Decode(widget.vozilo!.slika!)),
+                  fit: BoxFit.contain,
+                )
+              : null,
+        ),
+        alignment: Alignment.center,
+        child: widget.vozilo?.slika == null ? Placeholder() : null,
+      ),
     );
   }
 
@@ -134,39 +125,105 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
       key: _formKey,
       initialValue: _initialValue,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(
+            'Detalji vozila',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 10),
           Row(
             children: [
               Expanded(
                 child: FormBuilderTextField(
-                  decoration:
-                      const InputDecoration(labelText: "Godina proizvodnje"),
+                  decoration: const InputDecoration(
+                    labelText: "Godina proizvodnje",
+                    prefixIcon: Icon(Icons.calendar_today),
+                  ),
                   name: "godinaProizvodnje",
                 ),
               ),
               SizedBox(width: 10),
               Expanded(
                 child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "Cijena"),
+                  decoration: const InputDecoration(
+                    labelText: "Cijena",
+                    prefixIcon: Icon(Icons.attach_money),
+                  ),
                   name: "cijena",
-                ),
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "Dostupan"),
-                  name: "dostupan",
-                ),
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "Kilometraza"),
-                  name: "kilometraza",
                 ),
               ),
             ],
           ),
+          SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: FormBuilderTextField(
+                  decoration: const InputDecoration(
+                    labelText: "Model",
+                    prefixIcon: Icon(Icons.car_crash_outlined),
+                  ),
+                  name: "model",
+                ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: FormBuilderTextField(
+                  decoration: const InputDecoration(
+                    labelText: "Marka",
+                    prefixIcon: Icon(Icons.car_rental),
+                  ),
+                  name: "marka",
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: FormBuilderTextField(
+                  decoration: const InputDecoration(
+                    labelText: "KM",
+                    prefixIcon: Icon(Icons.speed),
+                  ),
+                  name: "kilometraza",
+                ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: FormBuilderDropdown<String>(
+                  name: "gorivo",
+                  decoration: InputDecoration(
+                    labelText: 'Gorivo',
+                    suffix: IconButton(
+                      icon: const Icon(Icons.local_gas_station),
+                      onPressed: () {
+                        _formKey.currentState?.fields['voziloId']
+                            ?.didChange(null);
+                      },
+                    ),
+                    hintText: 'Odaberi tip goriva',
+                  ),
+                  items: voziloResult?.result
+                          .map((item) => item.gorivo)
+                          .toSet()
+                          .map((gorivo) => DropdownMenuItem(
+                                alignment: AlignmentDirectional.center,
+                                value: gorivo,
+                                child: Text(gorivo ?? ""),
+                              ))
+                          .toList() ??
+                      [],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
           Row(
             children: [
               Expanded(
@@ -181,41 +238,203 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                             ?.didChange(null);
                       },
                     ),
-                    hintText: 'Odaberi marku vozila',
+                    hintText: 'Odaberi tip vozila',
                   ),
                   items: tipVozilaResult?.result
                           .map((item) => DropdownMenuItem(
                                 alignment: AlignmentDirectional.center,
                                 value: item.tipVozilaId.toString(),
-                                child: Text(item.marka ?? ""),
+                                child: Text(item.tip ?? ""),
                               ))
                           .toList() ??
                       [],
+                  onChanged: (newValue) {
+                    setState(() {
+                      var selectedTip = tipVozilaResult?.result.firstWhere(
+                          (item) => item.tipVozilaId.toString() == newValue);
+                      _formKey.currentState?.fields['opis']
+                          ?.didChange(selectedTip?.opis ?? '');
+                    });
+                  },
                 ),
-              )
+              ),
             ],
           ),
           Row(
             children: [
               Expanded(
-                  child: FormBuilderField(
-                name: 'imageId',
-                builder: ((field) {
-                  return InputDecorator(
-                    decoration: InputDecoration(
-                        label: Text('Odaberite sliku'),
-                        errorText: field.errorText),
-                    child: ListTile(
-                      leading: Icon(Icons.photo),
-                      title: Text("Select image"),
-                      trailing: Icon(Icons.file_upload),
-                      onTap: getImage,
+                child: FormBuilderTextField(
+                  name: 'opis',
+                  initialValue: tipVozilaResult?.result
+                      .firstWhere((item) =>
+                          item.tipVozilaId.toString() ==
+                          _initialValue['tipVozilaId'])
+                      .opis,
+                  decoration: InputDecoration(
+                    labelText: 'Opis',
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              ElevatedButton(
+                onPressed: () async {
+                  final result = await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => TipOpisScreen(tipVozila: null),
                     ),
                   );
-                }),
-              ))
+
+                  if (result == true) {
+                    setState(() {
+                      isLoading = true;
+                    });
+                    initForm();
+                  }
+                },
+                child: const Text("Dodaj tip/opis"),
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                ),
+              ),
             ],
-          )
+          ),
+          SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: FormBuilderField(
+                  name: 'imageId',
+                  builder: ((field) {
+                    return InputDecorator(
+                      decoration: InputDecoration(
+                        label: Text('Odaberite sliku'),
+                        errorText: field.errorText,
+                      ),
+                      child: _image != null
+                          ? Row(
+                              children: [
+                                Expanded(
+                                  child: Image.file(
+                                    _image!,
+                                    //fit: BoxFit.cover,
+                                    height: 150,
+                                    width: 150,
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.close),
+                                  onPressed: () {
+                                    setState(() {
+                                      _image = null;
+                                    });
+                                  },
+                                ),
+                              ],
+                            )
+                          : ListTile(
+                              leading: Icon(Icons.photo),
+                              title: Text("Select image"),
+                              trailing: Icon(Icons.file_upload),
+                              onTap: getImage,
+                            ),
+                    );
+                  }),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              ElevatedButton(
+                onPressed: () async {
+                  _formKey.currentState?.saveAndValidate();
+                  print(_formKey.currentState?.value);
+                  var request = new Map.from(_formKey.currentState!.value);
+                  print("Opis: ${_formKey.currentState!.value['opis']}");
+                  request['opis'] = _formKey.currentState!.value['opis'];
+
+                  if (_base64Image != null) {
+                    request['slika'] = _base64Image;
+                  } else {
+                    request['slika'] = widget.vozilo?.slika;
+                  }
+                  request['model'] = _formKey.currentState!.value['model'];
+
+                  try {
+                    if (widget.vozilo == null) {
+                      await _vozilaProvider.insert(request);
+                    } else {
+                      await _vozilaProvider.update(
+                          widget.vozilo!.voziloId!, request);
+                    }
+                    if (_base64Image != null) {
+                      setState(() {
+                        widget.vozilo?.slika = _base64Image;
+                      });
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Podaci su uspješno sačuvani!'),
+                      ),
+                    );
+                  } on Exception catch (e) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) => AlertDialog(
+                        title: Text("Error"),
+                        content: Text(e.toString()),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text("OK"),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                child: Ink(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xFF000000),
+                        Color(0xFF333333),
+                        Color(0xFF555555),
+                      ],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Container(
+                    constraints:
+                        BoxConstraints(minWidth: 88.0, minHeight: 36.0),
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Sačuvaj",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -228,8 +447,10 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
     var result = await FilePicker.platform.pickFiles(type: FileType.image);
 
     if (result != null && result.files.single.path != null) {
-      _image = File(result.files.single.path!);
-      _base64Image = base64Encode(_image!.readAsBytesSync());
+      setState(() {
+        _image = File(result.files.single.path!);
+        _base64Image = base64Encode(_image!.readAsBytesSync());
+      });
     }
   }
 }

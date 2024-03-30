@@ -9,13 +9,11 @@ part of 'tip_vozila.dart';
 TipVozila _$TipVozilaFromJson(Map<String, dynamic> json) => TipVozila(
       json['tipVozilaId'] as int?,
       json['tip'] as String?,
-      json['marka'] as String?,
-      json['model'] as String?,
+      json['opis'] as String?,
     );
 
 Map<String, dynamic> _$TipVozilaToJson(TipVozila instance) => <String, dynamic>{
       'tipVozilaId': instance.tipVozilaId,
       'tip': instance.tip,
-      'marka': instance.marka,
-      'model': instance.model,
+      'opis': instance.opis,
     };

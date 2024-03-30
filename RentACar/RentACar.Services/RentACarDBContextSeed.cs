@@ -172,29 +172,25 @@ namespace RentACar.Services
             {
                 TipVozilaId=1,
                 Tip="Limuzina",
-                Marka="test1",
-                Model="test1"
+                Opis= "Automobil sa dosta prostora."
             },
             new TipVozila
             {
                 TipVozilaId = 2,
                 Tip = "Malo auto",
-                Marka = "test2",
-                Model = "test2"
+                Opis="Vozilo pogodnije za dvije osobe."
             },
             new TipVozila
             {
                 TipVozilaId = 3,
                 Tip = "Karavan",
-                Marka = "test3",
-                Model = "test3"
+                Opis="Automobil za širu porodicu."
             },
             new TipVozila
             {
                 TipVozilaId = 4,
                 Tip = "Kabriolet",
-                Marka = "test4",
-                Model = "test4"
+                Opis="Automobil za ljetne avanture."
             });
         }
         private void SeedVozila(ModelBuilder modelBuilder)
@@ -205,10 +201,12 @@ namespace RentACar.Services
                 VoziloId = 1,
                 TipVozilaId=1,
                 Slika=imageData,
-                Dostupan=true,
+                Model="test1",
+                Marka="testtest1",
                 Cijena=1,
                 GodinaProizvodnje=2000,
                 Kilometraza=100,
+                Gorivo="dizel",
                 StateMachine="draft"
             },
             new Vozila
@@ -216,10 +214,12 @@ namespace RentACar.Services
                 VoziloId = 2,
                 TipVozilaId = 1,
                 Slika = imageData,
-                Dostupan = true,
+                Model = "test2",
+                Marka = "testtest2",
                 Cijena = 2,
                 GodinaProizvodnje = 2001,
                 Kilometraza = 101,
+                Gorivo="benzin",
                 StateMachine = "draft"
             },
             new Vozila
@@ -227,10 +227,12 @@ namespace RentACar.Services
                 VoziloId = 3,
                 TipVozilaId = 2,
                 Slika = imageData,
-                Dostupan = true,
+                Model = "test3",
+                Marka = "testtest3",
                 Cijena = 3,
                 GodinaProizvodnje = 2002,
                 Kilometraza = 102,
+                Gorivo="plin",
                 StateMachine = "draft"
             },
             new Vozila
@@ -238,10 +240,12 @@ namespace RentACar.Services
                 VoziloId = 4,
                 TipVozilaId = 2,
                 Slika = imageData,
-                Dostupan = true,
+                Model = "test4",
+                Marka = "testtest4",
                 Cijena = 4,
                 GodinaProizvodnje = 2003,
                 Kilometraza = 103,
+                Gorivo="hibrid",
                 StateMachine = "draft"
             },
             new Vozila
@@ -249,10 +253,12 @@ namespace RentACar.Services
                 VoziloId = 5,
                 TipVozilaId = 3,
                 Slika = imageData,
-                Dostupan = true,
+                Model = "test5",
+                Marka = "testtest5",
                 Cijena = 5,
                 GodinaProizvodnje = 2004,
                 Kilometraza = 104,
+                Gorivo="elektro",
                 StateMachine = "draft"
             },
             new Vozila
@@ -260,10 +266,12 @@ namespace RentACar.Services
                 VoziloId = 6,
                 TipVozilaId = 3,
                 Slika = imageData,
-                Dostupan = true,
+                Model = "test6",
+                Marka = "testtest6",
                 Cijena = 6,
                 GodinaProizvodnje = 2005,
                 Kilometraza = 105,
+                Gorivo="dizel",
                 StateMachine = "draft"
             },
             new Vozila
@@ -271,10 +279,12 @@ namespace RentACar.Services
                 VoziloId = 7,
                 TipVozilaId = 4,
                 Slika = imageData,
-                Dostupan = true,
+                Model = "test7",
+                Marka = "testtest7",
                 Cijena = 7,
                 GodinaProizvodnje = 2006,
                 Kilometraza = 106,
+                Gorivo="benzin",
                 StateMachine = "draft"
             },
             new Vozila
@@ -282,10 +292,12 @@ namespace RentACar.Services
                 VoziloId = 8,
                 TipVozilaId = 4,
                 Slika = imageData,
-                Dostupan = true,
+                Model = "test8",
+                Marka = "testtest8",
                 Cijena = 8,
                 GodinaProizvodnje = 2007,
                 Kilometraza = 107,
+                Gorivo="plin",
                 StateMachine = "draft"
             });
         }

@@ -39,7 +39,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => const VozilaListScreen(),
+                    builder: (context) =>  VozilaListScreen(),
                   ),
                 );
               },

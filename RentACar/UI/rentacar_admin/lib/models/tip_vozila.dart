@@ -6,10 +6,9 @@ part 'tip_vozila.g.dart';
 class TipVozila {
   int? tipVozilaId;
   String? tip;
-  String? marka;
-  String? model;
+  String? opis;
 
-  TipVozila(this.tipVozilaId, this.tip, this.marka, this.model);
+  TipVozila(this.tipVozilaId, this.tip, this.opis);
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.
@@ -22,9 +21,3 @@ class TipVozila {
   /// helper method `_$UserToJson`.
   Map<String, dynamic> toJson() => _$TipVozilaToJson(this);
 }
-
-
-// "id": 1,
-//       "tip": "Limuzina",
-//       "marka": "Mercedes-Benz",
-//       "model": "E270"

@@ -21,6 +21,9 @@ namespace RentACar.Services
                 //.ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));  --> da možemo slati nullable vrijednosti
 
             CreateMap<Database.TipVozila, Model.TipVozila>();
+            CreateMap<Model.Requests.TipVozilaInsertRequest, Database.TipVozila>();
+            CreateMap<Model.Requests.TipVozilaUpdateRequest, Database.TipVozila>();
+
             CreateMap<Database.DodatnaUsluga, Model.DodatnaUsluga>();
             CreateMap<Database.KorisniciUloge, Model.KorisniciUloge>();
             CreateMap<Database.Uloge, Model.Uloge>();

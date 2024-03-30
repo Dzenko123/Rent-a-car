@@ -16,14 +16,20 @@ namespace RentACar.Services.Database
 
         public TipVozila TipVozila { get; set; } = null!;
 
-        public byte[]? Slika { get; set; }
+        public string? Marka { get; set; }
 
-        public bool Dostupan { get; set; }
+        public string? Model { get; set; }
+
+        public byte[]? Slika { get; set; }
 
         public decimal Cijena { get; set; }
 
         public int GodinaProizvodnje { get; set; }
+
         public double Kilometraza { get; set; }
+
+        public string Gorivo { get; set; }
+
         public string? StateMachine { get; set; }
 
         public virtual ICollection<Recenzije> Recenzije { get; } = new List<Recenzije>();

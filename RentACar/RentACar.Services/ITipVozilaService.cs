@@ -1,4 +1,5 @@
-﻿using RentACar.Model.SearchObject;
+﻿using RentACar.Model.Requests;
+using RentACar.Model.SearchObject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace RentACar.Services
 {
-    public interface ITipVozilaService: IService<Model.TipVozila, TipVozilaSearchObject>
+
+    public interface ITipVozilaService: ICRUDService<Model.TipVozila, TipVozilaSearchObject,TipVozilaInsertRequest,TipVozilaUpdateRequest>
     {
 
     }
