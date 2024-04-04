@@ -17,6 +17,9 @@ namespace RentACar.Services.Configurations
             builder.HasOne(c => c.Vozilo)
                    .WithMany(v => v.CijenePoVremenskomPeriodu)
                    .HasForeignKey(c => c.VoziloId);
+            builder.HasOne(c => c.Period)
+                   .WithMany()
+                   .HasForeignKey(c => c.PeriodId);
         }
     }
 }

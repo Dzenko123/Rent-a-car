@@ -13,6 +13,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddTransient<IKorisniciService, KorisniciService>();
 builder.Services.AddTransient<ITipVozilaService, TipVozilaService>();
 builder.Services.AddTransient<IVozilaService, VozilaService>();
+builder.Services.AddTransient<IKontaktService, KontaktService>();
+builder.Services.AddTransient<ICPVPService, CPVPService>();
+builder.Services.AddTransient<IPeriodService, PeriodService>();
 builder.Services.AddTransient<IService<RentACar.Model.DodatnaUsluga, BaseSearchObject>,
     BaseService<RentACar.Model.DodatnaUsluga, RentACar.Services.Database.DodatnaUsluga, BaseSearchObject>>();
 

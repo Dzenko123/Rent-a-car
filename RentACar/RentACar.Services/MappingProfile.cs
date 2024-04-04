@@ -24,10 +24,22 @@ namespace RentACar.Services
             CreateMap<Model.Requests.TipVozilaInsertRequest, Database.TipVozila>();
             CreateMap<Model.Requests.TipVozilaUpdateRequest, Database.TipVozila>();
 
+            CreateMap<Database.Kontakt, Model.Kontakt>();
+            CreateMap<Model.Requests.KontaktInsertRequest, Database.Kontakt>();
+            CreateMap<Model.Requests.KontaktUpdateRequest, Database.Kontakt>();
+
             CreateMap<Database.DodatnaUsluga, Model.DodatnaUsluga>();
             CreateMap<Database.KorisniciUloge, Model.KorisniciUloge>();
             CreateMap<Database.Uloge, Model.Uloge>();
 
+
+            CreateMap<Database.CijenePoVremenskomPeriodu, Model.CijenePoVremenskomPeriodu>();
+            CreateMap<Model.Requests.CPVPInsertRequest, Database.CijenePoVremenskomPeriodu>();
+            CreateMap<Model.Requests.CPVPUpdateRequest, Database.CijenePoVremenskomPeriodu>();
+
+            CreateMap<Database.Period, Model.Period>();
+            CreateMap<Model.Requests.PeriodInsertRequest, Database.Period>();
+            CreateMap<Model.Requests.PeriodUpdateRequest, Database.Period>();
         }
     }
 }

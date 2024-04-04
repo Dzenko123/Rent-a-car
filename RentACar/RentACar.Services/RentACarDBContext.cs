@@ -22,7 +22,7 @@ namespace RentACar.Services
         public DbSet<Uloge> Uloge { get; set; }
         public DbSet<Vozila> Vozila { get; set; }
         public DbSet<Lajkovi> Lajkovi { get; set; }
-
+        public DbSet<Period> Period { get; set; }
 
         public RentACarDBContext(DbContextOptions<RentACarDBContext> options) : base(options)
         {

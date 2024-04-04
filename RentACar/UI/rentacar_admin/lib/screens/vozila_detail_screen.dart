@@ -102,22 +102,23 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
   }
 
   Widget _buildImagePreview() {
-    return Center(
-      child: Container(
-        height: 500,
-        width: 500,
-        decoration: BoxDecoration(
-          image: widget.vozilo?.slika != null
-              ? DecorationImage(
-                  image: MemoryImage(base64Decode(widget.vozilo!.slika!)),
-                  fit: BoxFit.contain,
-                )
-              : null,
+    if (widget.vozilo != null && widget.vozilo!.slika != null) {
+      return Center(
+        child: Container(
+          height: 500,
+          width: 500,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: MemoryImage(base64Decode(widget.vozilo!.slika!)),
+              fit: BoxFit.contain,
+            ),
+          ),
+          alignment: Alignment.center,
         ),
-        alignment: Alignment.center,
-        child: widget.vozilo?.slika == null ? Placeholder() : null,
-      ),
-    );
+      );
+    } else {
+      return SizedBox.shrink();
+    }
   }
 
   FormBuilder _buildForm() {
@@ -251,7 +252,9 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                   onChanged: (newValue) {
                     setState(() {
                       var selectedTip = tipVozilaResult?.result.firstWhere(
-                          (item) => item.tipVozilaId.toString() == newValue);
+                          (item) => item.tipVozilaId.toString() == newValue,
+                          orElse: () => TipVozila(null, null,
+                              null));
                       _formKey.currentState?.fields['opis']
                           ?.didChange(selectedTip?.opis ?? '');
                     });
@@ -265,11 +268,17 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
               Expanded(
                 child: FormBuilderTextField(
                   name: 'opis',
-                  initialValue: tipVozilaResult?.result
-                      .firstWhere((item) =>
-                          item.tipVozilaId.toString() ==
-                          _initialValue['tipVozilaId'])
-                      .opis,
+                  initialValue: tipVozilaResult != null &&
+                          tipVozilaResult!.result != null &&
+                          tipVozilaResult!.result!.isNotEmpty
+                      ? tipVozilaResult!.result!
+                          .firstWhere(
+                              (item) =>
+                                  item.tipVozilaId.toString() ==
+                                  _initialValue['tipVozilaId'],
+                              orElse: () => TipVozila(null, null, null))
+                          .opis
+                      : null,
                   decoration: InputDecoration(
                     labelText: 'Opis',
                   ),
