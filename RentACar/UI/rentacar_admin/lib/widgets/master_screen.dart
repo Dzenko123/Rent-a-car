@@ -3,6 +3,7 @@ import 'package:rentacar_admin/main.dart';
 import 'package:rentacar_admin/screens/cijene_po_vremenskom_periodu_screen.dart';
 import 'package:rentacar_admin/screens/kontakt_screen.dart';
 import 'package:rentacar_admin/screens/korisnici_screen.dart';
+import 'package:rentacar_admin/screens/period_screen.dart';
 import 'package:rentacar_admin/screens/vozila_detail_screen.dart';
 import 'package:rentacar_admin/screens/vozila_list_screen.dart';
 

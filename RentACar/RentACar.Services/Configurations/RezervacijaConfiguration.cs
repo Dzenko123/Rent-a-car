@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace RentACar.Services.Configurations
 {
-    public class RezervacijaConfiguration:BaseConfiguration<Rezervacija>
+    public class RezervacijaConfiguration : BaseConfiguration<Rezervacija>
     {
         public override void Configure(EntityTypeBuilder<Rezervacija> builder)
         {
@@ -29,6 +29,8 @@ namespace RentACar.Services.Configurations
             builder.HasOne(r => r.Lokacija)
                    .WithMany()
                    .HasForeignKey(r => r.LokacijaId);
+           
+
         }
     }
 }

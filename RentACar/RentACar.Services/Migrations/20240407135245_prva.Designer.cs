@@ -12,7 +12,7 @@ using RentACar.Services;
 namespace RentACar.Services.Migrations
 {
     [DbContext(typeof(RentACarDBContext))]
-    [Migration("20240403123814_prva")]
+    [Migration("20240407135245_prva")]
     partial class prva
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -162,22 +162,18 @@ namespace RentACar.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("KalendarRezervacijaId"), 1L, 1);
 
-                    b.Property<DateTime>("Datum")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Stanje")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("VozilaVoziloId")
+                    b.Property<int>("RezervacijaId")
                         .HasColumnType("int");
 
                     b.Property<int>("VoziloId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("isDostupan")
+                        .HasColumnType("bit");
+
                     b.HasKey("KalendarRezervacijaId");
 
-                    b.HasIndex("VozilaVoziloId");
+                    b.HasIndex("RezervacijaId");
 
                     b.HasIndex("VoziloId");
 
@@ -187,9 +183,9 @@ namespace RentACar.Services.Migrations
                         new
                         {
                             KalendarRezervacijaId = 1,
-                            Datum = new DateTime(2024, 4, 3, 14, 38, 11, 660, DateTimeKind.Local).AddTicks(2435),
-                            Stanje = "slobodno",
-                            VoziloId = 1
+                            RezervacijaId = 1,
+                            VoziloId = 1,
+                            isDostupan = true
                         });
                 });
 
@@ -374,21 +370,21 @@ namespace RentACar.Services.Migrations
                         new
                         {
                             KorisnikUlogaId = 1,
-                            DatumIzmjene = new DateTime(2024, 4, 3, 14, 38, 11, 660, DateTimeKind.Local).AddTicks(2435),
+                            DatumIzmjene = new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210),
                             KorisnikId = 1,
                             UlogaId = 1
                         },
                         new
                         {
                             KorisnikUlogaId = 2,
-                            DatumIzmjene = new DateTime(2024, 4, 3, 14, 38, 11, 660, DateTimeKind.Local).AddTicks(2435),
+                            DatumIzmjene = new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210),
                             KorisnikId = 2,
                             UlogaId = 2
                         },
                         new
                         {
                             KorisnikUlogaId = 3,
-                            DatumIzmjene = new DateTime(2024, 4, 3, 14, 38, 11, 660, DateTimeKind.Local).AddTicks(2435),
+                            DatumIzmjene = new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210),
                             KorisnikId = 3,
                             UlogaId = 3
                         });
@@ -606,7 +602,7 @@ namespace RentACar.Services.Migrations
                         new
                         {
                             RecenzijaId = 1,
-                            DatumVrijeme = new DateTime(2024, 4, 3, 14, 38, 11, 660, DateTimeKind.Local).AddTicks(2435),
+                            DatumVrijeme = new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210),
                             Komentar = "test1",
                             KorisniciId = 2,
                             Ocjena = 1,
@@ -615,7 +611,7 @@ namespace RentACar.Services.Migrations
                         new
                         {
                             RecenzijaId = 2,
-                            DatumVrijeme = new DateTime(2024, 4, 3, 14, 38, 11, 660, DateTimeKind.Local).AddTicks(2435),
+                            DatumVrijeme = new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210),
                             Komentar = "test2",
                             KorisniciId = 2,
                             Ocjena = 3,
@@ -624,7 +620,7 @@ namespace RentACar.Services.Migrations
                         new
                         {
                             RecenzijaId = 3,
-                            DatumVrijeme = new DateTime(2024, 4, 3, 14, 38, 11, 660, DateTimeKind.Local).AddTicks(2435),
+                            DatumVrijeme = new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210),
                             Komentar = "test3",
                             KorisniciId = 3,
                             Ocjena = 4,
@@ -633,7 +629,7 @@ namespace RentACar.Services.Migrations
                         new
                         {
                             RecenzijaId = 4,
-                            DatumVrijeme = new DateTime(2024, 4, 3, 14, 38, 11, 660, DateTimeKind.Local).AddTicks(2435),
+                            DatumVrijeme = new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210),
                             Komentar = "test4",
                             KorisniciId = 3,
                             Ocjena = 1,
@@ -648,9 +644,6 @@ namespace RentACar.Services.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RezervacijaId"), 1L, 1);
-
-                    b.Property<int>("KalendarRezervacijaId")
-                        .HasColumnType("int");
 
                     b.Property<int>("KorisnikId")
                         .HasColumnType("int");
@@ -672,8 +665,6 @@ namespace RentACar.Services.Migrations
 
                     b.HasKey("RezervacijaId");
 
-                    b.HasIndex("KalendarRezervacijaId");
-
                     b.HasIndex("KorisnikId");
 
                     b.HasIndex("LokacijaId");
@@ -688,24 +679,22 @@ namespace RentACar.Services.Migrations
                         new
                         {
                             RezervacijaId = 1,
-                            KalendarRezervacijaId = 1,
                             KorisnikId = 2,
                             LokacijaId = 1,
-                            PocetniDatum = new DateTime(2024, 4, 3, 14, 38, 11, 660, DateTimeKind.Local).AddTicks(2435),
+                            PocetniDatum = new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210),
                             RacunId = 1,
                             VoziloId = 1,
-                            ZavrsniDatum = new DateTime(2024, 5, 3, 14, 38, 11, 668, DateTimeKind.Local).AddTicks(4672)
+                            ZavrsniDatum = new DateTime(2024, 5, 7, 15, 52, 37, 174, DateTimeKind.Local).AddTicks(9596)
                         },
                         new
                         {
                             RezervacijaId = 2,
-                            KalendarRezervacijaId = 1,
                             KorisnikId = 3,
                             LokacijaId = 2,
-                            PocetniDatum = new DateTime(2024, 4, 3, 14, 38, 11, 660, DateTimeKind.Local).AddTicks(2435),
+                            PocetniDatum = new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210),
                             RacunId = 1,
                             VoziloId = 2,
-                            ZavrsniDatum = new DateTime(2024, 5, 3, 14, 38, 11, 668, DateTimeKind.Local).AddTicks(4672)
+                            ZavrsniDatum = new DateTime(2024, 5, 7, 15, 52, 37, 174, DateTimeKind.Local).AddTicks(9596)
                         });
                 });
 
@@ -821,7 +810,7 @@ namespace RentACar.Services.Migrations
                         new
                         {
                             TransakcijaId = 1,
-                            DatumVrijeme = new DateTime(2024, 4, 3, 14, 38, 11, 660, DateTimeKind.Local).AddTicks(2435),
+                            DatumVrijeme = new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210),
                             Iznos = 1000.0,
                             RacunId = 1,
                             Status = true
@@ -1038,15 +1027,19 @@ namespace RentACar.Services.Migrations
 
             modelBuilder.Entity("RentACar.Services.Database.KalendarRezervacija", b =>
                 {
-                    b.HasOne("RentACar.Services.Database.Vozila", null)
-                        .WithMany("KalendarRezervacije")
-                        .HasForeignKey("VozilaVoziloId");
+                    b.HasOne("RentACar.Services.Database.Rezervacija", "Rezervacija")
+                        .WithMany()
+                        .HasForeignKey("RezervacijaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("RentACar.Services.Database.Vozila", "Vozilo")
                         .WithMany()
                         .HasForeignKey("VoziloId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.Navigation("Rezervacija");
 
                     b.Navigation("Vozilo");
                 });
@@ -1132,12 +1125,6 @@ namespace RentACar.Services.Migrations
 
             modelBuilder.Entity("RentACar.Services.Database.Rezervacija", b =>
                 {
-                    b.HasOne("RentACar.Services.Database.KalendarRezervacija", "KalendarRezervacija")
-                        .WithMany()
-                        .HasForeignKey("KalendarRezervacijaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("RentACar.Services.Database.Korisnici", "Korisnik")
                         .WithMany()
                         .HasForeignKey("KorisnikId")
@@ -1161,8 +1148,6 @@ namespace RentACar.Services.Migrations
                         .HasForeignKey("VoziloId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.Navigation("KalendarRezervacija");
 
                     b.Navigation("Korisnik");
 
@@ -1247,8 +1232,6 @@ namespace RentACar.Services.Migrations
             modelBuilder.Entity("RentACar.Services.Database.Vozila", b =>
                 {
                     b.Navigation("CijenePoVremenskomPeriodu");
-
-                    b.Navigation("KalendarRezervacije");
 
                     b.Navigation("Lajkovi");
 

@@ -38,9 +38,9 @@ class _TipOpisScreenState extends State<TipOpisScreen> {
   }
 
   Future<void> initForm() async {
-    setState(() {
-      isLoading = true;
-    });
+    // setState(() {
+    //   isLoading = true;
+    // });
 
     tipVozilaResult = await _tipVozilaProvider.get();
 

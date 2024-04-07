@@ -9,9 +9,15 @@ namespace RentACar.Services.Database
     public class KalendarRezervacija
     {
         public int KalendarRezervacijaId { get; set; }
+
         public int VoziloId { get; set; }
+
         public Vozila Vozilo { get; set; } = null!;
-        public DateTime Datum { get; set; }
-        public string Stanje { get; set; }
+
+        public int RezervacijaId { get; set; }
+        public Rezervacija Rezervacija { get; set; } = null!;
+
+        public bool isDostupan { get; set; }
+
     }
 }

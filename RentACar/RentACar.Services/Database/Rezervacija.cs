@@ -29,8 +29,7 @@ namespace RentACar.Services.Database
 
         public Lokacija Lokacija { get; set; } = null!;
 
-        public int KalendarRezervacijaId { get; set; }
-        public KalendarRezervacija KalendarRezervacija { get; set; }
+      
 
         public DateTime PocetniDatum { get; set; }
 

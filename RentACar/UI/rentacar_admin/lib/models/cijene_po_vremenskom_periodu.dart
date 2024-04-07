@@ -13,8 +13,14 @@ class CijenePoVremenskomPeriodu {
   Period? period;
   Vozilo? vozilo;
 
-  CijenePoVremenskomPeriodu(this.cijenePoVremenskomPerioduId, this.voziloId,
-      this.cijena, this.periodId, this.vozilo,this.period);
+  CijenePoVremenskomPeriodu({
+    this.cijenePoVremenskomPerioduId,
+    required this.voziloId,
+    required this.periodId,
+    required this.cijena,
+    this.period,
+    this.vozilo,
+  });
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.

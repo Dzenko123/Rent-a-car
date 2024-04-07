@@ -34,7 +34,6 @@ namespace RentACar.Services.Database
 
         public virtual ICollection<Recenzije> Recenzije { get; } = new List<Recenzije>();
         public virtual ICollection<CijenePoVremenskomPeriodu> CijenePoVremenskomPeriodu { get; } = new List<CijenePoVremenskomPeriodu>();
-        public virtual ICollection<KalendarRezervacija> KalendarRezervacije { get; set; } = new List<KalendarRezervacija>();
         public virtual ICollection<Lajkovi> Lajkovi { get; set; } = new List<Lajkovi>();
     }
 }

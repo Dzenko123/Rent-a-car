@@ -10,8 +10,8 @@ namespace RentACar.Model.Requests
     {
         public int VoziloId { get; set; }
 
-        public int PeriodId { get; set; }
+        public int? PeriodId { get; set; }
 
-        public decimal Cijena { get; set; }
+        public decimal? Cijena { get; set; }
     }
 }

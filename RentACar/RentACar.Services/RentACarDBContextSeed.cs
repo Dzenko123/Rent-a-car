@@ -425,8 +425,8 @@ namespace RentACar.Services
                 {
                     KalendarRezervacijaId = 1,
                     VoziloId = 1,
-                    Datum = _dateTime,
-                    Stanje = "slobodno"
+                    RezervacijaId=1,
+                    isDostupan=true
                 });
         }
         private void SeedRacun(ModelBuilder modelBuilder)
@@ -532,7 +532,7 @@ namespace RentACar.Services
                     VoziloId = 1,
                     RacunId = 1,
                     LokacijaId = 1,
-                    KalendarRezervacijaId = 1,
+                  
                     PocetniDatum = _dateTime,
                     ZavrsniDatum = _dateTime2
                 },
@@ -543,7 +543,7 @@ namespace RentACar.Services
                     VoziloId = 2,
                     RacunId = 1,
                     LokacijaId = 2,
-                    KalendarRezervacijaId = 1,
+                   
                     PocetniDatum = _dateTime,
                     ZavrsniDatum = _dateTime2
                 });

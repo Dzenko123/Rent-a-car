@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RentACar.Services.Database;
 using System;
 using System.Collections.Generic;
@@ -13,10 +14,20 @@ namespace RentACar.Services.Configurations
         public override void Configure(EntityTypeBuilder<KalendarRezervacija> builder)
         {
             base.Configure(builder);
+
             builder.HasKey(k => k.KalendarRezervacijaId);
-            builder.HasOne(k => k.Vozilo)
+
+            builder.HasOne(r => r.Vozilo)
                    .WithMany()
-                   .HasForeignKey(k => k.VoziloId);
+                   .HasForeignKey(r => r.VoziloId)
+                   .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasOne(k => k.Rezervacija)
+               .WithMany()
+               .HasForeignKey(k => k.RezervacijaId)
+               .OnDelete(DeleteBehavior.Cascade);
+
+
         }
     }
 }
