@@ -30,7 +30,8 @@ class Vozilo {
       this.stateMachine,
       this.gorivo,
       this.marka,
-      this.model, this.tipVozila);
+      this.model,
+      this.tipVozila);
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.

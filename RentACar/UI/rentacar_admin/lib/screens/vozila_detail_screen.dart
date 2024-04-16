@@ -253,8 +253,7 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                     setState(() {
                       var selectedTip = tipVozilaResult?.result.firstWhere(
                           (item) => item.tipVozilaId.toString() == newValue,
-                          orElse: () => TipVozila(null, null,
-                              null));
+                          orElse: () => TipVozila(null, null, null));
                       _formKey.currentState?.fields['opis']
                           ?.didChange(selectedTip?.opis ?? '');
                     });

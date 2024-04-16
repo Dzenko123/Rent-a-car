@@ -25,9 +25,9 @@ namespace RentACar.Services.Database
 
         public Racun Racun { get; set; } = null!;
 
-        public int LokacijaId { get; set; }
+        public int GradId { get; set; }
 
-        public Lokacija Lokacija { get; set; } = null!;
+        public Grad Grad { get; set; } = null!;
 
       
 

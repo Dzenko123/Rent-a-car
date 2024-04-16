@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RentACar.Services.Database;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,8 @@ namespace RentACar.Services.Configurations
 
             builder.HasOne(k => k.Korisnik)
                    .WithMany()
-                   .HasForeignKey(k => k.KorisnikId);
+                   .HasForeignKey(k => k.KorisnikId)
+                   .OnDelete(DeleteBehavior.Cascade); ;
         }
     }
 }

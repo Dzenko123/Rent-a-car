@@ -43,9 +43,11 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
     initForm();
   }
 
-  Future initForm() async {
+  Future<void> initForm() async {
     tipVozilaResult = await _tipVozilaProvider.get();
+    var data = await _vozilaProvider.get(filter: {'fts': _ftsController.text});
     setState(() {
+      result = data;
       isLoading = false;
     });
 
@@ -85,7 +87,7 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
           Flexible(
             child: TextField(
               decoration: const InputDecoration(
-                labelText: "FTS",
+                labelText: "Filter po modelu",
                 labelStyle: TextStyle(color: Colors.white),
               ),
               controller: _ftsController,
@@ -130,190 +132,265 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
     );
   }
 
-  Widget _buildDataListView() {
-    return Expanded(
-      child: GridView.count(
-        crossAxisCount: 4,
-        children: result?.result
-                .map(
-                  (Vozilo e) => GridTile(
-                    child: Card(
-                      elevation: 5,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.all(Radius.circular(30)),
-                          gradient: LinearGradient(
-                            colors: [
-                              Color(0xFF000000),
-                              Color(0xFF333333),
-                              Color(0xFF555555),
-                            ],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Flexible(
-                              flex: 4,
-                              child: e.slika != ""
-                                  ? Container(
-                                      padding: EdgeInsets.all(8),
-                                      width: double.infinity,
-                                      height: 150,
-                                      child: imageFromBase64String(e.slika!),
-                                    )
-                                  : Container(),
-                            ),
-                            Flexible(
-                              flex: 1,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 8, top: 8),
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.calendar_today,
-                                        color: Colors.white),
-                                    SizedBox(width: 5),
-                                    Expanded(
-                                      child: Text(
-                                        'Godina proizvodnje: ${e.godinaProizvodnje}. god.',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontStyle: FontStyle.italic,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Flexible(
-                              flex: 1,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 8, top: 8),
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.attach_money,
-                                        color: Colors.white),
-                                    SizedBox(width: 5),
-                                    Expanded(
-                                      child: Text(
-                                        'Cijena: ${formatNumber(e.cijena)} KM',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontStyle: FontStyle.italic,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Flexible(
-                              flex: 1,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 8, top: 8),
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.speed, color: Colors.white),
-                                    SizedBox(width: 5),
-                                    Expanded(
-                                      child: Text(
-                                        'Kilometraža: ${formatNumber(e.kilometraza)} km',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontStyle: FontStyle.italic,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Flexible(
-                              flex: 1,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 8, top: 8),
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.car_repair, color: Colors.white),
-                                    SizedBox(width: 5),
-                                    Expanded(
-                                      child: Text(
-                                        'Tip vozila: ${tipVozilaResult?.result.firstWhere((item) => item.tipVozilaId == e.tipVozilaId).tip ?? ""}',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontStyle: FontStyle.italic,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            // Flexible(
-                            //   flex: 1,
-                            //   child: Padding(
-                            //     padding: const EdgeInsets.only(left: 8, top: 8),
-                            //     child: Row(
-                            //       children: [
-                            //         Icon(Icons.question_mark, color: Colors.white),
-                            //         SizedBox(width: 5),
-                            //         Expanded(
-                            //           child: Text(
-                            //             'Opis: ${tipVozilaResult?.result.firstWhere((item) => item.tipVozilaId == e.tipVozilaId).opis ?? ""}',
-                            //             style: TextStyle(
-                            //               color: Colors.white,
-                            //               fontStyle: FontStyle.italic,
-                            //             ),
-                            //           ),
-                            //         ),
-                            //       ],
-                            //     ),
-                            //   ),
-                            // ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Flexible(
-                              flex: 1,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 60.0),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            VozilaDetailScreen(vozilo: e),
-                                      ),
-                                    );
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 10),
-                                  ),
-                                  child: Text(
-                                    'Detalji',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+Widget _buildDataListView() {
+  return Expanded(
+    child: GridView.count(
+      crossAxisCount: 4,
+      children: result?.result
+          .map(
+            (Vozilo e) => GridTile(
+              child: Card(
+                elevation: 5,
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black),
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xFF000000),
+                        Color(0xFF333333),
+                        Color(0xFF555555),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
                     ),
                   ),
-                )
-                .toList() ??
-            [],
-      ),
-    );
-  }
+                  
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Flexible(
+                        flex: 4,
+                        child: e.slika != ""
+                            ? Container(
+                                padding: EdgeInsets.all(8),
+                                child: imageFromBase64String(e.slika!),
+                              )
+                            : Container(),
+                      ),
+                      Flexible(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10, top: 8),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'Model -${e.model}',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Flexible(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 20, top: 8),
+                          child: Row(
+                            children: [
+                              Icon(Icons.calendar_month_outlined,
+                                  color: const Color.fromARGB(
+                                      255, 139, 182, 255)),
+                              SizedBox(width: 5),
+                              Expanded(
+                                child: Text(
+                                  '${e.godinaProizvodnje}. god.',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ),
+                              Icon(Icons.attach_money_outlined,
+                                  color: Color.fromARGB(255, 77, 255, 83)),
+                              Expanded(
+                                child: Text(
+                                  '${formatNumber(e.cijena)} KM',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      
+                      Flexible(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left:20, top: 8),
+                          child: Row(
+                            children: [
+                              Icon(Icons.local_gas_station,
+                                  color: Colors.red),
+                              SizedBox(width: 5),
+                              Expanded(
+                                child: Text(
+                                  '${(e.gorivo)}',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ),
+                              Icon(Icons.route_outlined,
+                                  color: Colors.yellow),
+                              Expanded(
+                                child: Text(
+                                  '${formatNumber(e.kilometraza)} km',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Flexible(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 60.0),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      VozilaDetailScreen(vozilo: e),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding:
+                                  EdgeInsets.symmetric(horizontal: 10),
+                            ),
+                            child: Text(
+                              'Detalji',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Flexible(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 60.0),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("Confirmation"),
+                                    content: Text(
+                                        "Are you sure you want to delete this vehicle?"),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text("Cancel"),
+                                      ),
+                                      TextButton(
+                                        onPressed: () async {
+                                          Navigator.of(context).pop();
+                                          try {
+                                            await _vozilaProvider
+                                                .delete(e.voziloId!);
+                                            var data = await _vozilaProvider
+                                                .get(filter: {
+                                              'fts': _ftsController.text
+                                            });
+                                            setState(() {
+                                              result = data;
+                                            });
+                                          } catch (e) {
+                                            print(
+                                                "Error deleting vehicle: $e");
+                                          }
+                                        },
+                                        child: Text("Delete"),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding:
+                                  EdgeInsets.symmetric(horizontal: 10),
+                            ),
+                            child: Text(
+                              'Delete',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                       Flexible(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 60.0),
+                          child: PopupMenuButton<String>(
+                            onSelected: (String action) async {
+                              if (action == "Activate") {
+                                try {
+                                  await _vozilaProvider.activate(e.voziloId!);
+                                  print("Vehicle activated successfully.");
+                                } catch (e) {
+                                  print("Error activating vehicle: $e");
+                                }
+                              } else if (action == "Hide") {
+                                try {
+                                  await _vozilaProvider.hide(e.voziloId!);
+                                  print("Vehicle hidden successfully.");
+                                } catch (e) {
+                                  print("Error hiding vehicle: $e");
+                                }
+                              }
+                            },
+                            itemBuilder: (BuildContext context) {
+                              return ["Activate", "Hide"].map((String choice) {
+                                return PopupMenuItem<String>(
+                                  value: choice,
+                                  child: Text(choice),
+                                );
+                              }).toList();
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          )
+          .toList() ??
+          [],
+    ),
+  );
+}
+
 }

@@ -123,10 +123,6 @@ namespace RentACar.Services.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PostanskiBroj")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("GradId");
 
                     b.ToTable("Grad");
@@ -135,20 +131,17 @@ namespace RentACar.Services.Migrations
                         new
                         {
                             GradId = 1,
-                            Naziv = "test",
-                            PostanskiBroj = "test"
+                            Naziv = "Sarajevo"
                         },
                         new
                         {
                             GradId = 2,
-                            Naziv = "test2",
-                            PostanskiBroj = "test2"
+                            Naziv = "Mostar"
                         },
                         new
                         {
                             GradId = 3,
-                            Naziv = "test3",
-                            PostanskiBroj = "test3"
+                            Naziv = "Banja Luka"
                         });
                 });
 
@@ -368,21 +361,21 @@ namespace RentACar.Services.Migrations
                         new
                         {
                             KorisnikUlogaId = 1,
-                            DatumIzmjene = new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210),
+                            DatumIzmjene = new DateTime(2024, 4, 17, 0, 21, 29, 880, DateTimeKind.Local).AddTicks(5061),
                             KorisnikId = 1,
                             UlogaId = 1
                         },
                         new
                         {
                             KorisnikUlogaId = 2,
-                            DatumIzmjene = new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210),
+                            DatumIzmjene = new DateTime(2024, 4, 17, 0, 21, 29, 880, DateTimeKind.Local).AddTicks(5061),
                             KorisnikId = 2,
                             UlogaId = 2
                         },
                         new
                         {
                             KorisnikUlogaId = 3,
-                            DatumIzmjene = new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210),
+                            DatumIzmjene = new DateTime(2024, 4, 17, 0, 21, 29, 880, DateTimeKind.Local).AddTicks(5061),
                             KorisnikId = 3,
                             UlogaId = 3
                         });
@@ -458,55 +451,6 @@ namespace RentACar.Services.Migrations
                         });
                 });
 
-            modelBuilder.Entity("RentACar.Services.Database.Lokacija", b =>
-                {
-                    b.Property<int>("LokacijaId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LokacijaId"), 1L, 1);
-
-                    b.Property<string>("Adresa")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("GradId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Naziv")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("LokacijaId");
-
-                    b.HasIndex("GradId");
-
-                    b.ToTable("Lokacija");
-
-                    b.HasData(
-                        new
-                        {
-                            LokacijaId = 1,
-                            Adresa = "test",
-                            GradId = 1,
-                            Naziv = "test"
-                        },
-                        new
-                        {
-                            LokacijaId = 2,
-                            Adresa = "test2",
-                            GradId = 2,
-                            Naziv = "test2"
-                        },
-                        new
-                        {
-                            LokacijaId = 3,
-                            Adresa = "test3",
-                            GradId = 3,
-                            Naziv = "test3"
-                        });
-                });
-
             modelBuilder.Entity("RentACar.Services.Database.Period", b =>
                 {
                     b.Property<int>("PeriodId")
@@ -544,14 +488,18 @@ namespace RentACar.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RacunId"), 1L, 1);
 
-                    b.Property<string>("TipPlacanja")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("DatumVrijeme")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TipPlacanjaId")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("UkupnaCijena")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("RacunId");
+
+                    b.HasIndex("TipPlacanjaId");
 
                     b.ToTable("Racun");
 
@@ -559,7 +507,8 @@ namespace RentACar.Services.Migrations
                         new
                         {
                             RacunId = 1,
-                            TipPlacanja = "gotovina",
+                            DatumVrijeme = new DateTime(2024, 4, 17, 0, 21, 29, 880, DateTimeKind.Local).AddTicks(5061),
+                            TipPlacanjaId = 1,
                             UkupnaCijena = 1000m
                         });
                 });
@@ -600,7 +549,7 @@ namespace RentACar.Services.Migrations
                         new
                         {
                             RecenzijaId = 1,
-                            DatumVrijeme = new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210),
+                            DatumVrijeme = new DateTime(2024, 4, 17, 0, 21, 29, 880, DateTimeKind.Local).AddTicks(5061),
                             Komentar = "test1",
                             KorisniciId = 2,
                             Ocjena = 1,
@@ -609,7 +558,7 @@ namespace RentACar.Services.Migrations
                         new
                         {
                             RecenzijaId = 2,
-                            DatumVrijeme = new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210),
+                            DatumVrijeme = new DateTime(2024, 4, 17, 0, 21, 29, 880, DateTimeKind.Local).AddTicks(5061),
                             Komentar = "test2",
                             KorisniciId = 2,
                             Ocjena = 3,
@@ -618,7 +567,7 @@ namespace RentACar.Services.Migrations
                         new
                         {
                             RecenzijaId = 3,
-                            DatumVrijeme = new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210),
+                            DatumVrijeme = new DateTime(2024, 4, 17, 0, 21, 29, 880, DateTimeKind.Local).AddTicks(5061),
                             Komentar = "test3",
                             KorisniciId = 3,
                             Ocjena = 4,
@@ -627,7 +576,7 @@ namespace RentACar.Services.Migrations
                         new
                         {
                             RecenzijaId = 4,
-                            DatumVrijeme = new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210),
+                            DatumVrijeme = new DateTime(2024, 4, 17, 0, 21, 29, 880, DateTimeKind.Local).AddTicks(5061),
                             Komentar = "test4",
                             KorisniciId = 3,
                             Ocjena = 1,
@@ -643,10 +592,10 @@ namespace RentACar.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RezervacijaId"), 1L, 1);
 
-                    b.Property<int>("KorisnikId")
+                    b.Property<int>("GradId")
                         .HasColumnType("int");
 
-                    b.Property<int>("LokacijaId")
+                    b.Property<int>("KorisnikId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("PocetniDatum")
@@ -663,9 +612,9 @@ namespace RentACar.Services.Migrations
 
                     b.HasKey("RezervacijaId");
 
-                    b.HasIndex("KorisnikId");
+                    b.HasIndex("GradId");
 
-                    b.HasIndex("LokacijaId");
+                    b.HasIndex("KorisnikId");
 
                     b.HasIndex("RacunId");
 
@@ -677,22 +626,22 @@ namespace RentACar.Services.Migrations
                         new
                         {
                             RezervacijaId = 1,
+                            GradId = 1,
                             KorisnikId = 2,
-                            LokacijaId = 1,
-                            PocetniDatum = new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210),
+                            PocetniDatum = new DateTime(2024, 4, 17, 0, 21, 29, 880, DateTimeKind.Local).AddTicks(5061),
                             RacunId = 1,
                             VoziloId = 1,
-                            ZavrsniDatum = new DateTime(2024, 5, 7, 15, 52, 37, 174, DateTimeKind.Local).AddTicks(9596)
+                            ZavrsniDatum = new DateTime(2024, 5, 17, 0, 21, 29, 885, DateTimeKind.Local).AddTicks(380)
                         },
                         new
                         {
                             RezervacijaId = 2,
+                            GradId = 2,
                             KorisnikId = 3,
-                            LokacijaId = 2,
-                            PocetniDatum = new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210),
+                            PocetniDatum = new DateTime(2024, 4, 17, 0, 21, 29, 880, DateTimeKind.Local).AddTicks(5061),
                             RacunId = 1,
                             VoziloId = 2,
-                            ZavrsniDatum = new DateTime(2024, 5, 7, 15, 52, 37, 174, DateTimeKind.Local).AddTicks(9596)
+                            ZavrsniDatum = new DateTime(2024, 5, 17, 0, 21, 29, 885, DateTimeKind.Local).AddTicks(380)
                         });
                 });
 
@@ -730,6 +679,30 @@ namespace RentACar.Services.Migrations
                         {
                             RezervacijaId = 2,
                             DodatnaUslugaId = 2
+                        });
+                });
+
+            modelBuilder.Entity("RentACar.Services.Database.TipPlacanja", b =>
+                {
+                    b.Property<int>("TipPlacanjaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TipPlacanjaId"), 1L, 1);
+
+                    b.Property<string>("Tip")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TipPlacanjaId");
+
+                    b.ToTable("TipPlacanja");
+
+                    b.HasData(
+                        new
+                        {
+                            TipPlacanjaId = 1,
+                            Tip = "Kreditna kartica"
                         });
                 });
 
@@ -775,43 +748,6 @@ namespace RentACar.Services.Migrations
                             TipVozilaId = 4,
                             Opis = "Automobil za ljetne avanture.",
                             Tip = "Kabriolet"
-                        });
-                });
-
-            modelBuilder.Entity("RentACar.Services.Database.Transakcija", b =>
-                {
-                    b.Property<int>("TransakcijaId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TransakcijaId"), 1L, 1);
-
-                    b.Property<DateTime>("DatumVrijeme")
-                        .HasColumnType("datetime2");
-
-                    b.Property<double>("Iznos")
-                        .HasColumnType("float");
-
-                    b.Property<int>("RacunId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
-                    b.HasKey("TransakcijaId");
-
-                    b.HasIndex("RacunId");
-
-                    b.ToTable("Transkacija");
-
-                    b.HasData(
-                        new
-                        {
-                            TransakcijaId = 1,
-                            DatumVrijeme = new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210),
-                            Iznos = 1000.0,
-                            RacunId = 1,
-                            Status = true
                         });
                 });
 
@@ -1091,15 +1027,15 @@ namespace RentACar.Services.Migrations
                     b.Navigation("Vozilo");
                 });
 
-            modelBuilder.Entity("RentACar.Services.Database.Lokacija", b =>
+            modelBuilder.Entity("RentACar.Services.Database.Racun", b =>
                 {
-                    b.HasOne("RentACar.Services.Database.Grad", "Grad")
-                        .WithMany("Lokacija")
-                        .HasForeignKey("GradId")
+                    b.HasOne("RentACar.Services.Database.TipPlacanja", "TipPlacanja")
+                        .WithMany()
+                        .HasForeignKey("TipPlacanjaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Grad");
+                    b.Navigation("TipPlacanja");
                 });
 
             modelBuilder.Entity("RentACar.Services.Database.Recenzije", b =>
@@ -1123,15 +1059,15 @@ namespace RentACar.Services.Migrations
 
             modelBuilder.Entity("RentACar.Services.Database.Rezervacija", b =>
                 {
-                    b.HasOne("RentACar.Services.Database.Korisnici", "Korisnik")
+                    b.HasOne("RentACar.Services.Database.Grad", "Grad")
                         .WithMany()
-                        .HasForeignKey("KorisnikId")
+                        .HasForeignKey("GradId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RentACar.Services.Database.Lokacija", "Lokacija")
+                    b.HasOne("RentACar.Services.Database.Korisnici", "Korisnik")
                         .WithMany()
-                        .HasForeignKey("LokacijaId")
+                        .HasForeignKey("KorisnikId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1144,12 +1080,12 @@ namespace RentACar.Services.Migrations
                     b.HasOne("RentACar.Services.Database.Vozila", "Vozilo")
                         .WithMany()
                         .HasForeignKey("VoziloId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Korisnik");
+                    b.Navigation("Grad");
 
-                    b.Navigation("Lokacija");
+                    b.Navigation("Korisnik");
 
                     b.Navigation("Racun");
 
@@ -1175,17 +1111,6 @@ namespace RentACar.Services.Migrations
                     b.Navigation("Rezervacija");
                 });
 
-            modelBuilder.Entity("RentACar.Services.Database.Transakcija", b =>
-                {
-                    b.HasOne("RentACar.Services.Database.Racun", "Racun")
-                        .WithMany("Transakcije")
-                        .HasForeignKey("RacunId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Racun");
-                });
-
             modelBuilder.Entity("RentACar.Services.Database.Vozila", b =>
                 {
                     b.HasOne("RentACar.Services.Database.TipVozila", "TipVozila")
@@ -1202,19 +1127,9 @@ namespace RentACar.Services.Migrations
                     b.Navigation("Rezervacije");
                 });
 
-            modelBuilder.Entity("RentACar.Services.Database.Grad", b =>
-                {
-                    b.Navigation("Lokacija");
-                });
-
             modelBuilder.Entity("RentACar.Services.Database.Korisnici", b =>
                 {
                     b.Navigation("KorisniciUloge");
-                });
-
-            modelBuilder.Entity("RentACar.Services.Database.Racun", b =>
-                {
-                    b.Navigation("Transakcije");
                 });
 
             modelBuilder.Entity("RentACar.Services.Database.Rezervacija", b =>

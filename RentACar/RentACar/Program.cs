@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using RentACar;
 using RentACar.Filters;
+using RentACar.Model.Models;
 using RentACar.Model.SearchObject;
 using RentACar.Services;
 using RentACar.Services.VozilaStateMachine;
@@ -16,8 +17,9 @@ builder.Services.AddTransient<IVozilaService, VozilaService>();
 builder.Services.AddTransient<IKontaktService, KontaktService>();
 builder.Services.AddTransient<ICPVPService, CPVPService>();
 builder.Services.AddTransient<IPeriodService, PeriodService>();
-builder.Services.AddTransient<IService<RentACar.Model.DodatnaUsluga, BaseSearchObject>,
-    BaseService<RentACar.Model.DodatnaUsluga, RentACar.Services.Database.DodatnaUsluga, BaseSearchObject>>();
+builder.Services.AddTransient<IRezervacijaService, RezervacijaService>();
+builder.Services.AddTransient<IService<DodatnaUsluga, BaseSearchObject>,
+    BaseService<DodatnaUsluga, RentACar.Services.Database.DodatnaUsluga, BaseSearchObject>>();
 
 builder.Services.AddTransient<BaseState>();
 builder.Services.AddTransient<InitialVozilaState>();

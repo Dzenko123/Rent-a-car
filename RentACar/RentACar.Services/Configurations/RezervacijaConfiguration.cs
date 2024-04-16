@@ -21,14 +21,14 @@ namespace RentACar.Services.Configurations
             builder.HasOne(r => r.Vozilo)
                    .WithMany()
                    .HasForeignKey(r => r.VoziloId)
-                   .OnDelete(DeleteBehavior.NoAction);
+                   .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(r => r.Racun)
                    .WithMany()
                    .HasForeignKey(r => r.RacunId);
-            builder.HasOne(r => r.Lokacija)
+            builder.HasOne(r => r.Grad)
                    .WithMany()
-                   .HasForeignKey(r => r.LokacijaId);
+                   .HasForeignKey(r => r.GradId);
            
 
         }

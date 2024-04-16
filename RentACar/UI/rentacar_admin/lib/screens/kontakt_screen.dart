@@ -48,6 +48,11 @@ class _KontaktScreenState extends State<KontaktScreen> {
   Future<void> initForm() async {
     kontaktResult = await _kontaktProvider.get();
     korisniciResult = await _korisniciProvider.get();
+    var data = await _kontaktProvider.get(filter: {'fts': _ftsController.text});
+    setState(() {
+      kontaktResult = data;
+      isLoading = false;
+    });
   }
 
   @override
@@ -78,8 +83,7 @@ class _KontaktScreenState extends State<KontaktScreen> {
               onPressed: () async {
                 print("Pretraga uspješna");
                 await initForm();
-                setState(
-                    () {});
+                setState(() {});
               },
               child: const Text("Pretraga"),
               style: ElevatedButton.styleFrom(
@@ -154,6 +158,14 @@ class _KontaktScreenState extends State<KontaktScreen> {
             'Email',
             style: TextStyle(fontStyle: FontStyle.italic),
           ))),
+          const DataColumn(
+            label: Expanded(
+              child: Text(
+                'Akcije',
+                style: TextStyle(fontStyle: FontStyle.italic),
+              ),
+            ),
+          ),
         ],
                 rows: filteredResults
                         .map(
@@ -182,6 +194,47 @@ class _KontaktScreenState extends State<KontaktScreen> {
                               DataCell(Text(k.poruka ?? "")),
                               DataCell(Text(k.telefon ?? "")),
                               DataCell(Text(k.email ?? "")),
+                              DataCell(
+                                IconButton(
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text("Potvrda"),
+                                          content: Text(
+                                            "Jeste li sigurni da želite izbrisati ovaj kontakt?",
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text("Odustani"),
+                                            ),
+                                            TextButton(
+                                              onPressed: () async {
+                                                Navigator.of(context).pop();
+                                                try {
+                                                  await _kontaktProvider
+                                                      .delete(k.kontaktId!);
+                                                  // Refresh list after deletion
+                                                  await initForm();
+                                                } catch (e) {
+                                                  print(
+                                                      "Error deleting contact: $e");
+                                                }
+                                              },
+                                              child: Text("Izbriši"),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
                             ],
                           ),
                         )

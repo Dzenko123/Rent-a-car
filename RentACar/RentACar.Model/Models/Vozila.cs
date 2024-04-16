@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RentACar.Model
+namespace RentACar.Model.Models
 {
     public class Vozila
     {

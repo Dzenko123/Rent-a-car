@@ -30,8 +30,7 @@ namespace RentACar.Services.Migrations
                 {
                     GradId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Naziv = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PostanskiBroj = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Naziv = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -72,17 +71,16 @@ namespace RentACar.Services.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Racun",
+                name: "TipPlacanja",
                 columns: table => new
                 {
-                    RacunId = table.Column<int>(type: "int", nullable: false)
+                    TipPlacanjaId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TipPlacanja = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UkupnaCijena = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    Tip = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Racun", x => x.RacunId);
+                    table.PrimaryKey("PK_TipPlacanja", x => x.TipPlacanjaId);
                 });
 
             migrationBuilder.CreateTable(
@@ -114,27 +112,6 @@ namespace RentACar.Services.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Lokacija",
-                columns: table => new
-                {
-                    LokacijaId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    GradId = table.Column<int>(type: "int", nullable: false),
-                    Naziv = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Adresa = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Lokacija", x => x.LokacijaId);
-                    table.ForeignKey(
-                        name: "FK_Lokacija_Grad_GradId",
-                        column: x => x.GradId,
-                        principalTable: "Grad",
-                        principalColumn: "GradId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Kontakt",
                 columns: table => new
                 {
@@ -158,24 +135,23 @@ namespace RentACar.Services.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Transkacija",
+                name: "Racun",
                 columns: table => new
                 {
-                    TransakcijaId = table.Column<int>(type: "int", nullable: false)
+                    RacunId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RacunId = table.Column<int>(type: "int", nullable: false),
-                    Iznos = table.Column<double>(type: "float", nullable: false),
-                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    TipPlacanjaId = table.Column<int>(type: "int", nullable: false),
+                    UkupnaCijena = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     DatumVrijeme = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Transkacija", x => x.TransakcijaId);
+                    table.PrimaryKey("PK_Racun", x => x.RacunId);
                     table.ForeignKey(
-                        name: "FK_Transkacija_Racun_RacunId",
-                        column: x => x.RacunId,
-                        principalTable: "Racun",
-                        principalColumn: "RacunId",
+                        name: "FK_Racun_TipPlacanja_TipPlacanjaId",
+                        column: x => x.TipPlacanjaId,
+                        principalTable: "TipPlacanja",
+                        principalColumn: "TipPlacanjaId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -325,7 +301,7 @@ namespace RentACar.Services.Migrations
                     KorisnikId = table.Column<int>(type: "int", nullable: false),
                     VoziloId = table.Column<int>(type: "int", nullable: false),
                     RacunId = table.Column<int>(type: "int", nullable: false),
-                    LokacijaId = table.Column<int>(type: "int", nullable: false),
+                    GradId = table.Column<int>(type: "int", nullable: false),
                     PocetniDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ZavrsniDatum = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -333,16 +309,16 @@ namespace RentACar.Services.Migrations
                 {
                     table.PrimaryKey("PK_Rezervacija", x => x.RezervacijaId);
                     table.ForeignKey(
+                        name: "FK_Rezervacija_Grad_GradId",
+                        column: x => x.GradId,
+                        principalTable: "Grad",
+                        principalColumn: "GradId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Rezervacija_Korisnicis_KorisnikId",
                         column: x => x.KorisnikId,
                         principalTable: "Korisnicis",
                         principalColumn: "KorisnikId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Rezervacija_Lokacija_LokacijaId",
-                        column: x => x.LokacijaId,
-                        principalTable: "Lokacija",
-                        principalColumn: "LokacijaId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Rezervacija_Racun_RacunId",
@@ -354,7 +330,8 @@ namespace RentACar.Services.Migrations
                         name: "FK_Rezervacija_Vozila_VoziloId",
                         column: x => x.VoziloId,
                         principalTable: "Vozila",
-                        principalColumn: "VoziloId");
+                        principalColumn: "VoziloId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -419,12 +396,12 @@ namespace RentACar.Services.Migrations
 
             migrationBuilder.InsertData(
                 table: "Grad",
-                columns: new[] { "GradId", "Naziv", "PostanskiBroj" },
+                columns: new[] { "GradId", "Naziv" },
                 values: new object[,]
                 {
-                    { 1, "test", "test" },
-                    { 2, "test2", "test2" },
-                    { 3, "test3", "test3" }
+                    { 1, "Sarajevo" },
+                    { 2, "Mostar" },
+                    { 3, "Banja Luka" }
                 });
 
             migrationBuilder.InsertData(
@@ -447,9 +424,9 @@ namespace RentACar.Services.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Racun",
-                columns: new[] { "RacunId", "TipPlacanja", "UkupnaCijena" },
-                values: new object[] { 1, "gotovina", 1000m });
+                table: "TipPlacanja",
+                columns: new[] { "TipPlacanjaId", "Tip" },
+                values: new object[] { 1, "Kreditna kartica" });
 
             migrationBuilder.InsertData(
                 table: "TipVozila",
@@ -488,25 +465,15 @@ namespace RentACar.Services.Migrations
                 columns: new[] { "KorisnikUlogaId", "DatumIzmjene", "KorisnikId", "UlogaId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210), 1, 1 },
-                    { 2, new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210), 2, 2 },
-                    { 3, new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210), 3, 3 }
+                    { 1, new DateTime(2024, 4, 17, 0, 21, 29, 880, DateTimeKind.Local).AddTicks(5061), 1, 1 },
+                    { 2, new DateTime(2024, 4, 17, 0, 21, 29, 880, DateTimeKind.Local).AddTicks(5061), 2, 2 },
+                    { 3, new DateTime(2024, 4, 17, 0, 21, 29, 880, DateTimeKind.Local).AddTicks(5061), 3, 3 }
                 });
 
             migrationBuilder.InsertData(
-                table: "Lokacija",
-                columns: new[] { "LokacijaId", "Adresa", "GradId", "Naziv" },
-                values: new object[,]
-                {
-                    { 1, "test", 1, "test" },
-                    { 2, "test2", 2, "test2" },
-                    { 3, "test3", 3, "test3" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Transkacija",
-                columns: new[] { "TransakcijaId", "DatumVrijeme", "Iznos", "RacunId", "Status" },
-                values: new object[] { 1, new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210), 1000.0, 1, true });
+                table: "Racun",
+                columns: new[] { "RacunId", "DatumVrijeme", "TipPlacanjaId", "UkupnaCijena" },
+                values: new object[] { 1, new DateTime(2024, 4, 17, 0, 21, 29, 880, DateTimeKind.Local).AddTicks(5061), 1, 1000m });
 
             migrationBuilder.InsertData(
                 table: "Vozila",
@@ -550,19 +517,19 @@ namespace RentACar.Services.Migrations
                 columns: new[] { "RecenzijaId", "DatumVrijeme", "Komentar", "KorisniciId", "Ocjena", "VoziloId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210), "test1", 2, 1, 1 },
-                    { 2, new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210), "test2", 2, 3, 1 },
-                    { 3, new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210), "test3", 3, 4, 2 },
-                    { 4, new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210), "test4", 3, 1, 2 }
+                    { 1, new DateTime(2024, 4, 17, 0, 21, 29, 880, DateTimeKind.Local).AddTicks(5061), "test1", 2, 1, 1 },
+                    { 2, new DateTime(2024, 4, 17, 0, 21, 29, 880, DateTimeKind.Local).AddTicks(5061), "test2", 2, 3, 1 },
+                    { 3, new DateTime(2024, 4, 17, 0, 21, 29, 880, DateTimeKind.Local).AddTicks(5061), "test3", 3, 4, 2 },
+                    { 4, new DateTime(2024, 4, 17, 0, 21, 29, 880, DateTimeKind.Local).AddTicks(5061), "test4", 3, 1, 2 }
                 });
 
             migrationBuilder.InsertData(
                 table: "Rezervacija",
-                columns: new[] { "RezervacijaId", "KorisnikId", "LokacijaId", "PocetniDatum", "RacunId", "VoziloId", "ZavrsniDatum" },
+                columns: new[] { "RezervacijaId", "GradId", "KorisnikId", "PocetniDatum", "RacunId", "VoziloId", "ZavrsniDatum" },
                 values: new object[,]
                 {
-                    { 1, 2, 1, new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210), 1, 1, new DateTime(2024, 5, 7, 15, 52, 37, 174, DateTimeKind.Local).AddTicks(9596) },
-                    { 2, 3, 2, new DateTime(2024, 4, 7, 15, 52, 37, 170, DateTimeKind.Local).AddTicks(9210), 1, 2, new DateTime(2024, 5, 7, 15, 52, 37, 174, DateTimeKind.Local).AddTicks(9596) }
+                    { 1, 1, 2, new DateTime(2024, 4, 17, 0, 21, 29, 880, DateTimeKind.Local).AddTicks(5061), 1, 1, new DateTime(2024, 5, 17, 0, 21, 29, 885, DateTimeKind.Local).AddTicks(380) },
+                    { 2, 2, 3, new DateTime(2024, 4, 17, 0, 21, 29, 880, DateTimeKind.Local).AddTicks(5061), 1, 2, new DateTime(2024, 5, 17, 0, 21, 29, 885, DateTimeKind.Local).AddTicks(380) }
                 });
 
             migrationBuilder.InsertData(
@@ -627,9 +594,9 @@ namespace RentACar.Services.Migrations
                 column: "VoziloId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Lokacija_GradId",
-                table: "Lokacija",
-                column: "GradId");
+                name: "IX_Racun_TipPlacanjaId",
+                table: "Racun",
+                column: "TipPlacanjaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Recenzije_KorisniciId",
@@ -642,14 +609,14 @@ namespace RentACar.Services.Migrations
                 column: "VoziloId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Rezervacija_GradId",
+                table: "Rezervacija",
+                column: "GradId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Rezervacija_KorisnikId",
                 table: "Rezervacija",
                 column: "KorisnikId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Rezervacija_LokacijaId",
-                table: "Rezervacija",
-                column: "LokacijaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Rezervacija_RacunId",
@@ -665,11 +632,6 @@ namespace RentACar.Services.Migrations
                 name: "IX_RezervacijaDodatnaUsluga_DodatnaUslugaId",
                 table: "RezervacijaDodatnaUsluga",
                 column: "DodatnaUslugaId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Transkacija_RacunId",
-                table: "Transkacija",
-                column: "RacunId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Vozila_TipVozilaId",
@@ -701,9 +663,6 @@ namespace RentACar.Services.Migrations
                 name: "RezervacijaDodatnaUsluga");
 
             migrationBuilder.DropTable(
-                name: "Transkacija");
-
-            migrationBuilder.DropTable(
                 name: "Period");
 
             migrationBuilder.DropTable(
@@ -716,10 +675,10 @@ namespace RentACar.Services.Migrations
                 name: "Rezervacija");
 
             migrationBuilder.DropTable(
-                name: "Korisnicis");
+                name: "Grad");
 
             migrationBuilder.DropTable(
-                name: "Lokacija");
+                name: "Korisnicis");
 
             migrationBuilder.DropTable(
                 name: "Racun");
@@ -728,7 +687,7 @@ namespace RentACar.Services.Migrations
                 name: "Vozila");
 
             migrationBuilder.DropTable(
-                name: "Grad");
+                name: "TipPlacanja");
 
             migrationBuilder.DropTable(
                 name: "TipVozila");

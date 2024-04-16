@@ -3,7 +3,7 @@ using RabbitMQ.Client.Events;
 using RabbitMQ.Client;
 using System.Text;
 using EasyNetQ;
-using RentACar.Model;
+using RentACar.Model.Models;
 
 Console.WriteLine("Hello, World!");
 

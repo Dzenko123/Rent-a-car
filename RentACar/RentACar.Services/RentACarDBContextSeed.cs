@@ -26,9 +26,8 @@ namespace RentACar.Services
             SeedCijenePoVremenskomPeriodu(modelBuilder);
             SeedKalendarRezervacija(modelBuilder);
             SeedRacun(modelBuilder);
-            SeedTransakcija(modelBuilder);
+            SeedTipPlacanja(modelBuilder);
             SeedGrad(modelBuilder);
-            SeedLokacija(modelBuilder);
             SeedDodatnaUsluga(modelBuilder);
             SeedRezervacija(modelBuilder);
             SeedRezervacijaDodatnaUsluga(modelBuilder);
@@ -435,20 +434,18 @@ namespace RentACar.Services
                 new Racun
                 {
                     RacunId = 1,
-                    TipPlacanja = "gotovina",
-                    UkupnaCijena = 1000
+                    TipPlacanjaId=1,
+                    UkupnaCijena = 1000,
+                    DatumVrijeme=_dateTime
                 });
         }
-        private void SeedTransakcija(ModelBuilder modelBuilder)
+        private void SeedTipPlacanja(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Transakcija>().HasData(
-                new Transakcija
+            modelBuilder.Entity<TipPlacanja>().HasData(
+                new TipPlacanja
                 {
-                    TransakcijaId = 1,
-                    RacunId = 1,
-                    Iznos = 1000,
-                    Status = true,
-                    DatumVrijeme = _dateTime
+                    TipPlacanjaId = 1,
+                    Tip="Kreditna kartica"
                 });
         }
         private void SeedGrad(ModelBuilder modelBuilder)
@@ -457,47 +454,20 @@ namespace RentACar.Services
                 new Grad
                 {
                     GradId = 1,
-                    Naziv = "test",
-                    PostanskiBroj = "test"
+                    Naziv = "Sarajevo",
                 },
                 new Grad
                 {
                     GradId = 2,
-                    Naziv = "test2",
-                    PostanskiBroj = "test2"
+                    Naziv = "Mostar",
                 },
                 new Grad
                 {
                     GradId = 3,
-                    Naziv = "test3",
-                    PostanskiBroj = "test3"
+                    Naziv = "Banja Luka",
                 });
         }
-        private void SeedLokacija(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Lokacija>().HasData(
-                new Lokacija
-                {
-                    LokacijaId = 1,
-                    GradId = 1,
-                    Naziv = "test",
-                    Adresa = "test"
-                },
-                new Lokacija
-                {
-                    LokacijaId = 2,
-                    GradId = 2,
-                    Naziv = "test2",
-                    Adresa = "test2"
-                },
-                new Lokacija
-                {
-                    LokacijaId = 3,
-                    GradId = 3,
-                    Naziv = "test3",
-                    Adresa = "test3"
-                });
-        }
+       
         private void SeedDodatnaUsluga(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<DodatnaUsluga>().HasData(new DodatnaUsluga
@@ -531,7 +501,7 @@ namespace RentACar.Services
                     KorisnikId = 2,
                     VoziloId = 1,
                     RacunId = 1,
-                    LokacijaId = 1,
+                    GradId = 1,
                   
                     PocetniDatum = _dateTime,
                     ZavrsniDatum = _dateTime2
@@ -542,7 +512,7 @@ namespace RentACar.Services
                     KorisnikId = 3,
                     VoziloId = 2,
                     RacunId = 1,
-                    LokacijaId = 2,
+                    GradId = 2,
                    
                     PocetniDatum = _dateTime,
                     ZavrsniDatum = _dateTime2

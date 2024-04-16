@@ -6,10 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace RentACar.Services
 {
-    public class BaseCRUDService<T, TDb, TSearch, TInsert, TUpdate> : BaseService<T, TDb, TSearch> where TDb : class where T : class where TSearch : BaseSearchObject
+    public class BaseCRUDService<T, TDb, TSearch, TInsert, TUpdate, TDelete> : BaseService<T, TDb, TSearch> where TDb : class where T : class where TSearch : BaseSearchObject
     {
         public BaseCRUDService(RentACarDBContext context, IMapper mapper) : base(context, mapper)
         {
@@ -32,7 +33,7 @@ namespace RentACar.Services
         }
 
         public virtual async Task<T> Update(int id, TUpdate update)
-        {
+            {
             var set = _context.Set<TDb>();
             var entity = await set.FindAsync(id);
 
@@ -40,5 +41,34 @@ namespace RentACar.Services
             await _context.SaveChangesAsync();
             return _mapper.Map<T>(entity);
         }
+
+
+        public virtual async Task<T> Delete(int id, TDelete delete)
+        {
+            try
+            {
+                var set = _context.Set<TDb>();
+                var entity = await set.FindAsync(id);
+
+                if (entity == null)
+                {
+                    return null;
+                }
+                //_mapper.Map(delete, entity);
+                set.Remove(entity); // Uklonite entitet iz seta
+
+                await _context.SaveChangesAsync();
+                return _mapper.Map<T>(entity);
+            }
+            catch (Exception ex)
+            {
+                // Ovdje možeš dodati kod za rukovanje greškama, kao što je logiranje ili slanje obavijesti o grešci.
+                // Primjer:
+                Console.WriteLine($"Greška prilikom brisanja entiteta: {ex.Message}");
+                throw; // Ponovno baci izuzetak da bi bio uhvaćen na višem nivou.
+            }
+        }
+
+
     }
 }

@@ -13,9 +13,5 @@ namespace RentACar.Services.Database
         public int GradId { get; set; }
 
         public string Naziv { get; set; } = null!;
-
-        public string PostanskiBroj { get; set; } = null!;
-        public virtual ICollection<Lokacija> Lokacija { get; } = new List<Lokacija>();
-
     }
 }

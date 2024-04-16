@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using RentACar.Model;
+using RentACar.Model.Models;
 using RentACar.Model.Requests;
 
 namespace RentACar.Services.VozilaStateMachine
@@ -16,7 +16,7 @@ namespace RentACar.Services.VozilaStateMachine
 
             entity.StateMachine = "draft";
             await _context.SaveChangesAsync();
-            return _mapper.Map<Model.Vozila>(entity);
+            return _mapper.Map<Vozila>(entity);
         }
 
         public override async Task<List<string>> AllowedActions()

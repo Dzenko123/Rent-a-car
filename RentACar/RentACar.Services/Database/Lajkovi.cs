@@ -15,6 +15,6 @@ namespace RentACar.Services.Database
 
         public int KorisnikId { get; set; }
         public Korisnici Korisnik { get; set; }
-        public bool Tip { get; set; } // true za lajk, false za dislajk
+        public bool Tip { get; set; }
     }
 }

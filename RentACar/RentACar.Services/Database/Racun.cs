@@ -12,11 +12,12 @@ namespace RentACar.Services.Database
     {
         public int RacunId { get; set; }
 
-        public string TipPlacanja { get; set; }
+        public int TipPlacanjaId { get; set; }
 
+        public TipPlacanja TipPlacanja { get; set; }
 
         public decimal UkupnaCijena { get; set; }
 
-        public virtual ICollection<Transakcija> Transakcije { get; } = new List<Transakcija>();
+        public DateTime DatumVrijeme { get; set; }
     }
 }

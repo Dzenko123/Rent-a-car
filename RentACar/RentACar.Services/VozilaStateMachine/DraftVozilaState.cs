@@ -3,6 +3,7 @@ using EasyNetQ;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RentACar.Model;
+using RentACar.Model.Models;
 using RentACar.Model.Requests;
 using System;
 using System.Collections.Generic;
@@ -37,8 +38,40 @@ namespace RentACar.Services.VozilaStateMachine
             }
 
             await _context.SaveChangesAsync();
-            return _mapper.Map<Model.Vozila>(entity);
+            return _mapper.Map<Vozila>(entity);
         }
+        public async Task<Vozila> Delete(int id, VozilaDeleteRequest request)
+        {
+            try
+            {
+                var set = _context.Set<Database.Vozila>();
+                var entity = await set.FindAsync(id);
+
+                if (entity == null)
+                {
+                    throw new Exception($"Vozilo s ID-em {id} nije pronađeno.");
+                }
+
+                // Prvo uklonite sve vanjske veze prema entitetu koji želite izbrisati
+                // Ako postoje vanjske veze, prvo ih uklonite
+                // Na primjer, ako postoji entitet koji ima vanjski ključ koji referencira ovaj entitet
+                // Uklonite ili ažurirajte te entitete tako da ne referenciraju ovaj entitet
+
+                set.Remove(entity);
+                await _context.SaveChangesAsync();
+
+                return _mapper.Map<Vozila>(entity);
+            }
+            catch (Exception ex)
+            {
+                // Ovdje možete dodati dodatne informacije u logove kako biste identificirali uzrok izuzetka
+                _logger.LogError(ex, "Greška prilikom brisanja vozila.");
+
+                // Ponovno bacanje izuzetka kako bi ga metoda pozivatelja mogla uhvatiti
+                throw;
+            }
+        }
+
 
         public override async Task<Vozila> Activate(int id)
         {
@@ -66,7 +99,7 @@ namespace RentACar.Services.VozilaStateMachine
 
 
 
-            var mappedEntity = _mapper.Map<Model.Vozila>(entity);
+            var mappedEntity = _mapper.Map<Vozila>(entity);
 
             using var bus = RabbitHutch.CreateBus("host=localhost");
             bus.PubSub.Publish(mappedEntity);
@@ -78,6 +111,7 @@ namespace RentACar.Services.VozilaStateMachine
         {
             var list = await base.AllowedActions();
             list.Add("Update");
+            list.Add("Delete");
             list.Add("Activate");
             return list;
         }

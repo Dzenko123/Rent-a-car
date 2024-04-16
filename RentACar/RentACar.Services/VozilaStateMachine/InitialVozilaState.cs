@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using RentACar.Model;
+using RentACar.Model.Models;
 using RentACar.Model.Requests;
 
 namespace RentACar.Services.VozilaStateMachine

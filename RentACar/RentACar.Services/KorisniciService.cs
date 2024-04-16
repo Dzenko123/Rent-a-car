@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using RentACar.Model.Models;
 using RentACar.Model.Requests;
 using RentACar.Model.SearchObject;
 using RentACar.Services.Database;
@@ -13,14 +14,14 @@ using System.Threading.Tasks;
 
 namespace RentACar.Services
 {
-    public class KorisniciService: BaseCRUDService<Model.Korisnici, Database.Korisnici, KorisniciSearchObject, KorisniciInsertRequest, KorisniciUpdateRequest>, IKorisniciService
+    public class KorisniciService: BaseCRUDService<Model.Models.Korisnici, Database.Korisnici, KorisniciSearchObject, KorisniciInsertRequest, KorisniciUpdateRequest, KorisniciDeleteRequest>, IKorisniciService
     {
         public KorisniciService(RentACarDBContext context, IMapper mapper)
             : base(context, mapper)
         {
         }
 
-        public override async Task BeforeInsert(Korisnici entity, KorisniciInsertRequest insert)
+        public override async Task BeforeInsert(Database.Korisnici entity, KorisniciInsertRequest insert)
         {
             entity.LozinkaSalt = GenerateSalt();
             entity.LozinkaHash = GenerateHash(entity.LozinkaSalt, insert.Password);
@@ -58,7 +59,7 @@ namespace RentACar.Services
         //    return _mapper.Map<Model.Korisnici>(entity);
         //}
 
-        public override IQueryable<Korisnici> AddInclude(IQueryable<Korisnici> query, KorisniciSearchObject? search = null)
+        public override IQueryable<Database.Korisnici> AddInclude(IQueryable<Database.Korisnici> query, KorisniciSearchObject? search = null)
         {
             if(search?.IsUlogeIncluded==true)
             {
@@ -67,7 +68,7 @@ namespace RentACar.Services
             return base.AddInclude(query, search);
         }
 
-        public async Task<Model.Korisnici> Login(string username, string password)
+        public async Task<Model.Models.Korisnici> Login(string username, string password)
         {
             var entity = await _context.Korisnicis.Include("KorisniciUloge.Uloga").FirstOrDefaultAsync(x=>x.KorisnickoIme==username);
 
@@ -81,7 +82,7 @@ namespace RentACar.Services
             {
                 return null;
             }
-            return _mapper.Map<Model.Korisnici>(entity);
+            return _mapper.Map<Model.Models.Korisnici>(entity);
         }
     }
 }

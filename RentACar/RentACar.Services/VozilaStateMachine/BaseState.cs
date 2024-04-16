@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using RentACar.Model;
+using RentACar.Model.Models;
 using RentACar.Model.Requests;
 using System;
 using System.Collections.Generic;
@@ -23,27 +24,27 @@ namespace RentACar.Services.VozilaStateMachine
             _serviceProvider= serviceProvider;
         }
 
-        public virtual Task<Model.Vozila> Insert(VozilaInsertRequest request)
+        public virtual Task<Vozila> Insert(VozilaInsertRequest request)
         {
             throw new UserException("Not allowed");
         }
 
-        public virtual Task<Model.Vozila> Update(int id, VozilaUpdateRequest request)
+        public virtual Task<Vozila> Update(int id, VozilaUpdateRequest request)
         {
             throw new UserException("Not allowed");
         }
 
-        public virtual Task<Model.Vozila> Activate(int id)
+
+        public virtual Task<Vozila> Activate(int id)
         {
             throw new UserException("Not allowed");
         }
 
-        public virtual Task<Model.Vozila> Hide(int id)
+        public virtual Task<Vozila> Hide(int id)
         {
             throw new UserException("Not allowed");
         }
-
-        public virtual Task<Model.Vozila> Delete(int id)
+        public virtual Task<Vozila> Delete(int id, VozilaDeleteRequest request)
         {
             throw new UserException("Not allowed");
         }

@@ -26,7 +26,7 @@ class _KorisniciListScreenState extends State<KorisniciListScreen> {
     // TODO: implement initState
     super.initState();
     _korisniciProvider = KorisniciProvider();
-  //  initForm();
+   initForm();
   }
 
   @override
@@ -60,7 +60,9 @@ class _KorisniciListScreenState extends State<KorisniciListScreen> {
     print("Korisnici fetched: $korisniciResult");
     await fetchUloge();
 
+    var data = await _korisniciProvider.get(filter: {'fts': _ftsController.text});
     setState(() {
+      korisniciResult = data;
       isLoading = false;
     });
   }

@@ -1,4 +1,4 @@
-﻿namespace RentACar.Model
+﻿namespace RentACar.Model.Models
 {
     public class Korisnici
     {

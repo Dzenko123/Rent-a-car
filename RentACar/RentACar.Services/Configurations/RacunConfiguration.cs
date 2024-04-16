@@ -15,6 +15,10 @@ namespace RentACar.Services.Configurations
             base.Configure(builder);
             builder.HasKey(e => e.RacunId);
 
+            builder.HasOne(r => r.TipPlacanja)
+                .WithMany()
+                .HasForeignKey(r => r.TipPlacanjaId)
+                .IsRequired();
         }
     }
 }

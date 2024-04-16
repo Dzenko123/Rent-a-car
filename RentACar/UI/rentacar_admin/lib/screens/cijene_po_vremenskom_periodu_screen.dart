@@ -34,6 +34,7 @@ class _CijenePoVremenskomPerioduScreenState
   TextEditingController _ftsController = new TextEditingController();
   bool isLoading = true;
   Map<String, dynamic> _initialValue = {};
+  int? minPeriodId;
 
   @override
   void initState() {
@@ -56,18 +57,38 @@ class _CijenePoVremenskomPerioduScreenState
     super.didChangeDependencies();
   }
 
-  Future<void> initForm() async {
-    cijenePoVremenskomPerioduResult =
-        await _cijenePoVremenskomPerioduProvider.get();
-    periodResult = await _periodProvider.get();
-    vozilaResult = await _vozilaProvider.get();
+Future<void> initForm() async {
+  cijenePoVremenskomPerioduResult = await _cijenePoVremenskomPerioduProvider.get();
+  periodResult = await _periodProvider.get();
+  vozilaResult = await _vozilaProvider.get();
 
-    print("Cijene po vremenskom periodu: $cijenePoVremenskomPerioduResult");
-    print("Periodi: $periodResult");
-    print("Vozila: $vozilaResult");
-    setState(() {});
+  if (periodResult?.result.isNotEmpty ?? false) {
+    minPeriodId = periodResult!.result.map((period) => period.periodId!).reduce((a, b) => a < b ? a : b);
   }
 
+  print("Cijene po vremenskom periodu: $cijenePoVremenskomPerioduResult");
+  print("Periodi: $periodResult");
+  print("Vozila: $vozilaResult");
+  setState(() {});
+}
+
+Future<void> _deletePeriod(int periodId) async {
+  try {
+    // Pozivamo metodu za brisanje perioda iz PeriodProvider-a
+    await _periodProvider.deletePeriod(periodId);
+    // Nakon brisanja, ponovno inicijaliziramo podatke
+    await initForm();
+    setState(() {});
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Period uspješno obrisan.')),
+    );
+  } catch (e) {
+    print('Greška prilikom brisanja perioda: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Došlo je do pogreške prilikom brisanja perioda.')),
+    );
+  }
+}
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
@@ -107,7 +128,8 @@ class _CijenePoVremenskomPerioduScreenState
             .toList() ??
         [];
 
-    _initialValue['periodId'] = '1';
+   
+    _initialValue['periodId'] = minPeriodId.toString();
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
@@ -188,10 +210,12 @@ class _CijenePoVremenskomPerioduScreenState
                             decoration: InputDecoration(labelText: 'Vozilo'),
                           ),
                           TextFormField(
-                            initialValue: '1',
+                            initialValue: minPeriodId.toString(),
                             decoration: InputDecoration(labelText: 'Period ID'),
+                            readOnly: true,
                             onChanged: (value) {
-                              _initialValue['periodId'] = value;
+                              _initialValue['periodId'] =
+                                  minPeriodId.toString();
                             },
                           ),
                           TextFormField(
@@ -313,14 +337,26 @@ class _CijenePoVremenskomPerioduScreenState
                 ),
               ),
               ...(periodResult?.result.map<DataColumn>((period) {
-                    return DataColumn(
-                      label: Text(
-                        '${period.trajanje}',
-                        style: TextStyle(fontStyle: FontStyle.italic),
-                      ),
-                    );
-                  }).toList() ??
-                  []),
+  return DataColumn(
+    label: Row(
+      children: [
+        Text(
+          '${period.trajanje}',
+          style: TextStyle(fontStyle: FontStyle.italic),
+        ),
+        SizedBox(width: 8), // Dodajemo prazan prostor između teksta i dugmeta
+        ElevatedButton(
+          onPressed: () async {
+            // Pozivamo metodu za brisanje perioda
+            await _deletePeriod(period.periodId!);
+          },
+          child: Text('Obriši'),
+        ),
+      ],
+    ),
+  );
+}).toList() ??
+[]),
             ],
             rows: groupedResults.entries.map<DataRow>((entry) {
               int voziloId = entry.key;
@@ -360,14 +396,17 @@ class _CijenePoVremenskomPerioduScreenState
                   DataCell(
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      child: Text(vozilo?.model ?? "", style: TextStyle(color: Colors.red)),
+                      child: Text(vozilo?.model ?? "",
+                          style: TextStyle(color: Colors.red)),
                     ),
                   ),
                   DataCell(
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      child: Text(vozilo?.marka ?? "", style: TextStyle(color: Colors.red),),
-                      
+                      child: Text(
+                        vozilo?.marka ?? "",
+                        style: TextStyle(color: Colors.red),
+                      ),
                     ),
                   ),
                   ...(periodResult?.result.map<DataCell>((period) {
@@ -381,150 +420,173 @@ class _CijenePoVremenskomPerioduScreenState
                           }),
                         );
                         return DataCell(
-                          cijenaZaPeriod.cijena != null
-                              ? GestureDetector(
-                                  onTap: () async {
-                                    double? newPrice = await showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        double currentPrice =
-                                            cijenaZaPeriod?.cijena ?? 0.0;
-                                        return AlertDialog(
-                                          title: Text('Uredi cijenu'),
-                                          content: TextFormField(
-                                            initialValue:
-                                                currentPrice.toString(),
-                                            keyboardType: TextInputType.number,
-                                            onChanged: (value) {
-                                              currentPrice =
-                                                  double.tryParse(value) ??
-                                                      currentPrice;
-                                            },
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop(null);
+                          Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                if (cijenaZaPeriod.cijena != null)
+                                  GestureDetector(
+                                    onTap: () async {
+                                      double? newPrice = await showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          double currentPrice =
+                                              cijenaZaPeriod?.cijena ?? 0.0;
+                                          return AlertDialog(
+                                            title: Text('Uredi cijenu'),
+                                            content: TextFormField(
+                                              initialValue:
+                                                  currentPrice.toString(),
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              onChanged: (value) {
+                                                currentPrice =
+                                                    double.tryParse(value) ??
+                                                        currentPrice;
                                               },
-                                              child: Text('Cancel'),
                                             ),
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context)
-                                                    .pop(currentPrice);
-                                              },
-                                              child: Text('Save'),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                    if (newPrice != null) {
-                                      setState(() {
-                                        cijenaZaPeriod!.cijena = newPrice;
-                                      });
-                                      await _cijenePoVremenskomPerioduProvider
-                                          .update(
-                                              cijenaZaPeriod
-                                                  .cijenePoVremenskomPerioduId!,
-                                              cijenaZaPeriod);
-                                    }
-                                  },
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Text(
-                                        cijenaZaPeriod.cijena?.toString() ??
-                                            ""),
-                                  ),
-                                )
-                              : ElevatedButton(
-                                  onPressed: () async {
-                                    double? enteredPrice =
-                                        await showDialog<double>(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: Text('Unesi cijenu'),
-                                          content: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text('Vozilo ID: $voziloId'),
-                                              Text(
-                                                  'Period ID: ${period.periodId}'),
-                                              TextField(
-                                                decoration: InputDecoration(
-                                                    labelText: 'Cijena'),
-                                                onChanged: (value) {
-                                                  _initialValue['cijena'] =
-                                                      value;
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context)
+                                                      .pop(null);
                                                 },
+                                                child: Text('Cancel'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context)
+                                                      .pop(currentPrice);
+                                                },
+                                                child: Text('Save'),
                                               ),
                                             ],
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop(null);
-                                              },
-                                              child: Text('Cancel'),
+                                          );
+                                        },
+                                      );
+                                      if (newPrice != null) {
+                                        setState(() {
+                                          cijenaZaPeriod!.cijena = newPrice;
+                                        });
+                                        await _cijenePoVremenskomPerioduProvider
+                                            .update(
+                                                cijenaZaPeriod
+                                                    .cijenePoVremenskomPerioduId!,
+                                                cijenaZaPeriod);
+                                      }
+                                    },
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Text(
+                                          cijenaZaPeriod.cijena?.toString() ??
+                                              ""),
+                                    ),
+                                  )
+                                else
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      var enteredPrice =
+                                          await showDialog<double>(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text('Unesi cijenu'),
+                                            content: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text('Vozilo ID: $voziloId'),
+                                                Text(
+                                                    'Period ID: ${period.periodId}'),
+                                                TextField(
+                                                  decoration: InputDecoration(
+                                                      labelText: 'Cijena'),
+                                                  onChanged: (value) {
+                                                    _initialValue['cijena'] =
+                                                        value;
+                                                  },
+                                                ),
+                                              ],
                                             ),
-                                            ElevatedButton(
-                                              onPressed: () async {
-                                                double cijena = double.tryParse(
-                                                        _initialValue[
-                                                                'cijena'] ??
-                                                            '') ??
-                                                    0.0;
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context)
+                                                      .pop(null);
+                                                },
+                                                child: Text('Cancel'),
+                                              ),
+                                              ElevatedButton(
+                                                onPressed: () async {
+                                                  double cijena = double.tryParse(
+                                                          _initialValue[
+                                                                  'cijena'] ??
+                                                              '') ??
+                                                      0.0;
 
-                                                var newCijena =
-                                                    CijenePoVremenskomPeriodu(
-                                                  voziloId: voziloId,
-                                                  periodId: period.periodId,
-                                                  cijena: cijena,
-                                                );
-                                                print(
-                                                    "New CijenePoVremenskomPeriodu object: $newCijena");
-
-                                                try {
-                                                  print(
-                                                      'Novi CijenePoVremenskomPeriodu:');
-                                                  print(newCijena.toJson());
-                                                  var result =
-                                                      await _cijenePoVremenskomPerioduProvider
-                                                          .insert(newCijena);
-
-                                                  print(
-                                                      "Novi CijenePoVremenskomPeriodu spremljen: $result");
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    SnackBar(
-                                                        content: Text(
-                                                            'Podaci uspješno spremljeni!')),
+                                                  var newCijena =
+                                                      CijenePoVremenskomPeriodu(
+                                                    voziloId: voziloId,
+                                                    periodId: period.periodId,
+                                                    cijena: cijena,
                                                   );
-                                                  Navigator.of(context).pop();
-                                                  await initForm();
-                                                  setState(() {});
-                                                } catch (e) {
                                                   print(
-                                                      "Greška prilikom spremanja: $e");
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    SnackBar(
-                                                        content: Text(
-                                                            'Došlo je do pogreške pri spremanju podataka.')),
-                                                  );
-                                                }
-                                              },
-                                              child: Text('Save'),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                    if (enteredPrice != null) {}
-                                  },
-                                  child: Text('Unesi cijenu'),
-                                ),
+                                                      "New CijenePoVremenskomPeriodu object: $newCijena");
+
+                                                  try {
+                                                    print(
+                                                        'Novi CijenePoVremenskomPeriodu:');
+                                                    print(newCijena.toJson());
+                                                    var result =
+                                                        await _cijenePoVremenskomPerioduProvider
+                                                            .insert(newCijena);
+                                                    print('Result: $result');
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      SnackBar(
+                                                          content: Text(
+                                                              'Podaci uspješno spremljeni!')),
+                                                    );
+                                                    Navigator.of(context)
+                                                        .pop(cijena);
+                                                    await initForm();
+                                                    setState(() {});
+                                                  } catch (e) {
+                                                    print(
+                                                        'Error while creating new CijenePoVremenskomPeriodu: $e');
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      SnackBar(
+                                                          content: Text(
+                                                              'Došlo je do pogreške pri spremanju podataka.')),
+                                                    );
+                                                  }
+                                                },
+                                                child: Text('Save'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Text('Unesi cijenu'),
+                                  ),
+                                if (cijenaZaPeriod.cijena != null)
+                                  IconButton(
+                                    icon: Icon(Icons.delete),
+                                    onPressed: () async {
+                                      await _cijenePoVremenskomPerioduProvider
+                                          .delete(cijenaZaPeriod
+                                              .cijenePoVremenskomPerioduId!);
+                                      setState(() {
+                                        cijenaZaPeriod.cijena = null;
+                                      });
+                                    },
+                                  ),
+                              ],
+                            ),
+                          ),
                         );
                       }).toList() ??
                       []),

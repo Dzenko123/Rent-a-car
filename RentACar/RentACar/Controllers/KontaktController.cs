@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RentACar.Controllers;
-using RentACar.Model;
+using RentACar.Model.Models;
+using RentACar.Model.Requests;
 using RentACar.Model.SearchObject;
 using RentACar.Services;
 
@@ -8,10 +9,9 @@ namespace RentACar.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class KontaktController : BaseCRUDController<Model.Kontakt, Model.SearchObject.KontaktSearchObject, Model.Requests.KontaktInsertRequest, Model.Requests.KontaktUpdateRequest>
+    public class KontaktController : BaseCRUDController<Kontakt, Model.SearchObject.KontaktSearchObject, Model.Requests.KontaktInsertRequest, Model.Requests.KontaktUpdateRequest,Model.Requests.KontaktDeleteRequest>
     {
-        public KontaktController(ILogger<BaseController<Model.Kontakt, Model.SearchObject.KontaktSearchObject>> logger, 
-            IKontaktService service) : base(logger, service)
+        public KontaktController(ILogger<BaseController<Kontakt, KontaktSearchObject>> logger, IKontaktService service) : base(logger, service)
         {
         }
     }

@@ -9,4 +9,7 @@ class PeriodProvider extends BaseProvider<Period> {
     // TODO: implement fromJson
     return Period.fromJson(data);
   }
+  Future<void> deletePeriod(int periodId) async {
+    await delete(periodId);
+  }
 }

@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace RentACar.Services
 {
-    public interface IKorisniciService : ICRUDService<Model.Korisnici, Model.SearchObject.KorisniciSearchObject, Model.Requests.KorisniciInsertRequest, Model.Requests.KorisniciUpdateRequest>
+    public interface IKorisniciService : ICRUDService<Model.Models.Korisnici, Model.SearchObject.KorisniciSearchObject, Model.Requests.KorisniciInsertRequest, Model.Requests.KorisniciUpdateRequest, Model.Requests.KorisniciDeleteRequest>
     {
-        public Task<Model.Korisnici> Login(string username,  string password);
+        public Task<Model.Models.Korisnici> Login(string username,  string password);
     }
 }
