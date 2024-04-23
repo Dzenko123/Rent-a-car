@@ -28,6 +28,11 @@ namespace RentACar.Services
             CreateMap<Model.Requests.TipVozilaUpdateRequest, Database.TipVozila>();
             CreateMap<Model.Requests.TipVozilaDeleteRequest, Database.TipVozila>();
 
+            CreateMap<Database.Gorivo, Gorivo>();
+            CreateMap<Model.Requests.GorivoInsertRequest, Database.Gorivo>();
+            CreateMap<Model.Requests.GorivoUpdateRequest, Database.Gorivo>();
+            CreateMap<Model.Requests.GorivoDeleteRequest, Database.Gorivo>();
+
             CreateMap<Database.Kontakt, Kontakt>();
             CreateMap<Model.Requests.KontaktInsertRequest, Database.Kontakt>();
             CreateMap<Model.Requests.KontaktUpdateRequest, Database.Kontakt>();

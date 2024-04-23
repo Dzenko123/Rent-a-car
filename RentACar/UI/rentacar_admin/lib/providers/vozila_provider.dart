@@ -1,15 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
-import 'package:flutter/material.dart';
-import 'package:rentacar_admin/models/search_result.dart';
 import 'package:rentacar_admin/utils/util.dart';
 import 'package:rentacar_admin/models/vozila.dart';
 import 'package:rentacar_admin/providers/base_provider.dart';
 
 class VozilaProvider extends BaseProvider<Vozilo> {
-  static const String _baseUrl =  String.fromEnvironment("baseUrl",
-        defaultValue: "https://localhost:7284/");
+  static const String _baseUrl = String.fromEnvironment("baseUrl",
+      defaultValue: "https://localhost:7284/");
   static const String _endpoint = "Vozila";
 
   VozilaProvider() : super(_endpoint);
@@ -39,9 +37,11 @@ class VozilaProvider extends BaseProvider<Vozilo> {
     if (response.statusCode < 299) {
       return true;
     } else if (response.statusCode == 401) {
-      throw new Exception("Unauthorized");
+      throw Exception("Unauthorized");
+    } else if (response.statusCode == 500) {
+      throw Exception("Vozilo je rezervisano! (status:${response.statusCode})");
     } else {
-      throw new Exception("Unexpected status code: ${response.statusCode}. Vozilo je rezervisano!");
+      throw Exception("Active state machine or docker not running! (status:${response.statusCode})");
     }
   }
 
@@ -97,7 +97,7 @@ class VozilaProvider extends BaseProvider<Vozilo> {
         }
         query += '$prefix$key=$encoded';
       } else if (value is DateTime) {
-        query += '$prefix$key=${(value as DateTime).toIso8601String()}';
+        query += '$prefix$key=${(value).toIso8601String()}';
       } else if (value is List || value is Map) {
         if (value is List) value = value.asMap();
         value.forEach((k, v) {

@@ -55,17 +55,16 @@ namespace RentACar.Services
                     return null;
                 }
                 //_mapper.Map(delete, entity);
-                set.Remove(entity); // Uklonite entitet iz seta
+                set.Remove(entity);
 
                 await _context.SaveChangesAsync();
                 return _mapper.Map<T>(entity);
             }
             catch (Exception ex)
             {
-                // Ovdje možeš dodati kod za rukovanje greškama, kao što je logiranje ili slanje obavijesti o grešci.
-                // Primjer:
+            
                 Console.WriteLine($"Greška prilikom brisanja entiteta: {ex.Message}");
-                throw; // Ponovno baci izuzetak da bi bio uhvaćen na višem nivou.
+                throw;
             }
         }
 

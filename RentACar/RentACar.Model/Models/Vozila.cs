@@ -13,6 +13,7 @@ namespace RentACar.Model.Models
         public int VoziloId { get; set; }
 
         public int TipVozilaId { get; set; }
+        public int GorivoId { get; set; }
 
         public string? Marka { get; set; }
 
@@ -26,7 +27,6 @@ namespace RentACar.Model.Models
 
         public double Kilometraza { get; set; }
 
-        public string Gorivo { get; set; }
 
         public string StateMachine { get; set; }
 

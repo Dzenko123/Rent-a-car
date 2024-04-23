@@ -11,6 +11,7 @@ namespace RentACar.Model.Requests
     public class VozilaUpdateRequest
     {
         public int? TipVozilaId { get; set; }
+        public int GorivoId { get; set; }
 
         public string? Marka { get; set; }
 
@@ -21,7 +22,6 @@ namespace RentACar.Model.Requests
         public decimal Cijena { get; set; }
 
         public int GodinaProizvodnje { get; set; }
-        public string Gorivo { get; set; }
 
         public double Kilometraza { get; set; }
 

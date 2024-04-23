@@ -3,7 +3,6 @@ import 'package:rentacar_admin/main.dart';
 import 'package:rentacar_admin/screens/cijene_po_vremenskom_periodu_screen.dart';
 import 'package:rentacar_admin/screens/kontakt_screen.dart';
 import 'package:rentacar_admin/screens/korisnici_screen.dart';
-import 'package:rentacar_admin/screens/period_screen.dart';
 import 'package:rentacar_admin/screens/rezervacija_screen.dart';
 import 'package:rentacar_admin/screens/vozila_detail_screen.dart';
 import 'package:rentacar_admin/screens/vozila_list_screen.dart';
@@ -34,7 +33,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => LoginPage(),
+                    builder: (context) => const LoginPage(),
                   ),
                 );
               },
@@ -89,7 +88,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 );
               },
             ),
-             ListTile(
+            ListTile(
               title: const Text("Rezervacije"),
               onTap: () {
                 Navigator.of(context).push(
@@ -98,7 +97,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                   ),
                 );
               },
-            )
+            ),
           ],
         ),
       ),

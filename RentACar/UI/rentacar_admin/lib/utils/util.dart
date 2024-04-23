@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 
@@ -20,3 +19,7 @@ String formatNumber(double? number) {
   return f.format(number);
 }
 
+String formatDateTime(DateTime? dateTime) {
+  if (dateTime == null) return "";
+  return '${dateTime.hour}:${dateTime.minute}, ${dateTime.day}/${dateTime.month}/${dateTime.year}';
+}

@@ -11,10 +11,13 @@ Vozilo _$VoziloFromJson(Map<String, dynamic> json) => Vozilo(
       json['godinaProizvodnje'] as int?,
       (json['cijena'] as num?)?.toDouble(),
       json['tipVozilaId'] as int?,
+      json['gorivoId'] as int?,
       json['slika'] as String?,
       (json['kilometraza'] as num?)?.toDouble(),
       json['stateMachine'] as String?,
-      json['gorivo'] as String?,
+      json['gorivo'] == null
+          ? null
+          : Gorivo.fromJson(json['gorivo'] as Map<String, dynamic>),
       json['marka'] as String?,
       json['model'] as String?,
       json['tipVozila'] == null
@@ -25,13 +28,14 @@ Vozilo _$VoziloFromJson(Map<String, dynamic> json) => Vozilo(
 Map<String, dynamic> _$VoziloToJson(Vozilo instance) => <String, dynamic>{
       'voziloId': instance.voziloId,
       'tipVozilaId': instance.tipVozilaId,
+      'gorivoId': instance.gorivoId,
       'godinaProizvodnje': instance.godinaProizvodnje,
       'cijena': instance.cijena,
       'kilometraza': instance.kilometraza,
       'slika': instance.slika,
       'stateMachine': instance.stateMachine,
-      'gorivo': instance.gorivo,
       'model': instance.model,
       'marka': instance.marka,
       'tipVozila': instance.tipVozila,
+      'gorivo': instance.gorivo,
     };

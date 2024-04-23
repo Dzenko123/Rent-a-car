@@ -1,7 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:provider/provider.dart';
 import 'package:rentacar_admin/models/kontakt.dart';
 import 'package:rentacar_admin/models/korisnici.dart';
 import 'package:rentacar_admin/models/search_result.dart';
@@ -40,7 +37,22 @@ class _KontaktScreenState extends State<KontaktScreen> {
     return MasterScreenWidget(
       title_widget: const Text("Kontakt list"),
       child: Container(
-        child: Column(children: [_buildSearch(), _buildDataListView()]),
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFF000000),
+              Color.fromARGB(255, 68, 68, 68),
+              Color.fromARGB(255, 148, 147, 147),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Column(children: [
+          _buildSearch(),
+          const SizedBox(height: 20),
+          _buildDataListView()
+        ]),
       ),
     );
   }
@@ -71,13 +83,13 @@ class _KontaktScreenState extends State<KontaktScreen> {
             child: TextField(
               decoration: const InputDecoration(
                 labelText: "Korisnicko ime pretraga:",
-                labelStyle: TextStyle(color: Colors.black),
+                labelStyle: TextStyle(color: Colors.white),
               ),
               controller: _ftsController,
-              style: TextStyle(color: Colors.black),
+              style: TextStyle(color: Colors.white),
             ),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Flexible(
             child: ElevatedButton(
               onPressed: () async {
@@ -85,10 +97,10 @@ class _KontaktScreenState extends State<KontaktScreen> {
                 await initForm();
                 setState(() {});
               },
-              child: const Text("Pretraga"),
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 10.0),
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
               ),
+              child: const Text("Pretraga"),
             ),
           ),
         ],
@@ -113,97 +125,129 @@ class _KontaktScreenState extends State<KontaktScreen> {
     return Expanded(
         child: SingleChildScrollView(
             child: DataTable(
-                columns: [
-          const DataColumn(
-              label: Expanded(
-                  child: Text(
-            'Kontakt ID',
-            style: TextStyle(fontStyle: FontStyle.italic),
-          ))),
-          const DataColumn(
-              label: Expanded(
-                  child: Text(
-            'Korisnik ID',
-            style: TextStyle(fontStyle: FontStyle.italic),
-          ))),
-          const DataColumn(
-            label: Expanded(
-              child: Text(
-                'Korisničko ime',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
-          ),
-          const DataColumn(
-              label: Expanded(
-                  child: Text(
-            'Ime i prezime',
-            style: TextStyle(fontStyle: FontStyle.italic),
-          ))),
-          const DataColumn(
-              label: Expanded(
-                  child: Text(
-            'Poruka',
-            style: TextStyle(fontStyle: FontStyle.italic),
-          ))),
-          const DataColumn(
-              label: Expanded(
-                  child: Text(
-            'Telefon',
-            style: TextStyle(fontStyle: FontStyle.italic),
-          ))),
-          const DataColumn(
-              label: Expanded(
-                  child: Text(
-            'Email',
-            style: TextStyle(fontStyle: FontStyle.italic),
-          ))),
-          const DataColumn(
-            label: Expanded(
-              child: Text(
-                'Akcije',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
-          ),
-        ],
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xFF000000),
+                      Color.fromARGB(255, 54, 54, 54),
+                      Color.fromARGB(255, 82, 81, 81),
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                  borderRadius: BorderRadius.circular(15.0),
+                  border: Border.all(color: Colors.white, width: 2),
+                ),
+                columns: const [
+                  DataColumn(
+                      label: Expanded(
+                          child: Text(
+                    'Kontakt ID',
+                    style: TextStyle(
+                        fontStyle: FontStyle.italic, color: Colors.white),
+                  ))),
+                  DataColumn(
+                      label: Expanded(
+                          child: Text(
+                    'Korisnik ID',
+                    style: TextStyle(
+                        fontStyle: FontStyle.italic, color: Colors.white),
+                  ))),
+                  DataColumn(
+                    label: Expanded(
+                      child: Text(
+                        'Korisničko ime',
+                        style: TextStyle(
+                            fontStyle: FontStyle.italic, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  DataColumn(
+                      label: Expanded(
+                          child: Text(
+                    'Ime i prezime',
+                    style: TextStyle(
+                        fontStyle: FontStyle.italic, color: Colors.white),
+                  ))),
+                  DataColumn(
+                      label: Expanded(
+                          child: Text(
+                    'Poruka',
+                    style: TextStyle(
+                        fontStyle: FontStyle.italic, color: Colors.white),
+                  ))),
+                  DataColumn(
+                      label: Expanded(
+                          child: Text(
+                    'Telefon',
+                    style: TextStyle(
+                        fontStyle: FontStyle.italic, color: Colors.white),
+                  ))),
+                  DataColumn(
+                      label: Expanded(
+                          child: Text(
+                    'Email',
+                    style: TextStyle(
+                        fontStyle: FontStyle.italic, color: Colors.white),
+                  ))),
+                  DataColumn(
+                    label: Expanded(
+                      child: Text(
+                        'Akcija: obriši',
+                        style: TextStyle(
+                            fontStyle: FontStyle.italic, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
                 rows: filteredResults
                         .map(
                           (Kontakt k) => DataRow(
-                            onSelectChanged: (selected) =>
-                                {if (selected == true) {}},
+                            // onSelectChanged: (selected) =>
+                            //     {if (selected == true) {}},
                             cells: [
-                              DataCell(Text(k.kontaktId?.toString() ?? "")),
-                              DataCell(Text(k.korisnikId?.toString() ?? "")),
+                              DataCell(Text(k.kontaktId?.toString() ?? "",
+                                  style: const TextStyle(color: Colors.white))),
+                              DataCell(Text(k.korisnikId?.toString() ?? "",
+                                  style: const TextStyle(color: Colors.white))),
                               DataCell(
                                 FutureBuilder(
                                   future: _getKorisnickoIme(k.korisnikId),
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
-                                      return CircularProgressIndicator();
+                                      return const CircularProgressIndicator();
                                     }
                                     if (snapshot.hasError) {
                                       return Text('Error: ${snapshot.error}');
                                     }
-                                    return Text(snapshot.data.toString() ?? '');
+                                    return Text(snapshot.data.toString() ?? '',
+                                        style: const TextStyle(
+                                            color: Colors.white));
                                   },
                                 ),
                               ),
-                              DataCell(Text(k.imePrezime ?? "")),
-                              DataCell(Text(k.poruka ?? "")),
-                              DataCell(Text(k.telefon ?? "")),
-                              DataCell(Text(k.email ?? "")),
+                              DataCell(Text(k.imePrezime ?? "",
+                                  style: const TextStyle(color: Colors.white))),
+                              DataCell(Text(k.poruka ?? "",
+                                  style: const TextStyle(color: Colors.white))),
+                              DataCell(Text(k.telefon ?? "",
+                                  style: const TextStyle(color: Colors.white))),
+                              DataCell(Text(k.email ?? "",
+                                  style: const TextStyle(color: Colors.white))),
                               DataCell(
                                 IconButton(
-                                  icon: Icon(Icons.delete),
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
                                   onPressed: () {
                                     showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
                                         return AlertDialog(
-                                          title: Text("Potvrda"),
-                                          content: Text(
+                                          title: const Text("Potvrda"),
+                                          content: const Text(
                                             "Jeste li sigurni da želite izbrisati ovaj kontakt?",
                                           ),
                                           actions: [
@@ -211,7 +255,7 @@ class _KontaktScreenState extends State<KontaktScreen> {
                                               onPressed: () {
                                                 Navigator.of(context).pop();
                                               },
-                                              child: Text("Odustani"),
+                                              child: const Text("Odustani"),
                                             ),
                                             TextButton(
                                               onPressed: () async {
@@ -221,12 +265,13 @@ class _KontaktScreenState extends State<KontaktScreen> {
                                                       .delete(k.kontaktId!);
                                                   // Refresh list after deletion
                                                   await initForm();
+                                                  _showDeleteConfirmationSnackBar(); // Prikazuje Snackbar
                                                 } catch (e) {
                                                   print(
                                                       "Error deleting contact: $e");
                                                 }
                                               },
-                                              child: Text("Izbriši"),
+                                              child: const Text("Izbriši"),
                                             ),
                                           ],
                                         );
@@ -240,6 +285,17 @@ class _KontaktScreenState extends State<KontaktScreen> {
                         )
                         .toList() ??
                     [])));
+  }
+
+  void _showDeleteConfirmationSnackBar() {
+    final snackBar = SnackBar(
+      content: Text(
+        'Kontakt uspješno obrisan!',
+        style: TextStyle(color: Colors.white),
+      ),
+      backgroundColor: Colors.green,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   Future<String?> _getKorisnickoIme(int? korisnikId) async {

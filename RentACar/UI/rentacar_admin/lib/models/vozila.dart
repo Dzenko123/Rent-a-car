@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:rentacar_admin/models/gorivo.dart';
 import 'package:rentacar_admin/models/tip_vozila.dart';
 
 /// This allows the `User` class to access private members in
@@ -10,21 +11,22 @@ part 'vozila.g.dart';
 class Vozilo {
   int? voziloId;
   int? tipVozilaId;
+  int? gorivoId;
   int? godinaProizvodnje;
   double? cijena;
   double? kilometraza;
   String? slika;
   String? stateMachine;
-  String? gorivo;
   String? model;
   String? marka;
   TipVozila? tipVozila;
-
+  Gorivo? gorivo;
   Vozilo(
       this.voziloId,
       this.godinaProizvodnje,
       this.cijena,
       this.tipVozilaId,
+      this.gorivoId,
       this.slika,
       this.kilometraza,
       this.stateMachine,

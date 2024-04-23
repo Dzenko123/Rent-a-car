@@ -61,12 +61,10 @@ namespace RentACar.Services
 
             if (state is DraftVozilaState draftState)
             {
-                // Ako je stanje DraftVozilaState, pozovi metodu Delete s requestom.
                 return await draftState.Delete(id, delete);
             }
             else
             {
-                // Ako nije stanje DraftVozilaState, baci izuzetak.
                 throw new UserException("Not allowed");
             }
         }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RentACar.Services.Database;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace RentACar.Services.Configurations
 {
-    public class VoziloConfiguration:BaseConfiguration<Vozila>
+    public class VoziloConfiguration : BaseConfiguration<Vozila>
     {
         public override void Configure(EntityTypeBuilder<Vozila> builder)
         {
@@ -16,7 +17,14 @@ namespace RentACar.Services.Configurations
             builder.HasKey(v => v.VoziloId);
             builder.HasOne(v => v.TipVozila)
                    .WithMany()
-                   .HasForeignKey(v => v.TipVozilaId);
+                   .HasForeignKey(v => v.TipVozilaId)
+                   .OnDelete(DeleteBehavior.Restrict);
+            
+
+            builder.HasOne(v => v.TipGoriva)
+                   .WithMany()
+                   .HasForeignKey(v => v.GorivoId)
+                   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

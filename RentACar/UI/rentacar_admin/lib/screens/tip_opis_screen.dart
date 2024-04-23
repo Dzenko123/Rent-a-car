@@ -8,7 +8,7 @@ import 'package:rentacar_admin/providers/tip_vozila_provider.dart';
 class TipOpisScreen extends StatefulWidget {
   final TipVozila? tipVozila;
 
-  TipOpisScreen({Key? key, this.tipVozila}) : super(key: key);
+  const TipOpisScreen({super.key, this.tipVozila});
 
   @override
   _TipOpisScreenState createState() => _TipOpisScreenState();
@@ -53,10 +53,10 @@ class _TipOpisScreenState extends State<TipOpisScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Unos Tipa i Opisa'),
+        title: const Text('Unos Tipa i Opisa'),
       ),
       body: isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : Padding(
@@ -69,20 +69,20 @@ class _TipOpisScreenState extends State<TipOpisScreen> {
                   children: [
                     FormBuilderTextField(
                       name: 'tip',
-                      decoration: InputDecoration(labelText: 'Tip'),
+                      decoration: const InputDecoration(labelText: 'Tip'),
                     ),
-                    SizedBox(height: 16.0),
+                    const SizedBox(height: 16.0),
                     FormBuilderTextField(
                       name: 'opis',
-                      decoration: InputDecoration(labelText: 'Opis'),
+                      decoration: const InputDecoration(labelText: 'Opis'),
                       maxLines: 3,
                     ),
-                    SizedBox(height: 16.0),
+                    const SizedBox(height: 16.0),
                     ElevatedButton(
                       onPressed: () {
                         _saveForm();
                       },
-                      child: Text('Spremi'),
+                      child: const Text('Spremi'),
                     ),
                   ],
                 ),
@@ -92,41 +92,39 @@ class _TipOpisScreenState extends State<TipOpisScreen> {
   }
 
   void _saveForm() async {
-  if (_formKey.currentState!.saveAndValidate()) {
-    var formData = _formKey.currentState!.value;
-    var request = new Map.from(_formKey.currentState!.value);
+    if (_formKey.currentState!.saveAndValidate()) {
+      var request = Map.from(_formKey.currentState!.value);
 
-    try {
-      if (widget.tipVozila == null) {
-        await _tipVozilaProvider.insert(request);
-      } else {
-        await _tipVozilaProvider.update(
-            widget.tipVozila!.tipVozilaId!, request);
+      try {
+        if (widget.tipVozila == null) {
+          await _tipVozilaProvider.insert(request);
+        } else {
+          await _tipVozilaProvider.update(
+              widget.tipVozila!.tipVozilaId!, request);
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Podaci su uspješno sačuvani!'),
+          ),
+        );
+
+        Navigator.of(context).pop(true);
+      } on Exception catch (e) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text("Error"),
+            content: Text(e.toString()),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+        );
       }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Podaci su uspješno sačuvani!'),
-        ),
-      );
-
-      Navigator.of(context).pop(true);
-    } on Exception catch (e) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: Text("Error"),
-          content: Text(e.toString()),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text("OK"),
-            ),
-          ],
-        ),
-      );
     }
   }
-}
-
 }

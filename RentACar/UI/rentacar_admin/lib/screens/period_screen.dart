@@ -6,7 +6,7 @@ import 'package:rentacar_admin/providers/period_provider.dart';
 
 class PeriodScreen extends StatefulWidget {
   final Period? period;
-  PeriodScreen({Key? key, this.period}) : super(key: key);
+  const PeriodScreen({super.key, this.period});
 
   @override
   _PeriodScreenState createState() => _PeriodScreenState();
@@ -18,6 +18,7 @@ class _PeriodScreenState extends State<PeriodScreen> {
   SearchResult<Period>? periodResult;
   bool isLoading = true;
   Map<String, dynamic> _initialValue = {};
+  bool _autoValidate = false;
 
   @override
   void initState() {
@@ -35,6 +36,22 @@ class _PeriodScreenState extends State<PeriodScreen> {
     super.didChangeDependencies();
   }
 
+  String? _validatePeriod(String? value) {
+    if (value == null || !RegExp(r'^\d+-\d+ dana$').hasMatch(value)) {
+      return 'Format treba biti "n-n dana"';
+    }
+
+    var parts = value.split('-');
+    var firstDay = int.tryParse(parts[0]);
+    var secondDay = int.tryParse(parts[1].split(' ')[0]);
+
+    if (firstDay == null || secondDay == null || firstDay >= secondDay) {
+      return 'Prvi dan treba biti manji od drugog';
+    }
+
+    return null;
+  }
+
   Future<void> initForm() async {
     periodResult = await _periodProvider.get();
     setState(() {
@@ -46,10 +63,10 @@ class _PeriodScreenState extends State<PeriodScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Unos trajanje perioda'),
+        title: const Text('Unos trajanje perioda'),
       ),
       body: isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : Padding(
@@ -62,15 +79,24 @@ class _PeriodScreenState extends State<PeriodScreen> {
                   children: [
                     FormBuilderTextField(
                       name: 'trajanje',
-                      decoration: InputDecoration(labelText: 'Trajanje period'),
+                      decoration:
+                          const InputDecoration(labelText: 'Trajanje perioda'),
+                      onChanged: (value) {
+                        setState(() {
+                          _autoValidate = true;
+                        });
+                      },
+                      autovalidateMode: _autoValidate
+                          ? AutovalidateMode.always
+                          : AutovalidateMode.disabled,
+                      validator: _validatePeriod,
                     ),
-                    SizedBox(height: 16.0),
+                    const SizedBox(height: 16.0),
                     ElevatedButton(
                       onPressed: () {
                         _saveForm();
-                        
                       },
-                      child: Text('Spremi'),
+                      child: const Text('Spremi'),
                     ),
                   ],
                 ),
@@ -82,7 +108,7 @@ class _PeriodScreenState extends State<PeriodScreen> {
   void _saveForm() async {
     if (_formKey.currentState!.saveAndValidate()) {
       var formData = _formKey.currentState!.value;
-      var request = new Map.from(_formKey.currentState!.value);
+      var request = Map.from(_formKey.currentState!.value);
 
       try {
         if (widget.period == null) {
@@ -92,7 +118,7 @@ class _PeriodScreenState extends State<PeriodScreen> {
         }
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Podaci su uspješno sačuvani!'),
           ),
         );
@@ -102,12 +128,12 @@ class _PeriodScreenState extends State<PeriodScreen> {
         showDialog(
           context: context,
           builder: (BuildContext context) => AlertDialog(
-            title: Text("Error"),
+            title: const Text("Error"),
             content: Text(e.toString()),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text("OK"),
+                child: const Text("OK"),
               ),
             ],
           ),

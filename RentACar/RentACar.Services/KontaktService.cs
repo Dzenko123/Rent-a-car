@@ -17,12 +17,5 @@ namespace RentACar.Services
         {
         }
 
-        public async Task<Kontakt> Insert(KontaktInsertRequest insert)
-        {
-            var entity = _mapper.Map<Database.Kontakt>(insert);
-            _context.Set<Database.Kontakt>().Add(entity);
-            await _context.SaveChangesAsync();
-            return _mapper.Map<Kontakt>(entity);
-        }
     }
 }

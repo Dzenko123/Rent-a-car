@@ -1,18 +1,25 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:rentacar_admin/providers/gorivo_provider.dart';
 import 'package:rentacar_admin/providers/tip_vozila_provider.dart';
 import 'package:rentacar_admin/providers/vozila_provider.dart';
 import 'package:rentacar_admin/utils/util.dart';
 import './screens/vozila_list_screen.dart';
+import 'package:window_manager/window_manager.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
+
+  if (Platform.isWindows) {
+    WindowManager.instance.setMinimumSize(const Size(1200, 800));
+  }
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => VozilaProvider()),
-    ChangeNotifierProvider(create: (_) => TipVozilaProvider())
+    ChangeNotifierProvider(create: (_) => TipVozilaProvider()),
+    ChangeNotifierProvider(create: (_) => GorivoProvider())
   ], child: const MyMaterialApp()));
 }
 
@@ -23,10 +30,10 @@ class MyMaterialApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'RS II Material App',
-      home: LoginPage(),
+      home: const LoginPage(),
       theme: ThemeData(
         inputDecorationTheme: InputDecorationTheme(
-          focusedBorder: UnderlineInputBorder(
+          focusedBorder: const UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white),
           ),
           enabledBorder: UnderlineInputBorder(
@@ -40,15 +47,15 @@ class MyMaterialApp extends StatelessWidget {
 }
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController _usernameController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   late VozilaProvider _vozilaProvider;
   bool _isPasswordObscured = true;
@@ -66,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
       //   backgroundColor: Color.fromARGB(255, 23, 22, 22),
       // ),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage("assets/images/lambo.jpg"),
             fit: BoxFit.cover,
@@ -78,20 +85,21 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  constraints: BoxConstraints(maxHeight: 300, maxWidth: 350),
+                  constraints:
+                      const BoxConstraints(maxHeight: 300, maxWidth: 350),
                   child: Card(
                     elevation: 5,
                     color: Colors.transparent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
-                      side: BorderSide(
+                      side: const BorderSide(
                         color: Colors.white,
                         width: 1.5,
                       ),
                     ),
                     child: Container(
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
+                        gradient: const LinearGradient(
                           colors: [
                             Color(0xFF000000),
                             Color(0xFF333333),
@@ -109,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                             children: [
                               TextField(
                                 cursorColor: Colors.white,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   labelText: "Username",
                                   prefixIcon: Icon(
                                     Icons.email,
@@ -120,22 +128,23 @@ class _LoginPageState extends State<LoginPage> {
                                       EdgeInsets.symmetric(vertical: 5),
                                 ),
                                 controller: _usernameController,
-                                style: TextStyle(color: Colors.white),
+                                style: const TextStyle(color: Colors.white),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 8,
                               ),
                               TextField(
                                 cursorColor: Colors.white,
                                 decoration: InputDecoration(
                                   labelText: "Password",
-                                  prefixIcon: Icon(
+                                  prefixIcon: const Icon(
                                     Icons.password,
                                     color: Colors.white,
                                   ),
-                                  labelStyle: TextStyle(color: Colors.white),
+                                  labelStyle:
+                                      const TextStyle(color: Colors.white),
                                   contentPadding:
-                                      EdgeInsets.symmetric(vertical: 5),
+                                      const EdgeInsets.symmetric(vertical: 5),
                                   suffixIcon: IconButton(
                                     icon: Icon(
                                       _isPasswordObscured
@@ -152,10 +161,10 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                 ),
                                 controller: _passwordController,
-                                style: TextStyle(color: Colors.white),
+                                style: const TextStyle(color: Colors.white),
                                 obscureText: _isPasswordObscured,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 40,
                               ),
                               ElevatedButton(
@@ -170,7 +179,7 @@ class _LoginPageState extends State<LoginPage> {
                                     Navigator.of(context).push(
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                             VozilaListScreen(),
+                                            VozilaListScreen(),
                                       ),
                                     );
                                   } on Exception catch (e) {
@@ -178,20 +187,20 @@ class _LoginPageState extends State<LoginPage> {
                                       context: context,
                                       builder: (BuildContext context) =>
                                           AlertDialog(
-                                        title: Text("Error"),
+                                        title: const Text("Error"),
                                         content: Text(e.toString()),
                                         actions: [
                                           TextButton(
                                             onPressed: () =>
                                                 Navigator.pop(context),
-                                            child: Text("OK"),
+                                            child: const Text("OK"),
                                           ),
                                         ],
                                       ),
                                     );
                                   }
                                 },
-                                child: Text(
+                                child: const Text(
                                   "Login",
                                   style: TextStyle(color: Colors.black),
                                 ),

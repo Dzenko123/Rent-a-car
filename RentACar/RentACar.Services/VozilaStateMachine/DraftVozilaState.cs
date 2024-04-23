@@ -51,12 +51,6 @@ namespace RentACar.Services.VozilaStateMachine
                 {
                     throw new Exception($"Vozilo s ID-em {id} nije pronađeno.");
                 }
-
-                // Prvo uklonite sve vanjske veze prema entitetu koji želite izbrisati
-                // Ako postoje vanjske veze, prvo ih uklonite
-                // Na primjer, ako postoji entitet koji ima vanjski ključ koji referencira ovaj entitet
-                // Uklonite ili ažurirajte te entitete tako da ne referenciraju ovaj entitet
-
                 set.Remove(entity);
                 await _context.SaveChangesAsync();
 
@@ -64,10 +58,7 @@ namespace RentACar.Services.VozilaStateMachine
             }
             catch (Exception ex)
             {
-                // Ovdje možete dodati dodatne informacije u logove kako biste identificirali uzrok izuzetka
                 _logger.LogError(ex, "Greška prilikom brisanja vozila.");
-
-                // Ponovno bacanje izuzetka kako bi ga metoda pozivatelja mogla uhvatiti
                 throw;
             }
         }

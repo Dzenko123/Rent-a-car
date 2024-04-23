@@ -20,36 +20,6 @@ namespace RentACar.Services
         {
         }
 
-        public async Task<CijenePoVremenskomPeriodu> Insert(CPVPInsertRequest insert)
-        {
-            var entity = _mapper.Map<Database.CijenePoVremenskomPeriodu>(insert);
-            _context.Set<Database.CijenePoVremenskomPeriodu>().Add(entity);
-            await _context.SaveChangesAsync();
-            return _mapper.Map<CijenePoVremenskomPeriodu>(entity);
-        }
-
-        public async Task<CijenePoVremenskomPeriodu> Update(int id, CPVPUpdateRequest update)
-        {
-            var entity = await _context.Set<Database.CijenePoVremenskomPeriodu>().FindAsync(id);
-            if (entity == null)
-            {
-                throw new ArgumentException("Entity not found");
-            }
-            var properties = typeof(CPVPUpdateRequest).GetProperties();
-            foreach (var property in properties)
-            {
-                if (property.GetValue(update) != null)
-                {
-                    var entityProperty = typeof(Database.CijenePoVremenskomPeriodu).GetProperty(property.Name);
-
-                    entityProperty.SetValue(entity, property.GetValue(update));
-                }
-            }
-
-            
-            await _context.SaveChangesAsync();
-
-            return _mapper.Map<CijenePoVremenskomPeriodu>(entity);
-        }
+       
     }
 }

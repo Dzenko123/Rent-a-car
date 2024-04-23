@@ -2,16 +2,17 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
+import 'package:rentacar_admin/models/gorivo.dart';
 import 'package:rentacar_admin/models/search_result.dart';
 import 'package:rentacar_admin/models/tip_vozila.dart';
 import 'package:rentacar_admin/models/vozila.dart';
+import 'package:rentacar_admin/providers/gorivo_provider.dart';
 import 'package:rentacar_admin/providers/tip_vozila_provider.dart';
 import 'package:rentacar_admin/providers/vozila_provider.dart';
+import 'package:rentacar_admin/screens/gorivo_screen.dart';
 import 'package:rentacar_admin/screens/tip_opis_screen.dart';
 import 'package:rentacar_admin/widgets/master_screen.dart';
 
@@ -30,8 +31,11 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
 
   late VozilaProvider _vozilaProvider;
   late TipVozilaProvider _tipVozilaProvider;
+  late GorivoProvider _gorivoProvider;
+
   SearchResult<TipVozila>? tipVozilaResult;
   SearchResult<Vozilo>? voziloResult;
+  SearchResult<Gorivo>? gorivoResult;
 
   bool isLoading = true;
 
@@ -42,15 +46,16 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
       'godinaProizvodnje': widget.vozilo?.godinaProizvodnje.toString(),
       'cijena': widget.vozilo?.cijena.toString(),
       'tipVozilaId': widget.vozilo?.tipVozilaId.toString(),
+      'gorivoId': widget.vozilo?.gorivoId.toString(),
       'kilometraza': widget.vozilo?.kilometraza.toString(),
       'stateMachine': widget.vozilo?.stateMachine,
-      'gorivo': widget.vozilo?.gorivo,
       'marka': widget.vozilo?.marka,
       'model': widget.vozilo?.model,
       'slika': widget.vozilo?.slika,
     };
     _tipVozilaProvider = context.read<TipVozilaProvider>();
     _vozilaProvider = context.read<VozilaProvider>();
+    _gorivoProvider = context.read<GorivoProvider>();
 
     initForm();
   }
@@ -63,7 +68,7 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
   Future initForm() async {
     tipVozilaResult = await _tipVozilaProvider.get();
     voziloResult = await _vozilaProvider.get();
-
+    gorivoResult = await _gorivoProvider.get();
     setState(() {
       isLoading = false;
     });
@@ -74,8 +79,11 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
+      title: widget.vozilo != null
+          ? 'Uređujete model i marku: ${widget.vozilo?.model}, ${widget.vozilo?.marka}'
+          : "Dodajte novo vozilo",
       child: Padding(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -85,39 +93,48 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     isLoading ? Container() : _buildForm(),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
             ),
-            SizedBox(width: 20),
+            const SizedBox(width: 20),
             _buildImagePreview(),
           ],
         ),
       ),
-      title: this.widget.vozilo != null
-          ? '${this.widget.vozilo?.voziloId}, ${this.widget.vozilo?.godinaProizvodnje}'
-          : "Vozila details",
     );
   }
 
   Widget _buildImagePreview() {
     if (widget.vozilo != null && widget.vozilo!.slika != null) {
-      return Center(
+      return Align(
+        alignment: Alignment.topCenter,
         child: Container(
-          height: 500,
-          width: 500,
+          height: 300,
+          width: 520,
           decoration: BoxDecoration(
-            image: DecorationImage(
-              image: MemoryImage(base64Decode(widget.vozilo!.slika!)),
-              fit: BoxFit.contain,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.9),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.memory(
+              base64Decode(widget.vozilo!.slika!),
+              fit: BoxFit.cover,
             ),
           ),
-          alignment: Alignment.center,
         ),
       );
     } else {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
   }
 
@@ -128,103 +145,248 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Detalji vozila',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Row(
             children: [
               Expanded(
                 child: FormBuilderTextField(
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: "Godina proizvodnje",
-                    prefixIcon: Icon(Icons.calendar_today),
+                    labelStyle: const TextStyle(
+                        color: Color.fromARGB(255, 24, 66, 139)),
+                    prefixIcon: const Icon(Icons.calendar_month_outlined,
+                        color: Color.fromARGB(255, 24, 66, 139)),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 20.0, horizontal: 15.0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.blue),
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    hintText: "Unesite godinu proizvodnje",
+                    hintStyle: const TextStyle(color: Colors.grey),
                   ),
                   name: "godinaProizvodnje",
+                  style: const TextStyle(fontSize: 16.0),
                 ),
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
                 child: FormBuilderTextField(
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: "Cijena",
-                    prefixIcon: Icon(Icons.attach_money),
+                    labelStyle:
+                        const TextStyle(color: Color.fromARGB(255, 6, 77, 6)),
+                    prefixIcon: const Icon(Icons.attach_money_outlined,
+                        color: Color.fromARGB(255, 6, 77, 6)),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 20.0, horizontal: 15.0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.green),
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    hintText: "Unesite cijenu",
+                    hintStyle: const TextStyle(color: Colors.grey),
                   ),
                   name: "cijena",
+                  style: const TextStyle(fontSize: 16.0),
                 ),
               ),
             ],
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Row(
             children: [
               Expanded(
                 child: FormBuilderTextField(
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: "Model",
-                    prefixIcon: Icon(Icons.car_crash_outlined),
+                    labelStyle: const TextStyle(color: Colors.black),
+                    prefixIcon: const Icon(Icons.car_crash_outlined,
+                        color: Color.fromARGB(206, 0, 0, 0)),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 20.0, horizontal: 15.0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.black),
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    hintText: "Unesite model",
+                    hintStyle: const TextStyle(color: Colors.grey),
                   ),
                   name: "model",
+                  style: const TextStyle(fontSize: 16.0),
                 ),
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
                 child: FormBuilderTextField(
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: "Marka",
-                    prefixIcon: Icon(Icons.car_rental),
+                    labelStyle: const TextStyle(color: Colors.black),
+                    prefixIcon: const Icon(Icons.car_crash_outlined,
+                        color: Color.fromARGB(206, 0, 0, 0)),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 20.0, horizontal: 15.0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.black),
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    hintText: "Unesite marku",
+                    hintStyle: const TextStyle(color: Colors.grey),
                   ),
                   name: "marka",
+                  style: const TextStyle(fontSize: 16.0),
                 ),
               ),
             ],
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Row(
             children: [
               Expanded(
                 child: FormBuilderTextField(
-                  decoration: const InputDecoration(
-                    labelText: "KM",
-                    prefixIcon: Icon(Icons.speed),
+                  decoration: InputDecoration(
+                    labelText: "Kilometraža",
+                    labelStyle: const TextStyle(
+                        color: Color.fromARGB(255, 172, 155, 3)),
+                    prefixIcon: const Icon(Icons.speed,
+                        color: Color.fromARGB(255, 172, 155, 3)),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 20.0, horizontal: 15.0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 172, 155, 3)),
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    hintText: "Unesite kilometražu",
+                    hintStyle: const TextStyle(color: Colors.grey),
                   ),
                   name: "kilometraza",
+                  style: const TextStyle(fontSize: 16.0),
                 ),
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
                 child: FormBuilderDropdown<String>(
-                  name: "gorivo",
+                  name: "gorivoId",
                   decoration: InputDecoration(
                     labelText: 'Gorivo',
-                    suffix: IconButton(
-                      icon: const Icon(Icons.local_gas_station),
+                    labelStyle: const TextStyle(color: Colors.red),
+                    prefixIcon: const Icon(
+                      Icons.local_gas_station,
+                      color: Colors.red,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 20.0, horizontal: 15.0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(
+                          color: Color.fromARGB(129, 160, 17, 7)),
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    hintText: 'Odaberi tip goriva',
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.clear, color: Colors.grey),
                       onPressed: () {
-                        _formKey.currentState?.fields['voziloId']
+                        _formKey.currentState?.fields['gorivoId']
                             ?.didChange(null);
                       },
                     ),
-                    hintText: 'Odaberi tip goriva',
                   ),
-                  items: voziloResult?.result
-                          .map((item) => item.gorivo)
-                          .toSet()
-                          .map((gorivo) => DropdownMenuItem(
-                                alignment: AlignmentDirectional.center,
-                                value: gorivo,
-                                child: Text(gorivo ?? ""),
-                              ))
-                          .toList() ??
+                  items: gorivoResult?.result.map((item) {
+                        return DropdownMenuItem<String>(
+                          value: item.gorivoId.toString(),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  item.tip ?? "",
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.edit, color: Colors.blue),
+                                onPressed: () {
+                                  _editGorivo(item);
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList() ??
                       [],
+                  style: const TextStyle(fontSize: 16.0),
                 ),
               ),
             ],
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Row(
             children: [
               Expanded(
@@ -232,14 +394,32 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                   name: 'tipVozilaId',
                   decoration: InputDecoration(
                     labelText: 'Tip vozila',
-                    suffix: IconButton(
-                      icon: const Icon(Icons.close),
+                    prefixIcon: const Icon(Icons.directions_car),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 20.0, horizontal: 15.0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.blue),
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    hintText: 'Odaberi tip vozila',
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.clear, color: Colors.grey),
                       onPressed: () {
                         _formKey.currentState?.fields['tipVozilaId']
                             ?.didChange(null);
                       },
                     ),
-                    hintText: 'Odaberi tip vozila',
                   ),
                   items: tipVozilaResult?.result
                           .map((item) => DropdownMenuItem(
@@ -262,15 +442,17 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
               ),
             ],
           ),
+          const SizedBox(
+            height: 10,
+          ),
           Row(
             children: [
               Expanded(
                 child: FormBuilderTextField(
                   name: 'opis',
                   initialValue: tipVozilaResult != null &&
-                          tipVozilaResult!.result != null &&
-                          tipVozilaResult!.result!.isNotEmpty
-                      ? tipVozilaResult!.result!
+                          tipVozilaResult!.result.isNotEmpty
+                      ? tipVozilaResult!.result
                           .firstWhere(
                               (item) =>
                                   item.tipVozilaId.toString() ==
@@ -278,14 +460,32 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                               orElse: () => TipVozila(null, null, null))
                           .opis
                       : null,
+                  readOnly: true,
                   decoration: InputDecoration(
                     labelText: 'Opis',
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 20.0, horizontal: 15.0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    hintStyle: const TextStyle(color: Colors.grey),
                   ),
                 ),
               ),
             ],
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -293,7 +493,8 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                 onPressed: () async {
                   final result = await Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => TipOpisScreen(tipVozila: null),
+                      builder: (context) =>
+                          const TipOpisScreen(tipVozila: null),
                     ),
                   );
 
@@ -304,14 +505,35 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                     initForm();
                   }
                 },
-                child: const Text("Dodaj tip/opis"),
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 ),
+                child: const Text("Dodaj tip/opis"),
+              ),
+              const SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: () async {
+                  final result = await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const GorivoScreen(gorivo: null),
+                    ),
+                  );
+
+                  if (result == true) {
+                    setState(() {
+                      isLoading = true;
+                    });
+                    initForm();
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                ),
+                child: const Text("Dodaj tip goriva"),
               ),
             ],
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 30),
           Row(
             children: [
               Expanded(
@@ -320,7 +542,23 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                   builder: ((field) {
                     return InputDecorator(
                       decoration: InputDecoration(
-                        label: Text('Odaberite sliku'),
+                        labelText: 'Odaberite novu sliku',
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 50.0, horizontal: 15.0),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: const BorderSide(color: Colors.grey),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: const BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: const BorderSide(color: Colors.blue),
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey[200],
                         errorText: field.errorText,
                       ),
                       child: _image != null
@@ -335,7 +573,7 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                                   ),
                                 ),
                                 IconButton(
-                                  icon: Icon(Icons.close),
+                                  icon: const Icon(Icons.close),
                                   onPressed: () {
                                     setState(() {
                                       _image = null;
@@ -345,9 +583,9 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                               ],
                             )
                           : ListTile(
-                              leading: Icon(Icons.photo),
-                              title: Text("Select image"),
-                              trailing: Icon(Icons.file_upload),
+                              leading: const Icon(Icons.photo),
+                              title: const Text("Odaberi sliku"),
+                              trailing: const Icon(Icons.file_upload),
                               onTap: getImage,
                             ),
                     );
@@ -356,7 +594,7 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
               ),
             ],
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -364,7 +602,7 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                 onPressed: () async {
                   _formKey.currentState?.saveAndValidate();
                   print(_formKey.currentState?.value);
-                  var request = new Map.from(_formKey.currentState!.value);
+                  var request = Map.from(_formKey.currentState!.value);
                   print("Opis: ${_formKey.currentState!.value['opis']}");
                   request['opis'] = _formKey.currentState!.value['opis'];
 
@@ -388,7 +626,7 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                       });
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      const SnackBar(
                         content: Text('Podaci su uspješno sačuvani!'),
                       ),
                     );
@@ -396,12 +634,12 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) => AlertDialog(
-                        title: Text("Error"),
+                        title: const Text("Error"),
                         content: Text(e.toString()),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context),
-                            child: Text("OK"),
+                            child: const Text("OK"),
                           ),
                         ],
                       ),
@@ -416,7 +654,7 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                 ),
                 child: Ink(
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
+                    gradient: const LinearGradient(
                       colors: [
                         Color(0xFF000000),
                         Color(0xFF333333),
@@ -429,9 +667,9 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                   ),
                   child: Container(
                     constraints:
-                        BoxConstraints(minWidth: 88.0, minHeight: 36.0),
+                        const BoxConstraints(minWidth: 88.0, minHeight: 36.0),
                     alignment: Alignment.center,
-                    child: Text(
+                    child: const Text(
                       "Sačuvaj",
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -447,6 +685,60 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
       ),
     );
   }
+
+  void _editGorivo(Gorivo gorivo) async {
+  final scaffoldMessenger = ScaffoldMessenger.of(context);
+  var updatedGorivo = await showDialog(
+    context: context,
+    builder: (context) {
+      var editedGorivo = Gorivo.fromJson(gorivo.toJson());
+      return AlertDialog(
+        title: Text('Uredi tip goriva'),
+        content: TextField(
+          controller: TextEditingController(text: gorivo.tip),
+          onChanged: (value) {
+            editedGorivo.tip = value;
+          },
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                await _gorivoProvider.update(gorivo.gorivoId, editedGorivo.toJson());
+                scaffoldMessenger.showSnackBar(
+                  SnackBar(content: Text('Tip goriva je uspješno ažuriran')),
+                );
+                Navigator.pop(context, editedGorivo);
+              } catch (e) {
+                scaffoldMessenger.showSnackBar(
+                  SnackBar(content: Text('Došlo je do pogreške: $e')),
+                );
+              }
+            },
+            child: Text('Spremi'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text('Odustani'),
+          ),
+        ],
+      );
+    },
+  );
+
+  if (updatedGorivo != null) {
+    setState(() {
+      gorivoResult?.result.forEach((item) {
+        if (item.gorivoId == updatedGorivo.gorivoId) {
+          item.tip = updatedGorivo.tip;
+        }
+      });
+    });
+  }
+}
+
 
   File? _image;
   String? _base64Image;

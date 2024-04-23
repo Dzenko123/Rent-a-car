@@ -10,12 +10,10 @@ namespace RentACar.Services
 
     public class TipVozilaService : BaseCRUDService<Model.Models.TipVozila, Database.TipVozila, TipVozilaSearchObject, TipVozilaInsertRequest, TipVozilaUpdateRequest,TipVozilaDeleteRequest>, ITipVozilaService
     {
-        public BaseState _baseState { get; set; }
 
-        public TipVozilaService(BaseState baseState, RentACarDBContext context, IMapper mapper)
+        public TipVozilaService(RentACarDBContext context, IMapper mapper)
             : base(context, mapper)
         {
-            _baseState = baseState;
         }
 
 
@@ -34,29 +32,7 @@ namespace RentACar.Services
         //}
 
 
-        public async Task<Model.Models.TipVozila> Insert(TipVozilaInsertRequest insert)
-        {
-            var entity = _mapper.Map<Database.TipVozila>(insert);
-            _context.Set<Database.TipVozila>().Add(entity);
-            await _context.SaveChangesAsync();
-            return _mapper.Map<Model.Models.TipVozila>(entity);
-        }
-
-        public async Task<Model.Models.TipVozila> Update(int id, TipVozilaUpdateRequest update)
-        {
-            var entity = await _context.Set<Database.TipVozila>().FindAsync(id);
-            if (entity == null)
-            {
-                throw new ArgumentException("Entity not found");
-            }
-
-            _mapper.Map(update, entity);
-
-            _context.Entry(entity).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-
-            return _mapper.Map<Model.Models.TipVozila>(entity);
-        }
+      
 
     }
 }
