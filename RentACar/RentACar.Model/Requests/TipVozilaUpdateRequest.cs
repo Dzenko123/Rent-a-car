@@ -2,9 +2,9 @@
 {
     public class TipVozilaUpdateRequest
     {
-        public string? Tip { get; set; }
+        public string Tip { get; set; }
 
-        public string? Opis { get; set; }
+        public string Opis { get; set; }
 
     }
 }

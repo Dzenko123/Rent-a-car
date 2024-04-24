@@ -39,9 +39,11 @@ class VozilaProvider extends BaseProvider<Vozilo> {
     } else if (response.statusCode == 401) {
       throw Exception("Unauthorized");
     } else if (response.statusCode == 500) {
-      throw Exception("Vozilo je rezervisano! (status:${response.statusCode})");
+      throw Exception(
+          "Došlo je do greške u spremanju podataka! (status:${response.statusCode})");
     } else {
-      throw Exception("Active state machine or docker not running! (status:${response.statusCode})");
+      throw Exception(
+          "Active state machine ili docker nije pokrenut! (status:${response.statusCode})");
     }
   }
 

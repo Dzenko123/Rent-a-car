@@ -19,7 +19,8 @@ class _GorivoScreenState extends State<GorivoScreen> {
   SearchResult<Gorivo>? gorivoResult;
   bool isLoading = true;
   Map<String, dynamic> _initialValue = {};
-
+  bool _autoValidate = false;
+  List<Gorivo> gorivaList = [];
   @override
   void initState() {
     // TODO: implement initState
@@ -40,6 +41,7 @@ class _GorivoScreenState extends State<GorivoScreen> {
 
     setState(() {
       isLoading = false;
+      gorivaList = gorivoResult!.result;
     });
   }
 
@@ -58,12 +60,26 @@ class _GorivoScreenState extends State<GorivoScreen> {
               child: FormBuilder(
                 key: _formKey,
                 initialValue: _initialValue,
+                autovalidateMode: _autoValidate
+                    ? AutovalidateMode.always
+                    : AutovalidateMode.disabled,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     FormBuilderTextField(
                       name: 'tip',
                       decoration: const InputDecoration(labelText: 'Tip'),
+                      onChanged: (value) {
+                        setState(() {
+                          _autoValidate = true;
+                        });
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Polje je obavezno';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 16.0),
                     ElevatedButton(
@@ -82,6 +98,25 @@ class _GorivoScreenState extends State<GorivoScreen> {
   void _saveForm() async {
     if (_formKey.currentState!.saveAndValidate()) {
       var request = Map.from(_formKey.currentState!.value);
+      var novoTipGoriva = (request['tip'] as String?)?.toLowerCase();
+
+      if (gorivaList
+          .any((gorivo) => gorivo.tip?.toLowerCase() == novoTipGoriva)) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text("Greška"),
+            content: Text("Tip goriva '$novoTipGoriva' već postoji!"),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+        );
+        return;
+      }
 
       try {
         if (widget.gorivo == null) {
@@ -97,11 +132,11 @@ class _GorivoScreenState extends State<GorivoScreen> {
         );
 
         Navigator.of(context).pop(true);
-      } on Exception catch (e) {
+      } catch (e) {
         showDialog(
           context: context,
           builder: (BuildContext context) => AlertDialog(
-            title: const Text("Error"),
+            title: const Text("Greška"),
             content: Text(e.toString()),
             actions: [
               TextButton(

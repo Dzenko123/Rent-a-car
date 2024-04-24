@@ -19,6 +19,7 @@ class _PeriodScreenState extends State<PeriodScreen> {
   bool isLoading = true;
   Map<String, dynamic> _initialValue = {};
   bool _autoValidate = false;
+  List<Period> periodList = [];
 
   @override
   void initState() {
@@ -56,6 +57,7 @@ class _PeriodScreenState extends State<PeriodScreen> {
     periodResult = await _periodProvider.get();
     setState(() {
       isLoading = false;
+      periodList = periodResult!.result;
     });
   }
 
@@ -104,41 +106,58 @@ class _PeriodScreenState extends State<PeriodScreen> {
             ),
     );
   }
+void _saveForm() async {
+  if (_formKey.currentState!.saveAndValidate()) {
+    var request = Map.from(_formKey.currentState!.value);
+    var novoTrajanje = (request['trajanje'] as String?)?.toLowerCase();
 
-  void _saveForm() async {
-    if (_formKey.currentState!.saveAndValidate()) {
-      var formData = _formKey.currentState!.value;
-      var request = Map.from(_formKey.currentState!.value);
+    if (periodList.any((period) => period.trajanje!.toLowerCase() == novoTrajanje)) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text("Greška"),
+          content: Text("Period '$novoTrajanje' već postoji!"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
-      try {
-        if (widget.period == null) {
-          await _periodProvider.insert(request);
-        } else {
-          await _periodProvider.update(widget.period!.periodId!, request);
-        }
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Podaci su uspješno sačuvani!'),
-          ),
-        );
-
-        Navigator.of(context).pop(true);
-      } on Exception catch (e) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-            title: const Text("Error"),
-            content: Text(e.toString()),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("OK"),
-              ),
-            ],
-          ),
-        );
+    try {
+      if (widget.period == null) {
+        await _periodProvider.insert(request);
+      } else {
+        await _periodProvider.update(widget.period!.periodId!, request);
       }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Podaci su uspješno sačuvani!'),
+        ),
+      );
+
+      Navigator.of(context).pop(true);
+    } on Exception catch (e) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text("Error"),
+          content: Text(e.toString()),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            ),
+          ],
+        ),
+      );
     }
   }
+}
+
 }

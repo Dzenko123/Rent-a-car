@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
+import 'package:rentacar_admin/models/gorivo.dart';
 import 'package:rentacar_admin/models/search_result.dart';
 import 'package:rentacar_admin/models/tip_vozila.dart';
 import 'package:rentacar_admin/models/vozila.dart';
+import 'package:rentacar_admin/providers/gorivo_provider.dart';
 import 'package:rentacar_admin/providers/tip_vozila_provider.dart';
 
 import 'package:rentacar_admin/providers/vozila_provider.dart';
@@ -25,8 +27,12 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
   Map<String, dynamic> _initialValue = {};
   late VozilaProvider _vozilaProvider;
   late TipVozilaProvider _tipVozilaProvider;
+  late GorivoProvider _gorivoProvider;
+
   SearchResult<Vozilo>? result;
   SearchResult<TipVozila>? tipVozilaResult;
+  SearchResult<Gorivo>? gorivoResult;
+
   bool isLoading = true;
   late ScaffoldMessengerState _scaffoldMessengerState;
 
@@ -40,6 +46,7 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
     };
     _tipVozilaProvider = context.read<TipVozilaProvider>();
     _vozilaProvider = context.read<VozilaProvider>();
+    _gorivoProvider = context.read<GorivoProvider>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scaffoldMessengerState = ScaffoldMessenger.of(context);
     });
@@ -48,6 +55,8 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
 
   Future<void> initForm() async {
     tipVozilaResult = await _tipVozilaProvider.get();
+    gorivoResult = await _gorivoProvider.get();
+
     var data = await _vozilaProvider.get(filter: {'fts': _ftsController.text});
     setState(() {
       result = data;
@@ -245,7 +254,7 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
                                     const SizedBox(width: 5),
                                     Expanded(
                                       child: Text(
-                                        '${(e.gorivo)}',
+                                        '${gorivoResult?.result.firstWhere((g) => g.gorivoId == e.gorivoId).tip ?? ""}',
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontStyle: FontStyle.italic,

@@ -8,7 +8,7 @@ import 'package:rentacar_admin/providers/tip_vozila_provider.dart';
 class TipOpisScreen extends StatefulWidget {
   final TipVozila? tipVozila;
 
-  const TipOpisScreen({super.key, this.tipVozila});
+  const TipOpisScreen({Key? key, this.tipVozila}) : super(key: key);
 
   @override
   _TipOpisScreenState createState() => _TipOpisScreenState();
@@ -20,6 +20,7 @@ class _TipOpisScreenState extends State<TipOpisScreen> {
   SearchResult<TipVozila>? tipVozilaResult;
   bool isLoading = true;
   Map<String, dynamic> _initialValue = {};
+  bool _autoValidate = false;
 
   @override
   void initState() {
@@ -32,18 +33,8 @@ class _TipOpisScreenState extends State<TipOpisScreen> {
     initForm();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
   Future<void> initForm() async {
-    // setState(() {
-    //   isLoading = true;
-    // });
-
     tipVozilaResult = await _tipVozilaProvider.get();
-
     setState(() {
       isLoading = false;
     });
@@ -64,18 +55,43 @@ class _TipOpisScreenState extends State<TipOpisScreen> {
               child: FormBuilder(
                 key: _formKey,
                 initialValue: _initialValue,
+                autovalidateMode: _autoValidate
+                    ? AutovalidateMode.always
+                    : AutovalidateMode.disabled,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     FormBuilderTextField(
                       name: 'tip',
                       decoration: const InputDecoration(labelText: 'Tip'),
+                      onChanged: (value) {
+                        setState(() {
+                          _autoValidate = true;
+                        });
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Polje je obavezno';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 16.0),
                     FormBuilderTextField(
                       name: 'opis',
                       decoration: const InputDecoration(labelText: 'Opis'),
                       maxLines: 3,
+                      onChanged: (value) {
+                        setState(() {
+                          _autoValidate = true;
+                        });
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Polje je obavezno';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 16.0),
                     ElevatedButton(
@@ -93,7 +109,7 @@ class _TipOpisScreenState extends State<TipOpisScreen> {
 
   void _saveForm() async {
     if (_formKey.currentState!.saveAndValidate()) {
-      var request = Map.from(_formKey.currentState!.value);
+      var request = Map<String, dynamic>.from(_formKey.currentState!.value);
 
       try {
         if (widget.tipVozila == null) {

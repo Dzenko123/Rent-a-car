@@ -34,6 +34,7 @@ class _CijenePoVremenskomPerioduScreenState
   bool isLoading = true;
   Map<String, dynamic> _initialValue = {};
   int? minPeriodId;
+  int _startIndex = 0;
 
   @override
   void initState() {
@@ -93,9 +94,13 @@ class _CijenePoVremenskomPerioduScreenState
 
   @override
   Widget build(BuildContext context) {
+    final canMoveNext = _startIndex + 3 < (periodResult?.result.length ?? 0);
+    final canMovePrevious = _startIndex - 3 >= 0;
+
     return MasterScreenWidget(
       title_widget: const Text("Cijene vozila"),
-      child: Container( decoration: const BoxDecoration(
+      child: Container(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
               Color(0xFF000000),
@@ -106,26 +111,113 @@ class _CijenePoVremenskomPerioduScreenState
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          
-            child: Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSearch(),
-                  const SizedBox(height: 16),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(10),
+        child: Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildSearch(),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 30, top: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (canMovePrevious || canMoveNext)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              if (canMovePrevious)
+                                Container(
+                                  decoration: BoxDecoration(
+                                      gradient: const LinearGradient(
+                                        colors: [
+                                          Color.fromARGB(130, 247, 2, 2),
+                                          Color.fromARGB(130, 131, 47, 47),
+                                          Color.fromARGB(130, 34, 34, 34),
+                                        ],
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight,
+                                      ),
+                                      borderRadius: BorderRadius.circular(20.0),
+                                      border: Border.all(color: Colors.white)),
+                                  child: IconButton(
+                                    onPressed: () {
+                                      _movePrevious();
+                                    },
+                                    icon: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.arrow_back,
+                                          color: Colors.white,
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          "Prethodna stranica",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              SizedBox(
+                                width: 30,
+                              ),
+                              if (canMoveNext)
+                                Container(
+                                  decoration: BoxDecoration(
+                                      gradient: const LinearGradient(
+                                        colors: [
+                                          Color.fromARGB(130, 34, 34, 34),
+                                          Color.fromARGB(130, 47, 131, 51),
+                                          Color.fromARGB(130, 10, 247, 2),
+                                        ],
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight,
+                                      ),
+                                      borderRadius: BorderRadius.circular(20.0),
+                                      border: Border.all(color: Colors.white)),
+                                  child: IconButton(
+                                    onPressed: () {
+                                      _moveNext();
+                                    },
+                                    icon: Row(
+                                      children: [
+                                        Text(
+                                          "Sljedeća stranica",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Icon(
+                                          Icons.arrow_forward,
+                                          color: Colors.white,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        isLoading
+                            ? Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: _buildDataListView(),
+                              )
+                            : Container(),
+                        const SizedBox(height: 20),
+                      ],
                     ),
-                    child: _buildDataListView(),
                   ),
-                ],
-              ),
-            ),
-          
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -144,7 +236,7 @@ class _CijenePoVremenskomPerioduScreenState
 
     _initialValue['periodId'] = minPeriodId.toString();
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.only(left: 30, top: 30, bottom: 20),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -154,7 +246,7 @@ class _CijenePoVremenskomPerioduScreenState
           //       labelText: "Pretraga:",
           //       labelStyle: TextStyle(color: Colors.black),
           //     ),
-          //     controller: _ftsController,
+          //     controller: _ftsController,r
           //     style: TextStyle(color: Colors.black),
           //   ),
           // ),
@@ -172,7 +264,6 @@ class _CijenePoVremenskomPerioduScreenState
           //     ),
           //   ),
           // ),
-          const SizedBox(width: 10),
           Flexible(
             child: ElevatedButton(
               onPressed: () async {
@@ -200,6 +291,8 @@ class _CijenePoVremenskomPerioduScreenState
                 var enteredValues = await showDialog<Map<String, dynamic>>(
                   context: context,
                   builder: (BuildContext context) {
+                    _initialValue['cijena'] = null;
+
                     return AlertDialog(
                       title: const Text('Unesi novo vozilo'),
                       content: Column(
@@ -220,11 +313,13 @@ class _CijenePoVremenskomPerioduScreenState
                             onChanged: (String? selectedValue) {
                               _initialValue['voziloId'] = selectedValue;
                             },
-                            decoration: const InputDecoration(labelText: 'Vozilo'),
+                            decoration:
+                                const InputDecoration(labelText: 'Vozilo'),
                           ),
                           TextFormField(
                             initialValue: minPeriodId.toString(),
-                            decoration: const InputDecoration(labelText: 'Period ID'),
+                            decoration:
+                                const InputDecoration(labelText: 'Period ID'),
                             readOnly: true,
                             onChanged: (value) {
                               _initialValue['periodId'] =
@@ -236,8 +331,8 @@ class _CijenePoVremenskomPerioduScreenState
                               labelText: 'Cijena',
                               hintText: 'Format cijene: npr. 67.5',
                             ),
-                            keyboardType:
-                                const TextInputType.numberWithOptions(decimal: true),
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
                             onChanged: (value) {
                               _initialValue['cijena'] = value;
                             },
@@ -300,7 +395,8 @@ class _CijenePoVremenskomPerioduScreenState
 
                     print("Novi CijenePoVremenskomPeriodu spremljen: $result");
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Podaci uspješno spremljeni!')),
+                      const SnackBar(
+                          content: Text('Podaci uspješno spremljeni!')),
                     );
                     await initForm();
                     setState(() {});
@@ -360,6 +456,8 @@ class _CijenePoVremenskomPerioduScreenState
       int daysB = calculateDayDifference(b.trajanje!);
       return daysA.compareTo(daysB);
     });
+    final displayedPeriods =
+        periodResult?.result.skip(_startIndex).take(3).toList() ?? [];
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -369,25 +467,49 @@ class _CijenePoVremenskomPerioduScreenState
           child: DataTable(
             dataRowHeight: 120,
             columns: [
-              const DataColumn(
-                label: Text(
-                  'Vozilo',
-                  style: TextStyle(fontStyle: FontStyle.italic),
+              DataColumn(
+                label: Container(
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  child: Text(
+                    'Vozilo',
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
+                  ),
                 ),
               ),
-              const DataColumn(
-                label: Text(
-                  'Model',
-                  style: TextStyle(fontStyle: FontStyle.italic),
+              DataColumn(
+                label: Container(
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  child: Text(
+                    'Model',
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
+                  ),
                 ),
               ),
-              const DataColumn(
-                label: Text(
-                  'Marka',
-                  style: TextStyle(fontStyle: FontStyle.italic),
+              DataColumn(
+                label: Container(
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  child: Text(
+                    'Marka',
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
+                  ),
                 ),
               ),
-              ...(periodResult?.result.map<DataColumn>((period) {
+              ...(displayedPeriods.map<DataColumn>((period) {
                     return DataColumn(
                       label: Row(
                         children: [
@@ -464,19 +586,66 @@ class _CijenePoVremenskomPerioduScreenState
                               cursor: SystemMouseCursors.click,
                               child: Tooltip(
                                 message: "Uredi period",
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Text(period.trajanje ?? ""),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 6),
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Text(
+                                      period.trajanje ?? "",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                           const SizedBox(width: 8),
-                          ElevatedButton(
-                            onPressed: () async {
-                              await _deletePeriod(period.periodId!);
+                          GestureDetector(
+                            onTap: () async {
+                              bool? confirmDelete = await showDialog<bool>(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text('Potvrda brisanja'),
+                                    content: const Text(
+                                        'Da li ste sigurni da želite obrisati ovaj period?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop(false);
+                                        },
+                                        child: const Text('Odustani'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop(true);
+                                        },
+                                        child: const Text('Obriši'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+
+                              if (confirmDelete == true) {
+                                await _deletePeriod(period.periodId!);
+                              }
                             },
-                            child: const Text('Obriši'),
+                            child: MouseRegion(
+                              cursor: SystemMouseCursors.click,
+                              child: Tooltip(
+                                message: "Obriši period",
+                                child: Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -522,8 +691,21 @@ class _CijenePoVremenskomPerioduScreenState
                   DataCell(
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      child: Text(vozilo?.model ?? "",
-                          style: const TextStyle(color: Colors.red)),
+                      child: Text(
+                        vozilo?.model ?? "",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          shadows: [
+                            Shadow(
+                              offset: Offset(2.0, 2.0),
+                              blurRadius: 3.0,
+                              color: Colors.grey.withOpacity(0.5),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                   DataCell(
@@ -531,11 +713,22 @@ class _CijenePoVremenskomPerioduScreenState
                       scrollDirection: Axis.horizontal,
                       child: Text(
                         vozilo?.marka ?? "",
-                        style: const TextStyle(color: Colors.red),
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          shadows: [
+                            Shadow(
+                              offset: Offset(2.0, 2.0),
+                              blurRadius: 3.0,
+                              color: Colors.grey.withOpacity(0.5),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                  ...(periodResult?.result.map<DataCell>((period) {
+                  ...(displayedPeriods.map<DataCell>((period) {
                         CijenePoVremenskomPeriodu? cijenaZaPeriod =
                             cijene.firstWhere(
                           (cijena) => cijena.periodId == period.periodId,
@@ -570,7 +763,7 @@ class _CijenePoVremenskomPerioduScreenState
                                                   currentPrice.toString(),
                                               keyboardType: const TextInputType
                                                   .numberWithOptions(
-                                                      decimal: true),
+                                                  decimal: true),
                                               onChanged: (value) {
                                                 currentPrice =
                                                     double.tryParse(value) ??
@@ -642,13 +835,15 @@ class _CijenePoVremenskomPerioduScreenState
                                                 Text(
                                                     'Period ID: ${period.periodId}'),
                                                 TextFormField(
-                                                  decoration: const InputDecoration(
+                                                  decoration:
+                                                      const InputDecoration(
                                                     labelText: 'Cijena',
                                                     hintText:
                                                         'Format cijene: npr. 67.5',
                                                   ),
-                                                  keyboardType: const TextInputType
-                                                      .numberWithOptions(
+                                                  keyboardType:
+                                                      const TextInputType
+                                                          .numberWithOptions(
                                                           decimal: true),
                                                   onChanged: (value) {
                                                     _initialValue['cijena'] =
@@ -738,6 +933,7 @@ class _CijenePoVremenskomPerioduScreenState
                                         cijenaZaPeriod.cijena = null;
                                       });
                                     },
+                                    tooltip: 'Obriši cijenu',
                                   ),
                               ],
                             ),
@@ -752,5 +948,21 @@ class _CijenePoVremenskomPerioduScreenState
         ),
       ),
     );
+  }
+
+  void _moveNext() {
+    setState(() {
+      if (_startIndex + 3 < (periodResult?.result.length ?? 0)) {
+        _startIndex += 3;
+      }
+    });
+  }
+
+  void _movePrevious() {
+    setState(() {
+      if (_startIndex - 3 >= 0) {
+        _startIndex -= 3;
+      }
+    });
   }
 }

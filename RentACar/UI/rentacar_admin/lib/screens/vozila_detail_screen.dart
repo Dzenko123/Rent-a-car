@@ -376,6 +376,13 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                                   _editGorivo(item);
                                 },
                               ),
+                              IconButton(
+                                icon: Icon(Icons.delete_forever_sharp,
+                                    color: Colors.red),
+                                onPressed: () {
+                                  _deleteGorivo(item);
+                                },
+                              ),
                             ],
                           ),
                         );
@@ -391,12 +398,14 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
             children: [
               Expanded(
                 child: FormBuilderDropdown<String>(
-                  name: 'tipVozilaId',
+                  name: "tipVozilaId",
                   decoration: InputDecoration(
                     labelText: 'Tip vozila',
                     prefixIcon: const Icon(Icons.directions_car),
                     contentPadding: const EdgeInsets.symmetric(
-                        vertical: 20.0, horizontal: 15.0),
+                      vertical: 20.0,
+                      horizontal: 15.0,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                       borderSide: const BorderSide(color: Colors.grey),
@@ -421,23 +430,46 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                       },
                     ),
                   ),
-                  items: tipVozilaResult?.result
-                          .map((item) => DropdownMenuItem(
-                                alignment: AlignmentDirectional.center,
-                                value: item.tipVozilaId.toString(),
-                                child: Text(item.tip ?? ""),
-                              ))
-                          .toList() ??
+                  items: tipVozilaResult?.result.map((tip) {
+                        return DropdownMenuItem<String>(
+                          value: tip.tipVozilaId.toString(),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  tip.tip ?? "",
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.edit, color: Colors.blue),
+                                onPressed: () {
+                                  _editTipVozila(tip);
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.delete_forever_sharp,
+                                    color: Colors.red),
+                                onPressed: () {
+                                  _deleteTipVozila(tip);
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList() ??
                       [],
                   onChanged: (newValue) {
                     setState(() {
                       var selectedTip = tipVozilaResult?.result.firstWhere(
-                          (item) => item.tipVozilaId.toString() == newValue,
-                          orElse: () => TipVozila(null, null, null));
+                        (tip) => tip.tipVozilaId.toString() == newValue,
+                        orElse: () => TipVozila(null, null, null),
+                      );
                       _formKey.currentState?.fields['opis']
                           ?.didChange(selectedTip?.opis ?? '');
                     });
                   },
+                  style: const TextStyle(fontSize: 16.0),
                 ),
               ),
             ],
@@ -686,59 +718,340 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
     );
   }
 
-  void _editGorivo(Gorivo gorivo) async {
-  final scaffoldMessenger = ScaffoldMessenger.of(context);
-  var updatedGorivo = await showDialog(
-    context: context,
-    builder: (context) {
-      var editedGorivo = Gorivo.fromJson(gorivo.toJson());
-      return AlertDialog(
-        title: Text('Uredi tip goriva'),
-        content: TextField(
-          controller: TextEditingController(text: gorivo.tip),
-          onChanged: (value) {
-            editedGorivo.tip = value;
-          },
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () async {
-              try {
-                await _gorivoProvider.update(gorivo.gorivoId, editedGorivo.toJson());
-                scaffoldMessenger.showSnackBar(
-                  SnackBar(content: Text('Tip goriva je uspješno ažuriran')),
-                );
-                Navigator.pop(context, editedGorivo);
-              } catch (e) {
-                scaffoldMessenger.showSnackBar(
-                  SnackBar(content: Text('Došlo je do pogreške: $e')),
-                );
-              }
-            },
-            child: Text('Spremi'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text('Odustani'),
-          ),
-        ],
-      );
-    },
-  );
-
-  if (updatedGorivo != null) {
+  Future<void> _refreshGorivoData() async {
+    gorivoResult = await _gorivoProvider.get();
     setState(() {
-      gorivoResult?.result.forEach((item) {
-        if (item.gorivoId == updatedGorivo.gorivoId) {
-          item.tip = updatedGorivo.tip;
-        }
+      isLoading = false;
+    });
+    initForm();
+  }
+
+  void _editGorivo(Gorivo gorivo) async {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final _formKey = GlobalKey<FormState>();
+    bool isTipFieldEmpty = gorivo.tip == null || gorivo.tip!.isEmpty;
+
+    var updatedGorivo = await showDialog(
+      context: context,
+      builder: (context) {
+        var editedGorivo = Gorivo.fromJson(gorivo.toJson());
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: Text('Uredi tip goriva'),
+              content: Form(
+                key: _formKey,
+                child: TextFormField(
+                  initialValue: gorivo.tip,
+                  onChanged: (value) {
+                    setState(() {
+                      isTipFieldEmpty = value.isEmpty;
+                      editedGorivo.tip = value;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Polje je obavezno';
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Tip goriva',
+                    errorText: isTipFieldEmpty ? 'Polje je obavezno' : null,
+                  ),
+                ),
+              ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      try {
+                        await _gorivoProvider.update(
+                            gorivo.gorivoId, editedGorivo.toJson());
+                        scaffoldMessenger.showSnackBar(
+                          SnackBar(
+                              content: Text('Tip goriva je uspješno ažuriran')),
+                        );
+                        Navigator.pop(context, editedGorivo);
+                      } catch (e) {
+                        scaffoldMessenger.showSnackBar(
+                          SnackBar(content: Text('Došlo je do pogreške: $e')),
+                        );
+                      }
+                    }
+                  },
+                  child: Text('Spremi'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Odustani'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    if (updatedGorivo != null) {
+      setState(() {
+        gorivoResult?.result.forEach((item) {
+          if (item.gorivoId == updatedGorivo.gorivoId) {
+            item.tip = updatedGorivo.tip;
+          }
+        });
       });
+      await _refreshGorivoData();
+    }
+  }
+
+  void _deleteGorivo(Gorivo gorivo) async {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+    var deletedGorivo = await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Brisanje tipa goriva'),
+          content:
+              Text('Jeste li sigurni da želite izbrisati ovaj tip goriva?'),
+          actions: [
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(context);
+
+                try {
+                  await _gorivoProvider.delete(gorivo.gorivoId);
+
+                  setState(() {
+                    gorivoResult?.result.removeWhere(
+                        (item) => item.gorivoId == gorivo.gorivoId);
+                  });
+
+                  scaffoldMessenger.showSnackBar(
+                    SnackBar(content: Text('Tip goriva je uspješno izbrisan')),
+                  );
+                } catch (e) {
+                  scaffoldMessenger.showSnackBar(
+                    SnackBar(content: Text('Došlo je do pogreške: $e')),
+                  );
+                }
+              },
+              child: Text('Obriši'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Odustani'),
+            ),
+          ],
+        );
+      },
+    );
+    if (deletedGorivo != null) {
+      setState(() {
+        gorivoResult?.result.forEach((item) {
+          if (item.gorivoId == deletedGorivo.gorivoId) {
+            item.tip = deletedGorivo.tip;
+          }
+        });
+      });
+      await _refreshGorivoData();
+    }
+  }
+
+  Future<void> _refreshTipVozilaData() async {
+    tipVozilaResult = await _tipVozilaProvider.get();
+    setState(() {
+      isLoading = false;
     });
   }
-}
 
+  void _editTipVozila(TipVozila tipVozila) {
+    final _formKey = GlobalKey<FormState>();
+    bool isTipFieldEmpty = tipVozila.tip == null || tipVozila.tip!.isEmpty;
+    bool isOpisFieldEmpty = tipVozila.opis == null || tipVozila.opis!.isEmpty;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: Text('Uredi tip vozila'),
+              content: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextFormField(
+                      initialValue: tipVozila.tip,
+                      onChanged: (value) {
+                        setState(() {
+                          isTipFieldEmpty = value.isEmpty;
+                          tipVozila.tip = value;
+                        });
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Polje je obavezno';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Tip vozila',
+                        errorText: isTipFieldEmpty ? 'Polje je obavezno' : null,
+                      ),
+                    ),
+                    TextFormField(
+                      initialValue: tipVozila.opis,
+                      onChanged: (value) {
+                        setState(() {
+                          isOpisFieldEmpty = value.isEmpty;
+                          tipVozila.opis = value;
+                        });
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Polje je obavezno';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Opis',
+                        errorText:
+                            isOpisFieldEmpty ? 'Polje je obavezno' : null,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      _updateTipVozila(tipVozila);
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: Text('Spremi'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Odustani'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _updateTipVozila(TipVozila tipVozila) async {
+    if (tipVozila.tip == null ||
+        tipVozila.tip!.isEmpty ||
+        tipVozila.opis == null ||
+        tipVozila.opis!.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Greška'),
+            content: Text('Morate popuniti sva polja.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      try {
+        await _tipVozilaProvider.update(tipVozila.tipVozilaId!, {
+          'Tip': tipVozila.tip,
+          'Opis': tipVozila.opis,
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Tip vozila je uspješno ažuriran')),
+        );
+        setState(() {
+          isLoading = true;
+        });
+        await _refreshTipVozilaData();
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Došlo je do pogreške: $e')),
+        );
+      }
+    }
+  }
+
+  void _deleteTipVozila(TipVozila tipVozila) async {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+    var deletedTipVozila = await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Brisanje tipa vozila'),
+          content:
+              Text('Jeste li sigurni da želite izbrisati ovaj tip vozila?'),
+          actions: [
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(context);
+
+                try {
+                  await _tipVozilaProvider.delete(tipVozila.tipVozilaId!);
+
+                  setState(() {
+                    tipVozilaResult?.result.removeWhere(
+                        (item) => item.tipVozilaId == tipVozila.tipVozilaId);
+                  });
+
+                  scaffoldMessenger.showSnackBar(
+                    SnackBar(content: Text('Tip vozila je uspješno izbrisan')),
+                  );
+                } catch (e) {
+                  scaffoldMessenger.showSnackBar(
+                    SnackBar(content: Text('Došlo je do pogreške: $e')),
+                  );
+                }
+              },
+              child: Text('Obriši'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Odustani'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (deletedTipVozila != null) {
+      setState(() {
+        tipVozilaResult?.result.forEach((item) {
+          if (item.tipVozilaId == deletedTipVozila.tipVozilaId) {
+            item.tip = deletedTipVozila.tip;
+          }
+        });
+      });
+      await _refreshTipVozilaData();
+    }
+  }
 
   File? _image;
   String? _base64Image;

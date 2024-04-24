@@ -17,4 +17,7 @@ class Period {
   /// to JSON. The implementation simply calls the private, generated
   /// helper method `_$UserToJson`.
   Map<String, dynamic> toJson() => _$PeriodToJson(this);
+  Period toLowerCase() {
+    return Period(periodId, trajanje?.toLowerCase());
+  }
 }
