@@ -18,8 +18,7 @@ namespace RentACar.Services.Configurations
 
             builder.HasOne(k => k.Korisnik)
                    .WithMany()
-                   .HasForeignKey(k => k.KorisnikId)
-                   .OnDelete(DeleteBehavior.Cascade); ;
+                   .HasForeignKey(k => k.KorisnikId);
         }
     }
 }

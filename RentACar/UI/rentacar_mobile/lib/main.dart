@@ -1,125 +1,241 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 
-void main() {
-  runApp(const MyApp());
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:rentacar_admin/providers/gorivo_provider.dart';
+import 'package:rentacar_admin/providers/kontakt_provider.dart';
+import 'package:rentacar_admin/providers/korisnici_provider.dart';
+import 'package:rentacar_admin/providers/tip_vozila_provider.dart';
+import 'package:rentacar_admin/providers/vozila_provider.dart';
+import 'package:rentacar_admin/utils/util.dart';
+import './screens/vozila_list_screen.dart';
+
+void main() async {
+  HttpOverrides.global = new MyHttpOverrides();
+
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => VozilaProvider()),
+    ChangeNotifierProvider(create: (_) => TipVozilaProvider()),
+    ChangeNotifierProvider(create: (_) => GorivoProvider()),
+    ChangeNotifierProvider(create: (_) => KorisniciProvider()),
+    ChangeNotifierProvider(create: (_) => KontaktProvider()),
+  ], child: const MyMaterialApp()));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyMaterialApp extends StatelessWidget {
+  const MyMaterialApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'RS II Material App',
+      home: const LoginPage(),
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        inputDecorationTheme: InputDecorationTheme(
+          focusedBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+          ),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey.withOpacity(0.9)),
+          ),
+          fillColor: Colors.transparent,
+        ),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  late VozilaProvider _vozilaProvider;
+  late KorisniciProvider _korisniciProvider;
+
+  bool _isPasswordObscured = true;
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    _vozilaProvider = context.read<VozilaProvider>();
+    _korisniciProvider = context.read<KorisniciProvider>();
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+      // appBar: AppBar(
+      //   title: Text(
+      //     "Welcome to login page.",
+      //     style: TextStyle(
+      //         fontWeight: FontWeight.bold, color: Colors.white, fontSize: 13),
+      //   ),
+      //   backgroundColor: Color.fromARGB(255, 23, 22, 22),
+      // ),
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/lambo.jpg"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  constraints:
+                      const BoxConstraints(maxHeight: 280, maxWidth: 320),
+                  child: Card(
+                    elevation: 5,
+                    color: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      side: const BorderSide(
+                        color: Colors.white,
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(0xFF000000),
+                            Color(0xFF333333),
+                            Color(0xFF555555),
+                          ],
+                          begin: Alignment.topRight,
+                          end: Alignment.bottomLeft,
+                        ),
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(25.0),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              TextField(
+                                cursorColor: Colors.white,
+                                decoration: const InputDecoration(
+                                  labelText: "Username",
+                                  prefixIcon: Icon(
+                                    Icons.email,
+                                    color: Colors.white,
+                                  ),
+                                  labelStyle: TextStyle(color: Colors.white),
+                                  contentPadding:
+                                      EdgeInsets.symmetric(vertical: 5),
+                                ),
+                                controller: _usernameController,
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                              const SizedBox(
+                                height: 8,
+                              ),
+                              TextField(
+                                cursorColor: Colors.white,
+                                decoration: InputDecoration(
+                                  labelText: "Password",
+                                  prefixIcon: const Icon(
+                                    Icons.password,
+                                    color: Colors.white,
+                                  ),
+                                  labelStyle:
+                                      const TextStyle(color: Colors.white),
+                                  contentPadding:
+                                      const EdgeInsets.symmetric(vertical: 5),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _isPasswordObscured
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
+                                      color: Colors.white,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _isPasswordObscured =
+                                            !_isPasswordObscured;
+                                      });
+                                    },
+                                  ),
+                                ),
+                                controller: _passwordController,
+                                style: const TextStyle(color: Colors.white),
+                                obscureText: _isPasswordObscured,
+                              ),
+                              const SizedBox(
+                                height: 40,
+                              ),
+                              ElevatedButton(
+                                onPressed: () async {
+                                  var username = _usernameController.text;
+                                  var password = _passwordController.text;
+                                  Authorization.username = username;
+                                  Authorization.password = password;
+
+                                  try {
+                                    var korisnikId = await _korisniciProvider
+                                        .getLoged(username, password);
+
+                                    if (korisnikId != null) {
+                                      print("Korisnik ID: $korisnikId");
+                                    }
+                                    await _vozilaProvider.get();
+
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            VozilaListScreen(),
+                                      ),
+                                    );
+                                  } on Exception catch (e) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          AlertDialog(
+                                        title: const Text("Error"),
+                                        content: Text(e.toString()),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: const Text("OK"),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: const Text(
+                                  "Login",
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+}
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port) {
+        return true;
+      };
   }
 }

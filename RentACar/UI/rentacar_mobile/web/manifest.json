@@ -1,6 +1,6 @@
 {
-    "name": "rentacar_mobile",
-    "short_name": "rentacar_mobile",
+    "name": "rentacar_admin",
+    "short_name": "rentacar_admin",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

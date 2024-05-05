@@ -78,39 +78,36 @@ abstract class BaseProvider<T> with ChangeNotifier {
   }
 
   Future<T> delete(int id, [dynamic request]) async {
-  var url = "$_baseUrl$_endpoint/$id";
-  var uri = Uri.parse(url);
-  var headers = createHeaders();
+    var url = "$_baseUrl$_endpoint/$id";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
 
-  var requestBody = request ?? {"delete": true};
-  var jsonRequest = jsonEncode(requestBody);
+    var requestBody = request ?? {"delete": true};
+    var jsonRequest = jsonEncode(requestBody);
 
-  var response = await http.delete(uri, headers: headers, body: jsonRequest);
+    var response = await http.delete(uri, headers: headers, body: jsonRequest);
 
-  if (isValidResponse(response)) {
-    var data = jsonDecode(response.body);
-    return fromJson(data);
-  } else {
-    throw Exception("Unexpected error occurred while deleting");
+    if (isValidResponse(response)) {
+      var data = jsonDecode(response.body);
+      return fromJson(data);
+    } else {
+      throw Exception("Unexpected error occurred while deleting");
+    }
   }
-}
-
 
   T fromJson(data) {
     throw Exception("Metoda nije implementirana!");
   }
 
- bool isValidResponse(Response response) {
-
-  if (response.statusCode < 299) {
-    return true;
-  } else if (response.statusCode == 401) {
-    throw Exception("Unauthorized");
-  } else {
-    throw Exception("Unexpected status code: ${response.statusCode}");
+  bool isValidResponse(Response response) {
+    if (response.statusCode < 299) {
+      return true;
+    } else if (response.statusCode == 401) {
+      throw Exception("Unauthorized");
+    } else {
+      throw Exception("Unexpected status code: ${response.statusCode}");
+    }
   }
-}
-
 
   Map<String, String> createHeaders() {
     String username = Authorization.username ?? "";

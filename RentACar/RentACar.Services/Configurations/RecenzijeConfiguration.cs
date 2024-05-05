@@ -14,9 +14,10 @@ namespace RentACar.Services.Configurations
         {
             base.Configure(builder);
             builder.HasKey(r => r.RecenzijaId);
-            builder.HasOne(r => r.Korisnici)
+
+            builder.HasOne(r => r.Korisnik)
                    .WithMany()
-                   .HasForeignKey(r => r.KorisniciId);
+                   .HasForeignKey(r => r.KorisnikId);
             builder.HasOne(r => r.Vozilo)
                    .WithMany(v => v.Recenzije)
                    .HasForeignKey(r => r.VoziloId);

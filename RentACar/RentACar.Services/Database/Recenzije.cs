@@ -12,18 +12,16 @@ namespace RentACar.Services.Database
     {
         public int RecenzijaId { get; set; }
 
-        public int KorisniciId { get; set; }
-        public Korisnici Korisnici { get; set; } = null!;
+        public int KorisnikId { get; set; }
+        public Korisnici Korisnik { get; set; } = null!;
 
         public int VoziloId { get; set; }
 
         public Vozila Vozilo { get; set; } = null!;
 
-        public int Ocjena { get; set; }
+        public bool IsLiked { get; set; }
 
-        public string Komentar { get; set; } = null!;
-
-        public DateTime DatumVrijeme { get; set; }
+        public string Komentar { get; set; }
 
     }
 }

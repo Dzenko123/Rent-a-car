@@ -21,5 +21,5 @@ String formatNumber(double? number) {
 
 String formatDateTime(DateTime? dateTime) {
   if (dateTime == null) return "";
-  return '${dateTime.hour}:${dateTime.minute}, ${dateTime.day}/${dateTime.month}/${dateTime.year}';
+  return '${dateTime.day}/${dateTime.month}/${dateTime.year}, ${dateTime.hour}:${dateTime.minute}';
 }

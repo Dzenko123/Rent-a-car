@@ -15,9 +15,11 @@ builder.Services.AddTransient<IKorisniciService, KorisniciService>();
 builder.Services.AddTransient<ITipVozilaService, TipVozilaService>();
 builder.Services.AddTransient<IGorivoService, GorivoService>();
 builder.Services.AddTransient<IVozilaService, VozilaService>();
+builder.Services.AddTransient<IVoziloPregledService, VoziloPregledService>();
 builder.Services.AddTransient<IKontaktService, KontaktService>();
 builder.Services.AddTransient<ICPVPService, CPVPService>();
 builder.Services.AddTransient<IPeriodService, PeriodService>();
+builder.Services.AddTransient<IRecenzijeService, RecenzijeService>();
 builder.Services.AddTransient<IRezervacijaService, RezervacijaService>();
 builder.Services.AddTransient<IService<DodatnaUsluga, BaseSearchObject>,
     BaseService<DodatnaUsluga, RentACar.Services.Database.DodatnaUsluga, BaseSearchObject>>();

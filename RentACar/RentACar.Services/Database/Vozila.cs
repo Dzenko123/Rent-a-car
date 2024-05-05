@@ -23,11 +23,10 @@
 
         public double Kilometraza { get; set; }
 
-
         public string? StateMachine { get; set; }
 
+        public virtual ICollection<VoziloPregled> VoziloPregled { get; } = new List<VoziloPregled>();
         public virtual ICollection<Recenzije> Recenzije { get; } = new List<Recenzije>();
         public virtual ICollection<CijenePoVremenskomPeriodu> CijenePoVremenskomPeriodu { get; } = new List<CijenePoVremenskomPeriodu>();
-        public virtual ICollection<Lajkovi> Lajkovi { get; set; } = new List<Lajkovi>();
     }
 }

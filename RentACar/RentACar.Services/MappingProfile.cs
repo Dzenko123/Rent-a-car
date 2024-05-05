@@ -28,10 +28,20 @@ namespace RentACar.Services
             CreateMap<Model.Requests.TipVozilaUpdateRequest, Database.TipVozila>();
             CreateMap<Model.Requests.TipVozilaDeleteRequest, Database.TipVozila>();
 
+                CreateMap<Database.VoziloPregled, VoziloPregled>();
+            CreateMap<Model.Requests.VoziloPregledInsertRequest, Database.VoziloPregled>();
+            CreateMap<Model.Requests.VoziloPregledUpdateRequest, Database.VoziloPregled>();
+            CreateMap<Model.Requests.VoziloPregledDeleteRequest, Database.VoziloPregled>();
+
             CreateMap<Database.Gorivo, Gorivo>();
             CreateMap<Model.Requests.GorivoInsertRequest, Database.Gorivo>();
             CreateMap<Model.Requests.GorivoUpdateRequest, Database.Gorivo>();
             CreateMap<Model.Requests.GorivoDeleteRequest, Database.Gorivo>();
+
+            CreateMap<Database.Recenzije, Recenzije>();
+            CreateMap<Model.Requests.RecenzijeInsertRequest, Database.Recenzije>();
+            CreateMap<Model.Requests.RecenzijeUpdateRequest, Database.Recenzije>();
+            CreateMap<Model.Requests.RecenzijeDeleteRequest, Database.Recenzije>();
 
             CreateMap<Database.Kontakt, Kontakt>();
             CreateMap<Model.Requests.KontaktInsertRequest, Database.Kontakt>();

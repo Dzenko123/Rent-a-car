@@ -23,6 +23,7 @@ class CijenePoVremenskomPerioduScreen extends StatefulWidget {
 
 class _CijenePoVremenskomPerioduScreenState
     extends State<CijenePoVremenskomPerioduScreen> {
+      
   SearchResult<CijenePoVremenskomPeriodu>? cijenePoVremenskomPerioduResult;
   SearchResult<Period>? periodResult;
   SearchResult<Vozilo>? vozilaResult;

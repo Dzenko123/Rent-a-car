@@ -26,7 +26,26 @@ namespace RentACar.Services
             entity.LozinkaSalt = GenerateSalt();
             entity.LozinkaHash = GenerateHash(entity.LozinkaSalt, insert.Password);
         }
-  
+
+        // Dodajte ovu metodu u KorisniciService
+        public async Task<int?> GetLoged(string username, string password)
+        {
+            var entity = await _context.Korisnicis.FirstOrDefaultAsync(x => x.KorisnickoIme == username);
+
+            if (entity == null)
+            {
+                return null; // Korisnik nije pronađen
+            }
+
+            var hash = GenerateHash(entity.LozinkaSalt, password);
+
+            if (hash != entity.LozinkaHash)
+            {
+                return null; // Pogrešna lozinka
+            }
+
+            return entity.KorisnikId;
+        }
 
         public static string GenerateSalt()
         {

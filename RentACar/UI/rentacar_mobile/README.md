@@ -1,4 +1,4 @@
-# rentacar_mobile
+# rentacar_admin
 
 A new Flutter project.
 
