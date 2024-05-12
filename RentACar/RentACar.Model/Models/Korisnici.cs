@@ -12,9 +12,11 @@
 
         public string? Telefon { get; set; }
 
-        public string KorisnickoIme { get; set; } = null!;
+        public string KorisnickoIme { get; set; } = null!; 
+        public string? LozinkaHash { get; set; }
 
-        public bool? Status { get; set; }
+        public string? LozinkaSalt { get; set; }
+
 
         public virtual ICollection<KorisniciUloge> KorisniciUloge { get; } = new List<KorisniciUloge>();
 

@@ -7,10 +7,8 @@ class Recenzije {
   int? korisnikId;
   int? voziloId;
   bool? isLiked;
-  String? komentar;
 
-  Recenzije(this.recenzijaId, this.korisnikId, this.voziloId, this.isLiked,
-      this.komentar);
+  Recenzije({this.recenzijaId, required this.korisnikId, required this.voziloId, required this.isLiked});
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.

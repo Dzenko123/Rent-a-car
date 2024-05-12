@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RentACar.Services.Database
+﻿namespace RentACar.Services.Database
 {
     public class Korisnici
     {
@@ -26,7 +18,6 @@ namespace RentACar.Services.Database
 
         public string LozinkaSalt { get; set; } = null!;
 
-        public bool? Status { get; set; }
 
         public virtual ICollection<KorisniciUloge> KorisniciUloge { get; } = new List<KorisniciUloge>();
 

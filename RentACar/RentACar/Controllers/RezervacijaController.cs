@@ -2,7 +2,7 @@
 using RentACar.Controllers;
 using RentACar.Model.Models;
 using RentACar.Model.SearchObject;
-using RentACar.Services;
+using RentACar.Services.IServices;
 
 namespace RentACar.Controllers
 {

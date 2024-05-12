@@ -37,4 +37,75 @@ class KorisniciProvider extends BaseProvider<Korisnici> {
       throw Exception("Unexpected error occurred while logging in");
     }
   }
+
+  Future<Korisnici> getById(int id) async {
+    var url = "$_baseUrl$_endpoint/$id";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+
+    var response = await http.get(uri, headers: headers);
+
+    if (isValidResponse(response)) {
+      var data = jsonDecode(response.body);
+      return fromJson(data);
+    } else {
+      throw Exception("Unexpected error occurred while fetching user data");
+    }
+  }
+
+  Future<void> updatePasswordAndUsername(int id, String oldPassword,
+      String korisnickoIme, String password, String passwordPotvrda) async {
+    var url =
+        "$_baseUrl$_endpoint/UpdatePasswordAndUsername?id=$id&oldPassword=$oldPassword";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+    var requestBody = jsonEncode({
+      'korisnickoIme': korisnickoIme,
+      'password': password,
+      'passwordPotvrda': passwordPotvrda
+    });
+
+    var response = await http.put(uri, headers: headers, body: requestBody);
+
+    if (!isValidResponse(response)) {
+      throw Exception(
+          "Unexpected error occurred while updating password and username");
+    }
+  }
+
+  Future<void> registerUser({
+    required String ime,
+    required String prezime,
+    required String email,
+    required String telefon,
+    required String korisnickoIme,
+    required String password,
+    required String passwordPotvrda,
+  }) async {
+    // Pripremi podatke o novom korisniku koji ćemo poslati na backend
+    var newUser = {
+      'Ime': ime,
+      'Prezime': prezime,
+      'Email': email,
+      'Telefon': telefon,
+      'KorisnickoIme': korisnickoIme,
+      'Password': password,
+      'PasswordPotvrda': passwordPotvrda,
+    };
+
+    var url = "$_baseUrl$_endpoint";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+    var requestBody = jsonEncode(newUser);
+
+    var response = await http.post(uri, headers: headers, body: requestBody);
+
+    if (isValidResponse(response)) {
+      // Uspješno dodan korisnik
+      print('Korisnik uspješno dodan!');
+    } else {
+      // Neuspješan zahtjev, ispišimo poruku o grešci
+      print('Greška prilikom dodavanja korisnika: ${response.reasonPhrase}');
+    }
+  }
 }

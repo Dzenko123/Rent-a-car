@@ -1,21 +1,31 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rentacar_admin/models/gorivo.dart';
+import 'package:rentacar_admin/models/komentari.dart';
 import 'package:rentacar_admin/models/korisnici.dart';
+import 'package:rentacar_admin/models/recenzije.dart';
 import 'package:rentacar_admin/models/search_result.dart';
 import 'package:rentacar_admin/models/tip_vozila.dart';
 import 'package:rentacar_admin/models/vozila.dart';
 import 'package:rentacar_admin/providers/gorivo_provider.dart';
+import 'package:rentacar_admin/providers/komentari_provider.dart';
+import 'package:rentacar_admin/providers/korisnici_provider.dart';
+import 'package:rentacar_admin/providers/recenzije_provider.dart';
 import 'package:rentacar_admin/providers/tip_vozila_provider.dart';
 import 'package:rentacar_admin/providers/vozila_provider.dart';
+import 'package:rentacar_admin/screens/komentari_screen.dart';
 import 'package:rentacar_admin/utils/util.dart';
 import 'package:rentacar_admin/widgets/master_screen.dart';
 
 class RecenzijeScreen extends StatefulWidget {
   final Korisnici? korisnik;
   Vozilo? vozilo;
+  Komentari? komentar;
+  Recenzije? recenzije;
 
-  RecenzijeScreen({super.key, this.korisnik, this.vozilo});
+  RecenzijeScreen(
+      {super.key, this.korisnik, this.vozilo, this.komentar, this.recenzije});
 
   @override
   State<RecenzijeScreen> createState() => _RecenzijeScreenState();
@@ -27,11 +37,20 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
   late VozilaProvider _vozilaProvider;
   late TipVozilaProvider _tipVozilaProvider;
   late GorivoProvider _gorivoProvider;
+  late KomentariProvider _komentariProvider;
+  late RecenzijeProvider _recenzijeProvider;
+  late KorisniciProvider _korisniciProvider;
 
+  SearchResult<Korisnici>? korisniciResult;
   SearchResult<Vozilo>? result;
   SearchResult<TipVozila>? tipVozilaResult;
   SearchResult<Gorivo>? gorivoResult;
+  SearchResult<Komentari>? komentariResult;
+  SearchResult<Recenzije>? recenzijeResult;
+
   final TextEditingController _ftsController = TextEditingController();
+  int? ulogovaniKorisnikId;
+  late bool isLiked;
 
   @override
   void initState() {
@@ -40,23 +59,47 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
     _initialValue = {
       'tipVozilaId': widget.vozilo?.tipVozilaId.toString(),
     };
+    isLiked = widget.recenzije?.isLiked ?? false;
     _tipVozilaProvider = context.read<TipVozilaProvider>();
     _vozilaProvider = context.read<VozilaProvider>();
     _gorivoProvider = context.read<GorivoProvider>();
+    _komentariProvider = context.read<KomentariProvider>();
+    _recenzijeProvider = context.read<RecenzijeProvider>();
+    _korisniciProvider = context.read<KorisniciProvider>();
+    getUlogovaniKorisnikId();
 
     initForm();
   }
 
+  Future<void> getUlogovaniKorisnikId() async {
+    try {
+      var ulogovaniKorisnik = await _korisniciProvider.getLoged(
+        Authorization.username ?? '',
+        Authorization.password ?? '',
+      );
+      setState(() {
+        ulogovaniKorisnikId = ulogovaniKorisnik;
+        print("ID je...:$ulogovaniKorisnikId");
+      });
+    } catch (e) {
+      print('Greška prilikom dobijanja ID-a ulogovanog korisnika: $e');
+    }
+  }
+
   Future<void> initForm() async {
+    korisniciResult = await _korisniciProvider.get();
+
     tipVozilaResult = await _tipVozilaProvider.get();
     gorivoResult = await _gorivoProvider.get();
+    komentariResult = await _komentariProvider.get();
+    recenzijeResult = await _recenzijeProvider.get();
+
     var data = await _vozilaProvider.get(filter: {'fts': _ftsController.text});
 
     setState(() {
       result = data;
       isLoading = false;
     });
-    print(tipVozilaResult);
   }
 
   @override
@@ -236,62 +279,337 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 5,
+                                  height: 10,
+                                ),
+                                Flexible(
+                                  flex: 1,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 15.0),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 18,
+                                          height: 18,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Color.fromARGB(
+                                                255, 5, 102, 182),
+                                          ),
+                                          child: Icon(
+                                            Icons.thumb_up_alt_rounded,
+                                            color: Colors.white,
+                                            size: 12,
+                                          ),
+                                        ),
+                                        SizedBox(width: 5),
+                                        if (recenzijeResult?.result.any(
+                                                (recenzija) =>
+                                                    recenzija.voziloId ==
+                                                        e.voziloId &&
+                                                    recenzija.korisnikId ==
+                                                        ulogovaniKorisnikId &&
+                                                    recenzija.isLiked ==
+                                                        true) ??
+                                            false)
+                                          if (recenzijeResult?.result
+                                                      .where((recenzija) =>
+                                                          recenzija.voziloId ==
+                                                              e.voziloId &&
+                                                          recenzija.isLiked ==
+                                                              true)
+                                                      .length ==
+                                                  1 ??
+                                              false)
+                                            Text(
+                                              'Sviđa vam se',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontStyle: FontStyle.italic,
+                                                fontSize: 14,
+                                              ),
+                                            )
+                                          else
+                                            Text(
+                                              'Vi i ${recenzijeResult!.result.where((recenzija) => recenzija.voziloId == e.voziloId && recenzija.isLiked == true).length - 1}',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontStyle: FontStyle.italic,
+                                                fontSize: 14,
+                                              ),
+                                            )
+                                        else
+                                          Text(
+                                            '${recenzijeResult?.result.where((recenzija) => recenzija.voziloId == e.voziloId && recenzija.isLiked == true).length ?? 0}',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontStyle: FontStyle.italic,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        SizedBox(width: 10),
+                                        Container(
+                                          width: 18,
+                                          height: 18,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color:
+                                                Color.fromARGB(255, 182, 5, 5),
+                                          ),
+                                          child: Icon(
+                                            Icons.thumb_down_alt_rounded,
+                                            color: Colors.white,
+                                            size: 12,
+                                          ),
+                                        ),
+                                        SizedBox(width: 5),
+                                        if (recenzijeResult?.result.any(
+                                                (recenzija) =>
+                                                    recenzija.voziloId ==
+                                                        e.voziloId &&
+                                                    recenzija.korisnikId ==
+                                                        ulogovaniKorisnikId &&
+                                                    recenzija.isLiked ==
+                                                        false) ??
+                                            false)
+                                          if (recenzijeResult?.result
+                                                      .where((recenzija) =>
+                                                          recenzija.voziloId ==
+                                                              e.voziloId &&
+                                                          recenzija.isLiked ==
+                                                              false)
+                                                      .length ==
+                                                  1 ??
+                                              false)
+                                            Text(
+                                              'Ne sviđa vam se',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontStyle: FontStyle.italic,
+                                                fontSize: 14,
+                                              ),
+                                            )
+                                          else
+                                            Text(
+                                              'Vi i ${recenzijeResult!.result.where((recenzija) => recenzija.voziloId == e.voziloId && recenzija.isLiked == false).length - 1}',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontStyle: FontStyle.italic,
+                                                fontSize: 14,
+                                              ),
+                                            )
+                                        else
+                                          Text(
+                                            '${recenzijeResult?.result.where((recenzija) => recenzija.voziloId == e.voziloId && recenzija.isLiked == false).length ?? 0}',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontStyle: FontStyle.italic,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        SizedBox(width: 10),
+                                        Container(
+                                          width: 18,
+                                          height: 18,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.grey,
+                                          ),
+                                          child: Icon(
+                                            Icons.message_rounded,
+                                            color: Colors.white,
+                                            size: 12,
+                                          ),
+                                        ),
+                                        SizedBox(width: 5),
+                                        Text(
+                                          '${komentariResult?.result.where((komentar) => komentar.voziloId == e.voziloId).length ?? 0} komentar/a',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontStyle: FontStyle.italic,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      right: 8.0, left: 8.0),
+                                  child: Divider(
+                                    color: Colors.white,
+                                    thickness: 1.2,
+                                  ),
                                 ),
                                 Flexible(
                                   flex: 2,
                                   child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
+                                    padding: const EdgeInsets.all(6.0),
                                     child: InkWell(
-                                      onTap: () {
-                                        // Logika za lajk/dislajk/otvaranje ekrana za komentar
-                                      },
                                       child: Container(
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: Colors
-                                              .transparent, // Dodajte transparentnu boju pozadine
+                                              BorderRadius.circular(5),
+                                          color: Color.fromARGB(
+                                              200, 255, 255, 255),
                                         ),
                                         child: Row(
                                           children: [
-                                            IconButton(
+                                            TextButton.icon(
                                               onPressed: () {
-                                                // Logika za lajk
+                                                likeButtonPressed(e.voziloId!);
                                               },
                                               icon: Icon(
-                                                  Icons.thumb_up_alt_outlined),
-                                              color: Color.fromARGB(
-                                                  255, 14, 71, 168),
-                                            ),
-                                            Text('Like',
+                                                recenzijeResult!.result.any(
+                                                        (recenzija) =>
+                                                            recenzija
+                                                                    .voziloId ==
+                                                                e.voziloId &&
+                                                            recenzija
+                                                                    .korisnikId ==
+                                                                ulogovaniKorisnikId &&
+                                                            recenzija.isLiked ==
+                                                                true)
+                                                    ? Icons.thumb_up_alt_rounded
+                                                    : Icons
+                                                        .thumb_up_alt_outlined,
+                                                color: recenzijeResult!.result
+                                                        .any((recenzija) =>
+                                                            recenzija
+                                                                    .voziloId ==
+                                                                e.voziloId &&
+                                                            recenzija
+                                                                    .korisnikId ==
+                                                                ulogovaniKorisnikId &&
+                                                            recenzija.isLiked ==
+                                                                true)
+                                                    ? Color.fromARGB(
+                                                        255, 5, 102, 182)
+                                                    : Color.fromARGB(
+                                                        210, 0, 0, 0),
+                                              ),
+                                              label: Text(
+                                                'Like',
                                                 style: TextStyle(
-                                                    color: Colors.white)),
-                                            SizedBox(width: 10),
-                                            IconButton(
+                                                  color: recenzijeResult!
+                                                          .result
+                                                          .any((recenzija) =>
+                                                              recenzija
+                                                                      .voziloId ==
+                                                                  e.voziloId &&
+                                                              recenzija
+                                                                      .korisnikId ==
+                                                                  ulogovaniKorisnikId &&
+                                                              recenzija
+                                                                      .isLiked ==
+                                                                  true)
+                                                      ? Color.fromARGB(
+                                                          255, 5, 102, 182)
+                                                      : Color.fromARGB(
+                                                          210, 0, 0, 0),
+                                                ),
+                                              ),
+                                              style: ButtonStyle(
+                                                backgroundColor:
+                                                    MaterialStateProperty.all(
+                                                  Colors.transparent,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(width: 5),
+                                            TextButton.icon(
                                               onPressed: () {
-                                                // Logika za dislajk
+                                                dislikeButtonPressed(
+                                                    e.voziloId!);
                                               },
                                               icon: Icon(
-                                                  Icons.thumb_down_outlined),
-                                              color: Color.fromARGB(
-                                                  210, 179, 12, 0),
-                                            ),
-                                            Text('Dislike',
+                                                recenzijeResult!
+                                                        .result
+                                                        .any((recenzija) =>
+                                                            recenzija
+                                                                    .voziloId ==
+                                                                e.voziloId &&
+                                                            recenzija
+                                                                    .korisnikId ==
+                                                                ulogovaniKorisnikId &&
+                                                            recenzija.isLiked ==
+                                                                false)
+                                                    ? Icons
+                                                        .thumb_down_alt_rounded
+                                                    : Icons.thumb_down_outlined,
+                                                color: recenzijeResult!.result
+                                                        .any((recenzija) =>
+                                                            recenzija
+                                                                    .voziloId ==
+                                                                e.voziloId &&
+                                                            recenzija
+                                                                    .korisnikId ==
+                                                                ulogovaniKorisnikId &&
+                                                            recenzija.isLiked ==
+                                                                false)
+                                                    ? Color.fromARGB(
+                                                        255, 182, 5, 5)
+                                                    : Color.fromARGB(
+                                                        210, 0, 0, 0),
+                                              ),
+                                              label: Text(
+                                                'Dislike',
                                                 style: TextStyle(
-                                                    color: Colors.white)),
-                                            SizedBox(width: 10),
-                                            IconButton(
+                                                  color: recenzijeResult!.result
+                                                          .any((recenzija) =>
+                                                              recenzija
+                                                                      .voziloId ==
+                                                                  e.voziloId &&
+                                                              recenzija
+                                                                      .korisnikId ==
+                                                                  ulogovaniKorisnikId &&
+                                                              recenzija
+                                                                      .isLiked ==
+                                                                  false)
+                                                      ? Color.fromARGB(
+                                                          255, 182, 5, 5)
+                                                      : Color.fromARGB(
+                                                          210, 0, 0, 0),
+                                                ),
+                                              ),
+                                              style: ButtonStyle(
+                                                backgroundColor:
+                                                    MaterialStateProperty.all(
+                                                  Colors.transparent,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(width: 5),
+                                            TextButton.icon(
                                               onPressed: () {
-                                                // Logika za otvaranje ekrana za komentar
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        KomentariScreen(
+                                                            vozilo: e),
+                                                  ),
+                                                );
                                               },
-                                              icon:
-                                                  Icon(Icons.message_outlined),
-                                              color: Colors.white,
-                                            ),
-                                            Text('Komentar',
+                                              icon: Icon(
+                                                Icons.messenger_outline_rounded,
+                                                color: Color.fromARGB(
+                                                    210, 0, 0, 0),
+                                              ),
+                                              label: Text(
+                                                'Komentar',
                                                 style: TextStyle(
-                                                    color: Colors.white)),
+                                                  color: Color.fromARGB(
+                                                      210, 0, 0, 0),
+                                                ),
+                                              ),
+                                              style: ButtonStyle(
+                                                backgroundColor:
+                                                    MaterialStateProperty.all(
+                                                  Colors.transparent,
+                                                ),
+                                              ),
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -308,5 +626,82 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> likeOrDislike(int voziloId, bool isLiked) async {
+    try {
+      if (ulogovaniKorisnikId != null) {
+        showLoadingDialog(context);
+
+        var existingRecenzija = recenzijeResult?.result.firstWhereOrNull(
+          (recenzija) =>
+              recenzija.voziloId == voziloId &&
+              recenzija.korisnikId == ulogovaniKorisnikId,
+        );
+
+        if (existingRecenzija != null) {
+          if (existingRecenzija.isLiked == isLiked) {
+            await _recenzijeProvider.delete(existingRecenzija.recenzijaId!);
+          } else {
+            existingRecenzija.isLiked = isLiked;
+            await _recenzijeProvider.update(
+              existingRecenzija.recenzijaId!,
+              existingRecenzija,
+            );
+          }
+        } else {
+          var novaRecenzija = Recenzije(
+            korisnikId: ulogovaniKorisnikId!,
+            voziloId: voziloId,
+            isLiked: isLiked,
+          );
+          await _recenzijeProvider.insert(novaRecenzija);
+        }
+
+        await initForm();
+
+        hideLoadingDialog(context);
+      }
+    } catch (e) {
+      print('Greška prilikom lajkovanja/dislajkovanja recenzije: $e');
+      hideLoadingDialog(context);
+    }
+  }
+
+  void likeButtonPressed(int voziloId) async {
+    await likeOrDislike(voziloId, true);
+  }
+
+  void dislikeButtonPressed(int voziloId) async {
+    await likeOrDislike(voziloId, false);
+  }
+
+  late OverlayEntry _overlayEntry;
+
+  void showLoadingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        content: Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16.0),
+              Text(
+                'Molimo pričekajte...',
+                style: TextStyle(fontSize: 16.0),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void hideLoadingDialog(BuildContext context) {
+    Navigator.of(context).pop();
   }
 }

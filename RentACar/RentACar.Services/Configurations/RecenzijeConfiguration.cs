@@ -18,6 +18,7 @@ namespace RentACar.Services.Configurations
             builder.HasOne(r => r.Korisnik)
                    .WithMany()
                    .HasForeignKey(r => r.KorisnikId);
+
             builder.HasOne(r => r.Vozilo)
                    .WithMany(v => v.Recenzije)
                    .HasForeignKey(r => r.VoziloId);

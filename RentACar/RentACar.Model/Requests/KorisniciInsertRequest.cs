@@ -19,7 +19,6 @@ namespace RentACar.Model.Requests
 
         public string KorisnickoIme { get; set; } = null!;
 
-        public bool? Status { get; set; }
         [Compare("PasswordPotvrda", ErrorMessage =" Passwords do not match")]
         public string Password { get; set; }
 

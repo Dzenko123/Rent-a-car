@@ -81,16 +81,6 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               },
             ),
             ListTile(
-              title: const Text("Kalendar rezervacija"),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => VoziloPregledScreen(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
               title: const Text("Profil"),
               onTap: () {
                 Navigator.of(context).push(

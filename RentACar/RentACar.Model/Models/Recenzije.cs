@@ -16,7 +16,6 @@ namespace RentACar.Model.Models
 
         public bool IsLiked { get; set; }
 
-        public string Komentar { get; set; }
 
     }
 }

@@ -21,7 +21,6 @@ namespace RentACar.Services.Database
 
         public bool IsLiked { get; set; }
 
-        public string Komentar { get; set; }
 
     }
 }

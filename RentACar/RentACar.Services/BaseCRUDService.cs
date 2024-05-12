@@ -1,12 +1,5 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using RentACar.Model.SearchObject;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace RentACar.Services
 {
@@ -20,7 +13,10 @@ namespace RentACar.Services
         {
 
         }
+        public virtual async Task BeforeUpdate(TDb entity, TUpdate update)
+        {
 
+        }
         public virtual async Task<T> Insert(TInsert insert)
         {
             var set = _context.Set<TDb>();
@@ -37,7 +33,8 @@ namespace RentACar.Services
             var set = _context.Set<TDb>();
             var entity = await set.FindAsync(id);
 
-            _mapper.Map(update, entity);
+            _mapper.Map(update, entity); await BeforeUpdate(entity, update);
+
             await _context.SaveChangesAsync();
             return _mapper.Map<T>(entity);
         }
@@ -67,7 +64,20 @@ namespace RentACar.Services
                 throw;
             }
         }
+        public virtual async Task UpdatePasswordAndUsername(int id, TUpdate update)
+        {
+            var entity = await _context.Set<TDb>().FindAsync(id);
 
+            if (entity == null)
+            {
+                throw new Exception($"{typeof(T).Name} with id {id} not found");
+            }
+
+            _mapper.Map(update, entity);
+
+            _context.Update(entity);
+            await _context.SaveChangesAsync();
+        }
 
     }
 }

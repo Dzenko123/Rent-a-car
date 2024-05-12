@@ -7,11 +7,10 @@ part of 'recenzije.dart';
 // **************************************************************************
 
 Recenzije _$RecenzijeFromJson(Map<String, dynamic> json) => Recenzije(
-      json['recenzijaId'] as int?,
-      json['korisnikId'] as int?,
-      json['voziloId'] as int?,
-      json['isLiked'] as bool?,
-      json['komentar'] as String?,
+      recenzijaId: json['recenzijaId'] as int?,
+      korisnikId: json['korisnikId'] as int?,
+      voziloId: json['voziloId'] as int?,
+      isLiked: json['isLiked'] as bool?,
     );
 
 Map<String, dynamic> _$RecenzijeToJson(Recenzije instance) => <String, dynamic>{
@@ -19,5 +18,4 @@ Map<String, dynamic> _$RecenzijeToJson(Recenzije instance) => <String, dynamic>{
       'korisnikId': instance.korisnikId,
       'voziloId': instance.voziloId,
       'isLiked': instance.isLiked,
-      'komentar': instance.komentar,
     };

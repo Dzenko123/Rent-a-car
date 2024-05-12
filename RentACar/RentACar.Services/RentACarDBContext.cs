@@ -12,12 +12,11 @@ namespace RentACar.Services
         public DbSet<Grad> Grad { get; set; }
         public DbSet<Kontakt> Kontakt { get; set; }
         public DbSet<KorisniciUloge> KorisniciUloge { get; set; }
-        public DbSet<Racun> Racun { get; set; }
         public DbSet<Recenzije> Recenzije { get; set;}
+        public DbSet<Komentari> Komentari { get; set;}
         public DbSet<Rezervacija> Rezervacija { get; set; }
         public DbSet<RezervacijaDodatnaUsluga> RezervacijaDodatnaUsluga { get; set; }
         public DbSet<TipVozila> TipVozila { get; set; }
-        public DbSet<TipPlacanja> TipPlacanja { get; set; }
         public DbSet<Uloge> Uloge { get; set; }
         public DbSet<Vozila> Vozila { get; set; }
         public DbSet<Period> Period { get; set; }

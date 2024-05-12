@@ -43,6 +43,13 @@ namespace RentACar.Services
             CreateMap<Model.Requests.RecenzijeUpdateRequest, Database.Recenzije>();
             CreateMap<Model.Requests.RecenzijeDeleteRequest, Database.Recenzije>();
 
+            CreateMap<Database.Komentari, Komentari>();
+            CreateMap<Model.Requests.KomentariInsertRequest, Database.Komentari>();
+            CreateMap<Model.Requests.KomentariUpdateRequest, Database.Komentari>();
+            CreateMap<Model.Requests.KomentariDeleteRequest, Database.Komentari>();
+    //        CreateMap<Database.Komentari, Komentari>()
+    //.ForMember(dest => dest.VoziloId, opt => opt.MapFrom(src => Convert.ToInt32(src.VoziloId)));
+
             CreateMap<Database.Kontakt, Kontakt>();
             CreateMap<Model.Requests.KontaktInsertRequest, Database.Kontakt>();
             CreateMap<Model.Requests.KontaktUpdateRequest, Database.Kontakt>();

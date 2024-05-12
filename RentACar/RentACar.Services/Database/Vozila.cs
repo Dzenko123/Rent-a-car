@@ -28,5 +28,7 @@
         public virtual ICollection<VoziloPregled> VoziloPregled { get; } = new List<VoziloPregled>();
         public virtual ICollection<Recenzije> Recenzije { get; } = new List<Recenzije>();
         public virtual ICollection<CijenePoVremenskomPeriodu> CijenePoVremenskomPeriodu { get; } = new List<CijenePoVremenskomPeriodu>();
+        public virtual ICollection<Komentari> Komentari { get; } = new List<Komentari>();
+
     }
 }

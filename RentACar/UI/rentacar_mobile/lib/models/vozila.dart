@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:rentacar_admin/models/gorivo.dart';
+import 'package:rentacar_admin/models/komentari.dart';
 import 'package:rentacar_admin/models/tip_vozila.dart';
 
 /// This allows the `User` class to access private members in
@@ -21,19 +22,23 @@ class Vozilo {
   String? marka;
   TipVozila? tipVozila;
   Gorivo? gorivo;
+  List<Komentari>? komentari;
+
   Vozilo(
-      this.voziloId,
-      this.godinaProizvodnje,
-      this.cijena,
-      this.tipVozilaId,
-      this.gorivoId,
-      this.slika,
-      this.kilometraza,
-      this.stateMachine,
-      this.gorivo,
-      this.marka,
-      this.model,
-      this.tipVozila);
+    this.voziloId,
+    this.godinaProizvodnje,
+    this.cijena,
+    this.tipVozilaId,
+    this.gorivoId,
+    this.slika,
+    this.kilometraza,
+    this.stateMachine,
+    this.gorivo,
+    this.marka,
+    this.model,
+    this.tipVozila,
+    this.komentari,
+  );
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.

@@ -1,14 +1,19 @@
 import 'dart:io';
-
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rentacar_admin/providers/gorivo_provider.dart';
+import 'package:rentacar_admin/providers/komentari_provider.dart';
 import 'package:rentacar_admin/providers/kontakt_provider.dart';
 import 'package:rentacar_admin/providers/korisnici_provider.dart';
+import 'package:rentacar_admin/providers/recenzije_provider.dart';
+import 'package:rentacar_admin/providers/rezervacija_provider.dart';
 import 'package:rentacar_admin/providers/tip_vozila_provider.dart';
 import 'package:rentacar_admin/providers/vozila_provider.dart';
+import 'package:rentacar_admin/providers/vozilo_pregled_provider.dart';
 import 'package:rentacar_admin/utils/util.dart';
 import './screens/vozila_list_screen.dart';
+import 'package:http/http.dart' as http;
 
 void main() async {
   HttpOverrides.global = new MyHttpOverrides();
@@ -19,11 +24,15 @@ void main() async {
     ChangeNotifierProvider(create: (_) => GorivoProvider()),
     ChangeNotifierProvider(create: (_) => KorisniciProvider()),
     ChangeNotifierProvider(create: (_) => KontaktProvider()),
+    ChangeNotifierProvider(create: (_) => KomentariProvider()),
+    ChangeNotifierProvider(create: (_) => RecenzijeProvider()),
+    ChangeNotifierProvider(create: (_) => VoziloPregledProvider()),
+    ChangeNotifierProvider(create: (_) => RezervacijaProvider()),
   ], child: const MyMaterialApp()));
 }
 
 class MyMaterialApp extends StatelessWidget {
-  const MyMaterialApp({super.key});
+  const MyMaterialApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -46,34 +55,59 @@ class MyMaterialApp extends StatelessWidget {
 }
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _imeController = TextEditingController();
+  final TextEditingController _prezimeController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _telefonController = TextEditingController();
+  final TextEditingController _korisnickoImeController =
+      TextEditingController();
+  final TextEditingController _noviPasswordController = TextEditingController();
+  final TextEditingController _passwordPotvrdaController =
+      TextEditingController();
 
-  late VozilaProvider _vozilaProvider;
   late KorisniciProvider _korisniciProvider;
 
+  late VozilaProvider _vozilaProvider;
+  late AnimationController _animationController;
+
   bool _isPasswordObscured = true;
+  bool _isSignUpMode = false;
+  final ScrollController _scrollController = ScrollController();
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    );
+
+    _animationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _animationController.reset();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     _vozilaProvider = context.read<VozilaProvider>();
     _korisniciProvider = context.read<KorisniciProvider>();
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(
-      //     "Welcome to login page.",
-      //     style: TextStyle(
-      //         fontWeight: FontWeight.bold, color: Colors.white, fontSize: 13),
-      //   ),
-      //   backgroundColor: Color.fromARGB(255, 23, 22, 22),
-      // ),
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
@@ -83,150 +117,594 @@ class _LoginPageState extends State<LoginPage> {
         ),
         child: Center(
           child: SingleChildScrollView(
+            controller: _scrollController,
+            physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  constraints:
-                      const BoxConstraints(maxHeight: 280, maxWidth: 320),
-                  child: Card(
-                    elevation: 5,
-                    color: Colors.transparent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                      side: const BorderSide(
-                        color: Colors.white,
-                        width: 1.5,
-                      ),
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            Color(0xFF000000),
-                            Color(0xFF333333),
-                            Color(0xFF555555),
-                          ],
-                          begin: Alignment.topRight,
-                          end: Alignment.bottomLeft,
-                        ),
+                if (!_isSignUpMode) ...[
+                  Container(
+                    constraints:
+                        const BoxConstraints(maxHeight: 280, maxWidth: 320),
+                    child: Card(
+                      elevation: 5,
+                      color: Colors.transparent,
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20.0),
+                        side: const BorderSide(
+                          color: Colors.white,
+                          width: 1.5,
+                        ),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(25.0),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              TextField(
-                                cursorColor: Colors.white,
-                                decoration: const InputDecoration(
-                                  labelText: "Username",
-                                  prefixIcon: Icon(
-                                    Icons.email,
-                                    color: Colors.white,
-                                  ),
-                                  labelStyle: TextStyle(color: Colors.white),
-                                  contentPadding:
-                                      EdgeInsets.symmetric(vertical: 5),
-                                ),
-                                controller: _usernameController,
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                              const SizedBox(
-                                height: 8,
-                              ),
-                              TextField(
-                                cursorColor: Colors.white,
-                                decoration: InputDecoration(
-                                  labelText: "Password",
-                                  prefixIcon: const Icon(
-                                    Icons.password,
-                                    color: Colors.white,
-                                  ),
-                                  labelStyle:
-                                      const TextStyle(color: Colors.white),
-                                  contentPadding:
-                                      const EdgeInsets.symmetric(vertical: 5),
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      _isPasswordObscured
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFF000000),
+                              Color(0xFF333333),
+                              Color(0xFF555555),
+                            ],
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                          ),
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(25.0),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                TextField(
+                                  cursorColor: Colors.white,
+                                  decoration: const InputDecoration(
+                                    labelText: "Username",
+                                    prefixIcon: Icon(
+                                      Icons.email,
                                       color: Colors.white,
                                     ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _isPasswordObscured =
-                                            !_isPasswordObscured;
-                                      });
-                                    },
+                                    labelStyle: TextStyle(color: Colors.white),
+                                    contentPadding:
+                                        EdgeInsets.symmetric(vertical: 5),
+                                  ),
+                                  controller: _usernameController,
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                                TextField(
+                                  cursorColor: Colors.white,
+                                  decoration: InputDecoration(
+                                    labelText: "Password",
+                                    prefixIcon: const Icon(
+                                      Icons.password,
+                                      color: Colors.white,
+                                    ),
+                                    labelStyle:
+                                        const TextStyle(color: Colors.white),
+                                    contentPadding:
+                                        const EdgeInsets.symmetric(vertical: 5),
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        _isPasswordObscured
+                                            ? Icons.visibility
+                                            : Icons.visibility_off,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _isPasswordObscured =
+                                              !_isPasswordObscured;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  controller: _passwordController,
+                                  style: const TextStyle(color: Colors.white),
+                                  obscureText: _isPasswordObscured,
+                                ),
+                                const SizedBox(
+                                  height: 40,
+                                ),
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    var username = _usernameController.text;
+                                    var password = _passwordController.text;
+                                    Authorization.username = username;
+                                    Authorization.password = password;
+
+                                    try {
+                                      var korisnikId = await _korisniciProvider
+                                          .getLoged(username, password);
+
+                                      if (korisnikId != null) {
+                                        print("Korisnik ID: $korisnikId");
+                                      }
+                                      await _vozilaProvider.get();
+
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              VozilaListScreen(),
+                                        ),
+                                      );
+                                    } on Exception catch (e) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) =>
+                                            AlertDialog(
+                                          title: const Text("Error"),
+                                          content: Text(e.toString()),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: const Text("OK"),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  child: const Text(
+                                    "Login",
+                                    style: TextStyle(color: Colors.black),
                                   ),
                                 ),
-                                controller: _passwordController,
-                                style: const TextStyle(color: Colors.white),
-                                obscureText: _isPasswordObscured,
-                              ),
-                              const SizedBox(
-                                height: 40,
-                              ),
-                              ElevatedButton(
-                                onPressed: () async {
-                                  var username = _usernameController.text;
-                                  var password = _passwordController.text;
-                                  Authorization.username = username;
-                                  Authorization.password = password;
-
-                                  try {
-                                    var korisnikId = await _korisniciProvider
-                                        .getLoged(username, password);
-
-                                    if (korisnikId != null) {
-                                      print("Korisnik ID: $korisnikId");
-                                    }
-                                    await _vozilaProvider.get();
-
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            VozilaListScreen(),
-                                      ),
-                                    );
-                                  } on Exception catch (e) {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) =>
-                                          AlertDialog(
-                                        title: const Text("Error"),
-                                        content: Text(e.toString()),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context),
-                                            child: const Text("OK"),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }
-                                },
-                                child: const Text(
-                                  "Login",
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                              )
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
+                ] else ...[
+                  Container(
+                    constraints:
+                        const BoxConstraints(maxHeight: 350, maxWidth: 320),
+                    child: Card(
+                      elevation: 5,
+                      color: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                        side: const BorderSide(
+                          color: Colors.white,
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFF000000),
+                              Color(0xFF333333),
+                              Color(0xFF555555),
+                            ],
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                          ),
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child: ScrollbarTheme(
+                          data: ScrollbarThemeData(
+                            thumbColor:
+                                MaterialStateProperty.all<Color>(Colors.white),
+                          ),
+                          child: Scrollbar(
+                            controller: _scrollController,
+                            thumbVisibility: true,
+                            trackVisibility: true,
+                            thickness: 9,
+                            radius: const Radius.circular(50),
+                            interactive: true,
+                            child: Padding(
+                              padding: const EdgeInsets.all(25.0),
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children: [
+                                    TextFormField(
+                                      cursorColor: Colors.white,
+                                      decoration: InputDecoration(
+                                          labelText: "Ime",
+                                          prefixIcon: Icon(
+                                            Icons.person,
+                                            color: Colors.white,
+                                          ),
+                                          labelStyle:
+                                              TextStyle(color: Colors.white),
+                                          contentPadding:
+                                              EdgeInsets.symmetric(vertical: 5),
+                                          errorText: _imeController.text.isEmpty
+                                              ? 'Polje ne smije biti prazno'
+                                              : null,
+                                          errorStyle:
+                                              TextStyle(color: Colors.white)),
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                      controller: _imeController,
+                                      onChanged: (_) {
+                                        setState(() {});
+                                      },
+                                    ),
+                                    const SizedBox(
+                                      height: 8,
+                                    ),
+                                    TextFormField(
+                                      cursorColor: Colors.white,
+                                      decoration: InputDecoration(
+                                          labelText: "Prezime",
+                                          prefixIcon: Icon(
+                                            Icons.person,
+                                            color: Colors.white,
+                                          ),
+                                          labelStyle:
+                                              TextStyle(color: Colors.white),
+                                          contentPadding:
+                                              EdgeInsets.symmetric(vertical: 5),
+                                          errorText:
+                                              _prezimeController.text.isEmpty
+                                                  ? 'Polje ne smije biti prazno'
+                                                  : null,
+                                          errorStyle:
+                                              TextStyle(color: Colors.white)),
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                      controller: _prezimeController,
+                                      onChanged: (_) {
+                                        setState(() {});
+                                      },
+                                    ),
+                                    const SizedBox(
+                                      height: 8,
+                                    ),
+                                    TextField(
+                                        cursorColor: Colors.white,
+                                        decoration: InputDecoration(
+                                            labelText: "Email",
+                                            prefixIcon: Icon(
+                                              Icons.email,
+                                              color: Colors.white,
+                                            ),
+                                            labelStyle:
+                                                TextStyle(color: Colors.white),
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    vertical: 5),
+                                            errorText: _emailController
+                                                    .text.isEmpty
+                                                ? 'Polje ne smije biti prazno'
+                                                : null,
+                                            errorStyle:
+                                                TextStyle(color: Colors.white)),
+                                        style: const TextStyle(
+                                            color: Colors.white),
+                                        controller: _emailController),
+                                    const SizedBox(
+                                      height: 8,
+                                    ),
+                                    TextField(
+                                      cursorColor: Colors.white,
+                                      decoration: InputDecoration(
+                                          labelText: "Telefon",
+                                          prefixIcon: Icon(
+                                            Icons.phone,
+                                            color: Colors.white,
+                                          ),
+                                          labelStyle:
+                                              TextStyle(color: Colors.white),
+                                          contentPadding:
+                                              EdgeInsets.symmetric(vertical: 5),
+                                          errorText:
+                                              _telefonController.text.isEmpty
+                                                  ? 'Polje ne smije biti prazno'
+                                                  : null,
+                                          errorStyle:
+                                              TextStyle(color: Colors.white)),
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                      controller: _telefonController,
+                                      onChanged: (_) {
+                                        setState(() {});
+                                      },
+                                    ),
+                                    const SizedBox(
+                                      height: 30,
+                                    ),
+                                    Divider(
+                                      color: Colors.white,
+                                      height: 1,
+                                      thickness: 5,
+                                    ),
+                                    TextField(
+                                      cursorColor: Colors.white,
+                                      decoration: InputDecoration(
+                                          labelText: "Korisnicko ime",
+                                          prefixIcon: Icon(
+                                            Icons.person,
+                                            color: Colors.white,
+                                          ),
+                                          labelStyle:
+                                              TextStyle(color: Colors.white),
+                                          contentPadding:
+                                              EdgeInsets.symmetric(vertical: 5),
+                                          errorText: _korisnickoImeController
+                                                  .text.isEmpty
+                                              ? 'Polje ne smije biti prazno'
+                                              : null,
+                                          errorStyle:
+                                              TextStyle(color: Colors.white)),
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                      controller: _korisnickoImeController,
+                                      onChanged: (_) {
+                                        setState(() {});
+                                      },
+                                    ),
+                                    const SizedBox(
+                                      height: 8,
+                                    ),
+                                    TextField(
+                                      cursorColor: Colors.white,
+                                      decoration: InputDecoration(
+                                        labelText: "Password",
+                                        prefixIcon: Icon(
+                                          Icons.password_sharp,
+                                          color: Colors.white,
+                                        ),
+                                        labelStyle:
+                                            TextStyle(color: Colors.white),
+                                        contentPadding:
+                                            EdgeInsets.symmetric(vertical: 5),
+                                        errorText:
+                                            _noviPasswordController.text.isEmpty
+                                                ? 'Polje ne smije biti prazno'
+                                                : null,
+                                        errorStyle:
+                                            TextStyle(color: Colors.white),
+                                      ),
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                      controller: _noviPasswordController,
+                                      onChanged: (_) {
+                                        setState(() {});
+                                      },
+                                      obscureText: true,
+                                    ),
+                                    const SizedBox(
+                                      height: 8,
+                                    ),
+                                    TextField(
+                                      cursorColor: Colors.white,
+                                      decoration: InputDecoration(
+                                        labelText: "Password potvrda",
+                                        prefixIcon: Icon(
+                                          Icons.password_sharp,
+                                          color: Colors.white,
+                                        ),
+                                        labelStyle:
+                                            TextStyle(color: Colors.white),
+                                        contentPadding:
+                                            EdgeInsets.symmetric(vertical: 5),
+                                        errorText: _passwordPotvrdaController
+                                                .text.isEmpty
+                                            ? 'Polje ne smije biti prazno'
+                                            : null,
+                                        errorStyle:
+                                            TextStyle(color: Colors.white),
+                                      ),
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                      controller: _passwordPotvrdaController,
+                                      onChanged: (_) {
+                                        setState(() {});
+                                      },
+                                      obscureText: true,
+                                    ),
+                                    const SizedBox(
+                                      height: 40,
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: registerUser,
+                                      child: const Text(
+                                        "Register",
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
               ],
             ),
           ),
         ),
       ),
+      floatingActionButton: Align(
+        alignment: Alignment.bottomRight,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (_isSignUpMode)
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _isSignUpMode = false;
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      Icon(Icons.arrow_back, color: Colors.white),
+                      SizedBox(width: 5),
+                      Text(
+                        'Back to Login',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+              RichText(
+                text: TextSpan(
+                  text: _isSignUpMode ? "" : "Nemate profil? Kreirajte ga  ",
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  children: [
+                    if (!_isSignUpMode)
+                      TextSpan(
+                        text: "ovdje",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.underline,
+                          fontSize: 18,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            setState(() {
+                              _isSignUpMode = true;
+                            });
+                          },
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
+  }
+
+  void registerUser() async {
+    if (_imeController.text.isEmpty ||
+        _prezimeController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _telefonController.text.isEmpty ||
+        _korisnickoImeController.text.isEmpty ||
+        _noviPasswordController.text.isEmpty ||
+        _passwordPotvrdaController.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text("Greška"),
+          content: const Text("Molimo popunite sva polja."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    if (_noviPasswordController.text != _passwordPotvrdaController.text) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text("Greška"),
+          content: const Text(
+              "Polja 'Password' i 'Password potvrda' se ne poklapaju."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    try {
+      await _korisniciProvider.registerUser(
+        ime: _imeController.text,
+        prezime: _prezimeController.text,
+        email: _emailController.text,
+        telefon: _telefonController.text,
+        korisnickoIme: _korisnickoImeController.text,
+        password: _noviPasswordController.text,
+        passwordPotvrda: _passwordPotvrdaController.text,
+      );
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          final Duration duration = const Duration(seconds: 2);
+
+          return AlertDialog(
+            title: const Text("Uspješno ste kreirali nalog!"),
+            content: TweenAnimationBuilder(
+              tween: Tween<double>(begin: 0, end: 1),
+              duration: duration,
+              builder: (BuildContext context, double value, Widget? child) {
+                return Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      width: 50 * value,
+                      height: 50 * value,
+                      child: CircularProgressIndicator(
+                        backgroundColor: Colors.grey,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.blue,
+                        ),
+                      ),
+                    ),
+                    if (value == 1)
+                      Icon(
+                        Icons.check,
+                        color: Colors.green,
+                        size: 50,
+                      ),
+                  ],
+                );
+              },
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  _imeController.clear();
+                  _prezimeController.clear();
+                  _emailController.clear();
+                  _telefonController.clear();
+                  _korisnickoImeController.clear();
+                  _noviPasswordController.clear();
+                  _passwordPotvrdaController.clear();
+                  Navigator.pop(context);
+                  setState(() {
+                    _isSignUpMode = false;
+                  });
+                },
+                child: const Text("U redu"),
+              ),
+            ],
+          );
+        },
+      );
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text("Greška"),
+          content:
+              const Text("Korisnik sa istim korisničkim imenom već postoji."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            ),
+          ],
+        ),
+      );
+      print('Greška prilikom dodavanja korisnika: $e');
+    }
   }
 }
 

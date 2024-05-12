@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using RentACar.Model.Requests;
-using RentACar.Services;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RentACar.Model.Models;
-using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
+using RentACar.Model.Requests;
+using RentACar.Services.IServices;
 
 namespace RentACar.Controllers
 {
@@ -33,5 +32,33 @@ namespace RentACar.Controllers
                 return NotFound("Korisnik nije pronađen ili pogrešna lozinka.");
             }
         }
+        [HttpPut("UpdatePasswordAndUsername")]
+        public virtual async Task<IActionResult> UpdatePasswordAndUsername(int id, string oldPassword, KorisniciUpdateRequestLimited request)
+        {
+            try
+            {
+                var isOldPasswordCorrect = await _korisniciService.VerifyOldPassword(id, oldPassword);
+
+                if (!isOldPasswordCorrect)
+                {
+                    return BadRequest("Stari password nije ispravan.");
+                }
+
+                await _korisniciService.UpdatePasswordAndUsername(id, request);
+                return Ok("Uspješno ažuriran korisničko ime i/ili lozinka.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Greška prilikom ažuriranja: {ex.Message}");
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public override async Task<Korisnici> Insert([FromBody] KorisniciInsertRequest insert)
+        {
+            return await _service.Insert(insert);
+        }
+
     }
 }

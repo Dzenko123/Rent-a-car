@@ -23,6 +23,9 @@ Vozilo _$VoziloFromJson(Map<String, dynamic> json) => Vozilo(
       json['tipVozila'] == null
           ? null
           : TipVozila.fromJson(json['tipVozila'] as Map<String, dynamic>),
+      (json['komentari'] as List<dynamic>?)
+          ?.map((e) => Komentari.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$VoziloToJson(Vozilo instance) => <String, dynamic>{
@@ -38,4 +41,5 @@ Map<String, dynamic> _$VoziloToJson(Vozilo instance) => <String, dynamic>{
       'marka': instance.marka,
       'tipVozila': instance.tipVozila,
       'gorivo': instance.gorivo,
+      'komentari': instance.komentari,
     };

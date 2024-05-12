@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RentACar.Controllers;
 using RentACar.Model.Models;
-using RentACar.Services;
+using RentACar.Services.IServices;
 
 namespace RentACar.Controllers
 {

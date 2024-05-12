@@ -20,11 +20,6 @@ namespace RentACar.Services.Database
 
         public Vozila Vozilo { get; set; } = null!;
 
-
-        public int RacunId { get; set; }
-
-        public Racun Racun { get; set; } = null!;
-
         public int GradId { get; set; }
 
         public Grad Grad { get; set; } = null!;

@@ -15,6 +15,7 @@ import 'package:rentacar_admin/providers/tip_vozila_provider.dart';
 import 'package:rentacar_admin/providers/vozila_provider.dart';
 import 'package:rentacar_admin/screens/gorivo_screen.dart';
 import 'package:rentacar_admin/screens/tip_opis_screen.dart';
+import 'package:rentacar_admin/screens/vozilo_pregled_screen.dart';
 import 'package:rentacar_admin/widgets/master_screen.dart';
 
 class VozilaDetailScreen extends StatefulWidget {
@@ -443,7 +444,18 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                 ),
               ),
             ],
-          ),
+          ),ElevatedButton(
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => VoziloPregledScreen(vozilo: widget.vozilo),
+      ),
+    );
+  },
+  child: Text('Pregled vozila'),
+),
+
         ],
       ),
     );
