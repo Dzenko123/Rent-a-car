@@ -8,7 +8,8 @@ namespace RentACar.Model.SearchObject
 {
     public class CPVPSearchObject:BaseSearchObject
     {
-        public string? FTS { get; set; }
+        public int VoziloId { get; set; }
+        public bool? IsPeriodIncluded { get; set; }
 
     }
 }

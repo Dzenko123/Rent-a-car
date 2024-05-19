@@ -82,7 +82,6 @@ class KorisniciProvider extends BaseProvider<Korisnici> {
     required String password,
     required String passwordPotvrda,
   }) async {
-    // Pripremi podatke o novom korisniku koji ćemo poslati na backend
     var newUser = {
       'Ime': ime,
       'Prezime': prezime,
@@ -101,10 +100,8 @@ class KorisniciProvider extends BaseProvider<Korisnici> {
     var response = await http.post(uri, headers: headers, body: requestBody);
 
     if (isValidResponse(response)) {
-      // Uspješno dodan korisnik
       print('Korisnik uspješno dodan!');
     } else {
-      // Neuspješan zahtjev, ispišimo poruku o grešci
       print('Greška prilikom dodavanja korisnika: ${response.reasonPhrase}');
     }
   }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using RentACar.Model.Models;
 using RentACar.Model.Requests;
 using RentACar.Model.SearchObject;
@@ -14,16 +15,23 @@ namespace RentACar.Services.Services
 {
     public class RezervacijaService : BaseCRUDService<Rezervacija, Database.Rezervacija, RezervacijaSearchObject, RezervacijaInsertRequest, RezervacijaUpdateRequest, RezervacijaDeleteRequest>, IRezervacijaService
     {
+        private readonly RentACarDBContext _context;
+
         public RezervacijaService(RentACarDBContext context, IMapper mapper) : base(context, mapper)
         {
+            _context = context;
+
+        }
+        public async Task<IEnumerable<Rezervacija>> GetByKorisnikId(int korisnikId)
+        {
+            var rezervacijeFromDb = await _context.Rezervacija
+                                                .Where(r => r.KorisnikId == korisnikId)
+                                                .ToListAsync();
+
+            var rezervacije = _mapper.Map<IEnumerable<Model.Models.Rezervacija>>(rezervacijeFromDb);
+
+            return rezervacije;
         }
 
-        public async Task<Rezervacija> Insert(RezervacijaInsertRequest insert)
-        {
-            var entity = _mapper.Map<Database.Rezervacija>(insert);
-            _context.Set<Database.Rezervacija>().Add(entity);
-            await _context.SaveChangesAsync();
-            return _mapper.Map<Rezervacija>(entity);
-        }
     }
 }

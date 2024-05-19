@@ -9,9 +9,9 @@ namespace RentACar.Model.Models
 {
     public class DodatnaUsluga
     {
-        public int Id { get; set; }
+        public int DodatnaUslugaId { get; set; }
 
-        public string Naziv { get; set; } = null!;
+        public string Naziv { get; set; }
 
         public decimal Cijena { get; set; }
     }

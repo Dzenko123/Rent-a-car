@@ -21,6 +21,23 @@ namespace RentACar.Services.Services
         {
         }
 
+        public override IQueryable<Database.CijenePoVremenskomPeriodu> AddFilter(IQueryable<Database.CijenePoVremenskomPeriodu> query, CPVPSearchObject search = null)
+        {
+            if (search != null && search.VoziloId > 0)
+            {
+                query = query.Where(c => c.VoziloId == search.VoziloId);
+            }
+
+            return base.AddFilter(query, search);
+        }
+        public override IQueryable<Database.CijenePoVremenskomPeriodu> AddInclude(IQueryable<Database.CijenePoVremenskomPeriodu> query, CPVPSearchObject search = null)
+        {
+                query = query.Include(c => c.Period);
+           
+
+            return base.AddInclude(query, search);
+        }
+
 
     }
 }

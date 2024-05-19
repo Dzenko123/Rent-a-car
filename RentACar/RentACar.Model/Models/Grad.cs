@@ -10,6 +10,6 @@ namespace RentACar.Model.Models
     {
         public int GradId { get; set; }
 
-        public string Naziv { get; set; } = null!;
+        public string Naziv { get; set; }
     }
 }

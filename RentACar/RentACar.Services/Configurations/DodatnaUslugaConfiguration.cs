@@ -14,9 +14,7 @@ namespace RentACar.Services.Configurations
         {
             base.Configure(builder);
             builder.HasKey(du => du.DodatnaUslugaId);
-            builder.HasMany(du => du.Rezervacije)
-                   .WithOne(rd => rd.DodatnaUsluga)
-                   .HasForeignKey(rd => rd.DodatnaUslugaId);
+           
         }
     }
 }

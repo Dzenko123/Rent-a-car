@@ -38,6 +38,11 @@ namespace RentACar.Services
             CreateMap<Model.Requests.GorivoUpdateRequest, Database.Gorivo>();
             CreateMap<Model.Requests.GorivoDeleteRequest, Database.Gorivo>();
 
+            CreateMap<Database.Grad, Grad>();
+            CreateMap<Model.Requests.GradInsertRequest, Database.Grad>();
+            CreateMap<Model.Requests.GradUpdateRequest, Database.Grad>();
+            CreateMap<Model.Requests.GradDeleteRequest, Database.Grad>();
+
             CreateMap<Database.Recenzije, Recenzije>();
             CreateMap<Model.Requests.RecenzijeInsertRequest, Database.Recenzije>();
             CreateMap<Model.Requests.RecenzijeUpdateRequest, Database.Recenzije>();
@@ -56,9 +61,9 @@ namespace RentACar.Services
             CreateMap<Model.Requests.KontaktDeleteRequest, Database.Kontakt>();
 
             CreateMap<Database.DodatnaUsluga, DodatnaUsluga>();
-            CreateMap<Database.KorisniciUloge, KorisniciUloge>();
-            CreateMap<Database.Uloge, Uloge>();
-
+            CreateMap<Model.Requests.DodatnaUslugaInsertRequest, Database.DodatnaUsluga>();
+            CreateMap<Model.Requests.DodatnaUslugaUpdateRequest, Database.DodatnaUsluga>();
+            CreateMap<Model.Requests.DodatnaUslugaDeleteRequest, Database.DodatnaUsluga>();
 
             CreateMap<Database.CijenePoVremenskomPeriodu, CijenePoVremenskomPeriodu>();
             CreateMap<Model.Requests.CPVPInsertRequest, Database.CijenePoVremenskomPeriodu>();

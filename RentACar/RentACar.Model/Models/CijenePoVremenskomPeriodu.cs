@@ -16,5 +16,7 @@ namespace RentACar.Model.Models
         public decimal Cijena { get; set; }
 
         public int PeriodId { get; set; }
+        public virtual Period Period { get; set; } = null!;
+
     }
 }

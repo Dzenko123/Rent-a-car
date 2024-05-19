@@ -147,6 +147,58 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      VoziloPregledScreen(vozilo: widget.vozilo),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.zero,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+            ),
+            child: Ink(
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [
+                    Color(0xFF000000),
+                    Color(0xFF333333),
+                    Color(0xFF555555),
+                  ],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Container(
+                constraints:
+                    const BoxConstraints(maxWidth: 100.0, minHeight: 36.0),
+                alignment: Alignment.center,
+                child: const Text(
+                  "Pregledaj",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 5),
+          Text(
+            'Pogledajte kada je ovo vozilo slobodno za rezervaciju!',
+            style: TextStyle(
+              fontSize: 15,
+              color: Colors.black,
+            ),
+          ),
+          const SizedBox(height: 40),
           const Text(
             'Detalji vozila',
             style: TextStyle(
@@ -444,18 +496,7 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                 ),
               ),
             ],
-          ),ElevatedButton(
-  onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => VoziloPregledScreen(vozilo: widget.vozilo),
-      ),
-    );
-  },
-  child: Text('Pregled vozila'),
-),
-
+          ),
         ],
       ),
     );

@@ -15,8 +15,6 @@ namespace RentACar.Model.Requests
         public int VoziloId { get; set; }
 
 
-        public int RacunId { get; set; }
-
         public int GradId { get; set; }
 
 

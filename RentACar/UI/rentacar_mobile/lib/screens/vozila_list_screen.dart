@@ -9,6 +9,7 @@ import 'package:rentacar_admin/providers/gorivo_provider.dart';
 import 'package:rentacar_admin/providers/tip_vozila_provider.dart';
 
 import 'package:rentacar_admin/providers/vozila_provider.dart';
+import 'package:rentacar_admin/screens/rezervacija_screen.dart';
 import 'package:rentacar_admin/screens/vozila_detail_screen.dart';
 import 'package:rentacar_admin/utils/util.dart';
 import 'package:rentacar_admin/widgets/master_screen.dart';
@@ -306,6 +307,31 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
                               ),
                               const SizedBox(
                                 height: 5,
+                              ),
+                              Flexible(
+                                flex: 1,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20.0),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              RezervacijaScreen(vozilo: e),
+                                        ),
+                                      );
+                                    },
+                                    child: const Text(
+                                      'Rezerviši vozilo',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontStyle: FontStyle.italic,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ]),
                       ),

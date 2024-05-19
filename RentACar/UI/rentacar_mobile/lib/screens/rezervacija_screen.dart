@@ -1,19 +1,35 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:rentacar_admin/models/cijene_po_vremenskom_periodu.dart';
+import 'package:rentacar_admin/models/grad.dart';
 import 'package:rentacar_admin/models/korisnici.dart';
 import 'package:rentacar_admin/models/rezervacija.dart';
 import 'package:rentacar_admin/models/search_result.dart';
 import 'package:rentacar_admin/models/vozila.dart';
+import 'package:rentacar_admin/models/vozilo_pregled.dart';
+import 'package:rentacar_admin/providers/cijene_po_vremenskom_periodu_provider.dart';
+import 'package:rentacar_admin/providers/grad_provider.dart';
 import 'package:rentacar_admin/providers/korisnici_provider.dart';
 import 'package:rentacar_admin/providers/rezervacija_provider.dart';
 import 'package:rentacar_admin/providers/vozila_provider.dart';
+import 'package:rentacar_admin/providers/vozilo_pregled_provider.dart';
+import 'package:rentacar_admin/screens/vozila_list_screen.dart';
 import 'package:rentacar_admin/utils/util.dart';
 import 'package:rentacar_admin/widgets/master_screen.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class RezervacijaScreen extends StatefulWidget {
   Rezervacija? rezervacija;
-  RezervacijaScreen({super.key});
+  Vozilo? vozilo;
+  Korisnici? korisnik;
+  VoziloPregled? voziloPregled;
+
+  RezervacijaScreen({super.key, this.vozilo, this.korisnik});
 
   @override
   State<RezervacijaScreen> createState() => _RezervacijaScreenState();
@@ -23,280 +39,598 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
   SearchResult<Rezervacija>? rezervacijaResult;
   SearchResult<Korisnici>? korisniciResult;
   SearchResult<Vozilo>? vozilaResult;
+  SearchResult<VoziloPregled>? voziloPregledResult;
+  SearchResult<Grad>? gradResult;
 
   late RezervacijaProvider _rezervacijaProvider;
   late KorisniciProvider _korisniciProvider;
   late VozilaProvider _vozilaProvider;
+  late CijenePoVremenskomPerioduProvider _cijenePoVremenskomPerioduProvider;
+  late VoziloPregledProvider _voziloPregledProvider;
+  late GradProvider _gradProvider;
+
+  DateTime? _selectedStartDate;
+  DateTime? _selectedEndDate;
   bool isLoading = true;
   final TextEditingController _ftsController = TextEditingController();
+  int? ulogovaniKorisnikId;
+  final _formKey = GlobalKey<FormBuilderState>();
+  Map<String, dynamic> _initialValue = {};
+  bool isEditing = false;
+  List<CijenePoVremenskomPeriodu> _cijenePoVremenskomPerioduList = [];
+  CijenePoVremenskomPeriodu? _selectedPeriod;
+  Uint8List? _imageBytes;
+  bool isStartDateSelected = false;
+  bool isInfoVisible = false;
+  bool _autoValidate = false;
 
   @override
   void initState() {
     super.initState();
-    _rezervacijaProvider = RezervacijaProvider();
-    _korisniciProvider = KorisniciProvider();
-    _vozilaProvider = VozilaProvider();
+    _initialValue = {
+      'ime': widget.korisnik?.ime,
+      'prezime': widget.korisnik?.prezime,
+      'email': widget.korisnik?.email,
+      'telefon': widget.korisnik?.telefon,
+    };
+
+    _rezervacijaProvider = context.read<RezervacijaProvider>();
+    _korisniciProvider = context.read<KorisniciProvider>();
+    _vozilaProvider = context.read<VozilaProvider>();
+    _cijenePoVremenskomPerioduProvider =
+        context.read<CijenePoVremenskomPerioduProvider>();
+    _voziloPregledProvider = context.read<VoziloPregledProvider>();
+    _gradProvider = context.read<GradProvider>();
+
+    getUlogovaniKorisnikId();
+
     initForm();
+    _loadImage();
+  }
+
+  Future<void> getUlogovaniKorisnikId() async {
+    try {
+      var ulogovaniKorisnik = await _korisniciProvider.getLoged(
+        Authorization.username ?? '',
+        Authorization.password ?? '',
+      );
+      setState(() {
+        ulogovaniKorisnikId = ulogovaniKorisnik;
+        if (ulogovaniKorisnikId != null) {
+          getKorisnikData(ulogovaniKorisnikId!);
+        }
+      });
+    } catch (e) {
+      print('Greška prilikom dobijanja ID-a ulogovanog korisnika: $e');
+    }
+  }
+
+  void _loadImage() {
+    if (widget.vozilo != null && widget.vozilo!.slika != null) {
+      setState(() {
+        _imageBytes = base64Decode(widget.vozilo!.slika!);
+      });
+    }
+  }
+
+  Future<void> getKorisnikData(int korisnikId) async {
+    try {
+      var result = await _korisniciProvider.getById(korisnikId);
+      setState(() {
+        widget.korisnik = result;
+      });
+    } catch (e) {
+      print('Greška prilikom dobijanja podataka o korisniku: $e');
+    }
   }
 
   Future<void> initForm() async {
     rezervacijaResult = await _rezervacijaProvider.get();
     korisniciResult = await _korisniciProvider.get();
     vozilaResult = await _vozilaProvider.get();
-    setState(() {});
-  }
+    voziloPregledResult = await _voziloPregledProvider.get();
+    gradResult = await _gradProvider.get();
 
-  @override
-  Widget build(BuildContext context) {
-    return MasterScreenWidget(
-      title_widget: const Text("Rezervacije"),
-      child: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color(0xFF000000),
-              Color.fromARGB(255, 68, 68, 68),
-              Color.fromARGB(255, 148, 147, 147),
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: Column(children: [
-          _buildSearch(),
-          const SizedBox(height: 20),
-          _buildDataListView(vozilaResult)
-        ]),
-      ),
-    );
+    print('${vozilaResult}');
+    print('${widget.vozilo?.voziloId}');
+    print('$gradResult');
+    try {
+      final cijenePoVremenskomPerioduResult =
+          await _cijenePoVremenskomPerioduProvider
+              .getByVoziloId(widget.vozilo?.voziloId ?? 0);
+      setState(() {
+        _cijenePoVremenskomPerioduList = cijenePoVremenskomPerioduResult;
+      });
+      print('CijenePoVremenskomPeriodu: $cijenePoVremenskomPerioduResult');
+    } catch (e) {
+      print('Error fetching data: $e');
+    }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
+    _loadImage();
   }
 
-  Widget _buildSearch() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Flexible(
-            child: TextField(
-              decoration: const InputDecoration(
-                labelText: "Korisnicko ime pretraga:",
-                labelStyle: TextStyle(color: Colors.white),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Rezervacija za voziloId: ${widget.vozilo?.voziloId}"),
+      ),
+      body: Container(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 10),
+              _buildImagePreview(),
+              const SizedBox(height: 20),
+              _buildDataListView(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImagePreview() {
+    if (_imageBytes != null) {
+      return Align(
+        alignment: Alignment.topCenter,
+        child: Container(
+          height: 160,
+          width: 280,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.9),
+                spreadRadius: 2,
+                blurRadius: 5,
+                offset: const Offset(0, 4),
               ),
-              controller: _ftsController,
-              style: const TextStyle(color: Colors.white),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.memory(
+              _imageBytes!,
+              fit: BoxFit.cover,
             ),
           ),
-          const SizedBox(width: 8),
-          Flexible(
-            child: ElevatedButton(
-              onPressed: () async {
-                print("Pretraga uspješna");
-                await initForm();
-                setState(() {});
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        ),
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
+  }
+
+  Widget _buildDataListView() {
+    return SingleChildScrollView(
+      child: FormBuilder(
+        key: _formKey,
+        initialValue: _initialValue,
+        autovalidateMode:
+            _autoValidate ? AutovalidateMode.always : AutovalidateMode.disabled,
+        child: Column(
+          children: [
+            SizedBox(height: 10),
+            if (widget.korisnik != null) ...[
+              Padding(
+                padding: EdgeInsets.only(left: 20, right: 20),
+                child: _buildInfoRow(
+                    Icons.person_pin, 'Ime', widget.korisnik!.ime),
               ),
-              child: const Text("Pretraga"),
+              Padding(
+                padding: EdgeInsets.only(left: 20, right: 20),
+                child: _buildInfoRow(
+                    Icons.person_pin, 'Prezime', widget.korisnik!.prezime),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 20, right: 20),
+                child: _buildInfoRow(
+                    Icons.email, 'Email:', widget.korisnik!.email),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 20, right: 20),
+                child: _buildInfoRow(
+                    Icons.phone, 'Telefon:', widget.korisnik!.telefon),
+              ),
+              IconButton(
+                icon: Icon(Icons.info),
+                color: Colors.red,
+                onPressed: () {
+                  setState(() {
+                    isInfoVisible = !isInfoVisible;
+                  });
+                },
+              ),
+              Visibility(
+                visible: isInfoVisible,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 20, right: 20),
+                  child: Text(
+                    'Vaše podatke možete urediti na stavci "Profil"!',
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      color: Colors.red,
+                    ),
+                  ),
+                ),
+              ),
+            ] else ...[
+              CircularProgressIndicator(),
+            ],
+            _buildGradDropdown(),
+            SizedBox(height: 10),
+            _buildCijenaDropdown(),
+            if (_selectedStartDate != null || _selectedEndDate != null) ...[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    if (_selectedStartDate != null) ...[
+                      FormBuilderTextField(
+                        name: 'pocetniDatum',
+                        decoration: InputDecoration(
+                          labelText:
+                              'Start Date: ${DateFormat('yyyy-MM-dd').format(_selectedStartDate!)}',
+                        ),
+                        initialValue: DateFormat('yyyy-MM-dd')
+                            .format(_selectedStartDate!),
+                        readOnly: true,
+                      ),
+                    ],
+                    if (_selectedEndDate != null) ...[
+                      FormBuilderTextField(
+                        name: 'zavrsniDatum',
+                        decoration: InputDecoration(
+                          labelText: 'End Date',
+                        ),
+                        initialValue:
+                            DateFormat('yyyy-MM-dd').format(_selectedEndDate!),
+                        readOnly: true,
+                      ),
+                    ],
+                    SizedBox(height: 8),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedStartDate = null;
+                          _selectedEndDate = null;
+                          _selectedPeriod = null;
+                        });
+                      },
+                      child: Text('Očisti odabrani period'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: insertRezervacija,
+              child: Text('Potvrdi rezervaciju'),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> insertRezervacija() async {
+    if (_formKey.currentState?.saveAndValidate() ?? false) {
+      var request = Map.from(_formKey.currentState!.value);
+      request['korisnikId'] = ulogovaniKorisnikId;
+      request['voziloId'] = widget.vozilo?.voziloId;
+      request['gradId'] = int.parse(request['gradId']);
+      await _rezervacijaProvider.insert(request);
+
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Uspješna rezervacija'),
+          content: Text(
+            'Uspješno ste rezervisali vozilo. Vaše rezervacije možete pogledati u stavci "Profil". Hvala Vam na povjerenju!',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => VozilaListScreen()),
+                );
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  Widget _buildGradDropdown() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: FormBuilderDropdown<String>(
+        name: "gradId",
+        decoration: InputDecoration(
+          labelText: 'Grad *', // Dodajte zvjezdicu kao oznaku obaveznog polja
+          labelStyle: const TextStyle(color: Colors.blue),
+          prefixIcon: const Icon(
+            Icons.location_city,
+            color: Colors.blue,
+          ),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: const BorderSide(color: Colors.grey),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: const BorderSide(color: Colors.grey),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide:
+                const BorderSide(color: Color.fromARGB(129, 160, 17, 7)),
+          ),
+          filled: true,
+          fillColor: Colors.grey[200],
+          hintText: 'Odaberi grad',
+          hintStyle: const TextStyle(color: Colors.grey),
+          suffixIcon: IconButton(
+            icon: const Icon(Icons.clear, color: Colors.grey),
+            onPressed: () {
+              _formKey.currentState?.fields['gradId']?.didChange(null);
+            },
+          ),
+        ),
+        items: gradResult?.result.map((item) {
+              return DropdownMenuItem<String>(
+                value: item.gradId.toString(),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        item.naziv ?? "",
+                        style: const TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList() ??
+            [],
+        style: const TextStyle(fontSize: 16.0),
+        // Postavite validator koji će provjeriti je li odabran grad
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Polje grad je obavezno';
+          }
+          return null;
+        },
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void _showErrorDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Pogrešan period'),
+        content: Text('Za odabrani datum nije moguć odabrani period.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              setState(() {
+                _selectedStartDate = null;
+                _selectedEndDate = null;
+              });
+            },
+            child: Text('OK'),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildDataListView(SearchResult<Vozilo>? vozilaResult) {
-    List<Rezervacija> filteredResults = rezervacijaResult?.result
-            .where((k) =>
-                k.korisnikId != null &&
-                korisniciResult!.result
-                    .firstWhere(
-                        (korisnik) => korisnik.korisnikId == k.korisnikId,
-                        orElse: () => Korisnici.fromJson({}))
-                    .korisnickoIme!
-                    .toLowerCase()
-                    .contains(_ftsController.text.toLowerCase()))
-            .toList() ??
-        [];
-    return Expanded(
-        child: SingleChildScrollView(
-            child: DataTable(
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color(0xFF000000),
-                      Color.fromARGB(255, 54, 54, 54),
-                      Color.fromARGB(255, 82, 81, 81),
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                  borderRadius: BorderRadius.circular(15.0),
-                  border: Border.all(color: Colors.white, width: 2),
-                ),
-                columns: const [
-                  DataColumn(
-                      label: Expanded(
-                          child: Text(
-                    'Rezervacija ID',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.white),
-                  ))),
-                  DataColumn(
-                      label: Expanded(
-                          child: Text(
-                    'Korisnik ID',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.white),
-                  ))),
-                  DataColumn(
-                    label: Expanded(
-                      child: Text(
-                        'Korisničko ime',
-                        style: TextStyle(
-                            fontStyle: FontStyle.italic, color: Colors.red),
-                      ),
-                    ),
-                  ),
-                  
-                  DataColumn(
-                      label: Expanded(
-                          child: Text(
-                    'Vozilo model',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.red),
-                  ))),
-                  DataColumn(
-                    label: Expanded(
-                      child: Text(
-                        'Slika',
-                        style: TextStyle(
-                          fontStyle: FontStyle.italic,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                      label: Expanded(
-                          child: Text(
-                    'Pocetni datum',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.white),
-                  ))),
-                  DataColumn(
-                      label: Expanded(
-                          child: Text(
-                    'Zavrsni datum',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.white),
-                  ))),
-                ],
-                rows: filteredResults
-                        .map(
-                          (Rezervacija r) => DataRow(
-                            // onSelectChanged: (selected) =>
-                            //     {if (selected == true) {}},
-                            cells: [
-                              DataCell(Text(r.rezervacijaId?.toString() ?? "",
-                                  style: const TextStyle(color: Colors.white))),
-                              DataCell(Text(r.korisnikId?.toString() ?? "",
-                                  style: const TextStyle(color: Colors.white))),
-                              DataCell(
-                                FutureBuilder(
-                                  future: _getKorisnickoIme(r.korisnikId),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
-                                    }
-                                    if (snapshot.hasError) {
-                                      return Text('Error: ${snapshot.error}');
-                                    }
-                                    return Text(snapshot.data.toString() ?? '',
-                                        style: const TextStyle(
-                                            color: Colors.white));
-                                  },
-                                ),
-                              ),
-                              
-                              DataCell(
-                                FutureBuilder(
-                                  future: _getVozilo(r.voziloId),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
-                                    }
-                                    if (snapshot.hasError) {
-                                      return Text('Error: ${snapshot.error}');
-                                    }
-                                    return Text(snapshot.data.toString() ?? '',
-                                        style: const TextStyle(
-                                            color: Colors.white));
-                                  },
-                                ),
-                              ),
-                              DataCell(
-                                SizedBox(
-                                  width: 80,
-                                 
-                                  child: vozilaResult?.result
-                                              .firstWhere(
-                                                  (vozilo) =>
-                                                      vozilo.voziloId ==
-                                                      r.voziloId,
-                                                  orElse: () =>
-                                                      Vozilo.fromJson({}))
-                                              .slika !=
-                                          null
-                                      ? Image.memory(
-                                          base64Decode(vozilaResult!.result
-                                              .firstWhere((vozilo) =>
-                                                  vozilo.voziloId == r.voziloId)
-                                              .slika!),height: 180,
-                                          fit: BoxFit.contain,
-                                        )
-                                      : SizedBox.shrink(),
-                                ),
-                              ),
-                              DataCell(Text(formatDateTime(r.pocetniDatum),
-                                  style: const TextStyle(color: Colors.white))),
-                              DataCell(Text(formatDateTime(r.zavrsniDatum),
-                                  style: const TextStyle(color: Colors.white))),
-                            ],
-                          ),
-                        )
-                        .toList() ??
-                    [])));
+  Widget _buildCijenaDropdown() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: DropdownButtonFormField<CijenePoVremenskomPeriodu>(
+        decoration: InputDecoration(
+          labelText: 'Period *',
+          border: OutlineInputBorder(),
+        ),
+        value: _selectedPeriod,
+        items: _cijenePoVremenskomPerioduList.map((period) {
+          return DropdownMenuItem<CijenePoVremenskomPeriodu>(
+            value: period,
+            child: Text('${period.period?.trajanje}'),
+          );
+        }).toList(),
+        onChanged: (newValue) {
+          setState(() {
+            _selectedPeriod = newValue;
+            resetSelectedDates();
+            if (newValue != null) {
+              _pickStartDate(context);
+            }
+          });
+        },
+        validator: (value) {
+          if (value == null) {
+            return 'Polje "Period" je obavezno';
+          }
+          return null;
+        },
+      ),
+    );
   }
 
-  Future<String?> _getKorisnickoIme(int? korisnikId) async {
-    if (korisnikId == null || korisniciResult == null) return null;
-
-    var korisnik = korisniciResult!.result.firstWhere(
-      (korisnik) => korisnik.korisnikId == korisnikId,
-      orElse: () => Korisnici.fromJson({}),
-    );
-
-    return korisnik.korisnickoIme;
+  void resetSelectedDates() {
+    setState(() {
+      _selectedStartDate = null;
+      _selectedEndDate = null;
+      _formKey.currentState?.fields['pocetniDatum']?.didChange(null);
+      _formKey.currentState?.fields['zavrsniDatum']?.didChange(null);
+    });
   }
 
-  Future<String?> _getVozilo(int? voziloId) async {
-    if (voziloId == null || vozilaResult == null) return null;
+  Future<void> _pickStartDate(BuildContext context) async {
+    try {
+      DateTime initialDate = _selectedStartDate ?? DateTime.now();
+      initialDate = _findFirstSelectableDate(initialDate);
 
-    var vozilo = vozilaResult!.result.firstWhere(
-      (vozilo) => vozilo.voziloId == voziloId,
-      orElse: () => Vozilo.fromJson({}),
+      DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: initialDate,
+        firstDate: DateTime.now(),
+        lastDate: DateTime(2101),
+        selectableDayPredicate: (DateTime date) => isDateAvailable(date),
+      );
+
+      if (picked != null) {
+        setState(() {
+          _selectedStartDate = picked;
+          _formKey.currentState?.fields['pocetniDatum']
+              ?.didChange(DateFormat('yyyy-MM-dd').format(picked));
+          _pickEndDate(context);
+        });
+      }
+    } catch (e) {
+      print('Error picking start date: $e');
+    }
+  }
+
+  Future<void> _pickEndDate(BuildContext context) async {
+    if (_selectedPeriod == null) return;
+
+    try {
+      List<int> parts = extractNumericPart(_selectedPeriod!.period!.trajanje!);
+      int minDays = parts[0] - 1;
+      int maxDays = parts[1];
+
+      DateTime startDate = _selectedStartDate!;
+      DateTime initialEndDate = startDate.add(Duration(days: minDays));
+      initialEndDate = _findFirstSelectableDate(initialEndDate);
+
+      bool isAnyDateUnavailable = false;
+
+      for (DateTime date = startDate;
+          date.isBefore(initialEndDate.add(Duration(days: maxDays)));
+          date = date.add(Duration(days: 1))) {
+        if (!isDateAvailable(date)) {
+          isAnyDateUnavailable = true;
+          break;
+        }
+      }
+
+      if (isAnyDateUnavailable) {
+        _showErrorDialog();
+        return;
+      }
+
+      DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: initialEndDate,
+        firstDate: initialEndDate,
+        lastDate: startDate.add(Duration(days: maxDays)),
+        selectableDayPredicate: (DateTime date) => isDateAvailable(date),
+      );
+
+      if (picked != null) {
+        setState(() {
+          _selectedEndDate = picked;
+          _formKey.currentState?.fields['zavrsniDatum']
+              ?.didChange(DateFormat('yyyy-MM-dd').format(picked));
+        });
+      } else {
+        resetSelectedDates();
+      }
+    } catch (e) {
+      print('Error picking end date: $e');
+    }
+  }
+
+  DateTime _findFirstSelectableDate(DateTime start) {
+    DateTime date = start;
+    while (!isDateAvailable(date)) {
+      date = date.add(Duration(days: 1));
+    }
+    return date;
+  }
+
+  bool isDateAvailable(DateTime date) {
+    if (rezervacijaResult != null && vozilaResult != null) {
+      for (var rezervacija in rezervacijaResult!.result) {
+        if (rezervacija.voziloId == widget.vozilo?.voziloId &&
+            (isSameDay(rezervacija.pocetniDatum!, date) ||
+                date.isAfter(rezervacija.pocetniDatum!)) &&
+            (isSameDay(rezervacija.zavrsniDatum!, date) ||
+                date.isBefore(rezervacija.zavrsniDatum!))) {
+          return false;
+        }
+      }
+    }
+    if (voziloPregledResult != null && vozilaResult != null) {
+      for (var pregled in voziloPregledResult!.result) {
+        if (pregled.voziloId == widget.vozilo?.voziloId &&
+            isSameDay(pregled.datum!, date)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  List<int> extractNumericPart(String input) {
+    List<String> parts = input.replaceAll(' dana', '').split('-');
+    int minDays = int.parse(parts[0]);
+    int maxDays = int.parse(parts[1]) - 1;
+    return [minDays, maxDays];
+  }
+
+  Widget _buildInfoRow(IconData icon, String label, String? value) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Icon(
+            icon,
+            color: Colors.black,
+          ),
+          SizedBox(width: 10),
+          Expanded(
+            child: TextFormField(
+              initialValue: value,
+              decoration: InputDecoration(
+                labelText: label,
+                border: OutlineInputBorder(),
+              ),
+              readOnly: !isEditing,
+              onChanged: (newValue) {},
+            ),
+          ),
+        ],
+      ),
     );
-
-    return vozilo.model;
   }
 }

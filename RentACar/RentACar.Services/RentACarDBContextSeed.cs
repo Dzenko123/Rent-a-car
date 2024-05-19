@@ -37,7 +37,6 @@ namespace RentACar.Services
             SeedGrad(modelBuilder);
             SeedDodatnaUsluga(modelBuilder);
             SeedRezervacija(modelBuilder);
-            SeedRezervacijaDodatnaUsluga(modelBuilder);
             SeedPeriod(modelBuilder);
         }
 
@@ -486,22 +485,19 @@ namespace RentACar.Services
             modelBuilder.Entity<DodatnaUsluga>().HasData(new DodatnaUsluga
             {
                 DodatnaUslugaId = 1,
-                Naziv = "test",
-                Opis = "test",
+                Naziv = "Dječija sjedalica",
                 Cijena = 100
             },
             new DodatnaUsluga
             {
                 DodatnaUslugaId = 2,
-                Naziv = "test2",
-                Opis = "test2",
+                Naziv = "Nosač bicikla",
                 Cijena = 101
             },
             new DodatnaUsluga
             {
                 DodatnaUslugaId = 3,
-                Naziv = "test3",
-                Opis = "test3",
+                Naziv = "WIFI",
                 Cijena = 102
             });
         }
@@ -514,7 +510,7 @@ namespace RentACar.Services
                     KorisnikId = 2,
                     VoziloId = 1,
                     GradId = 1,
-
+                    DodatnaUslugaId=1,
                     PocetniDatum = _dateTime,
                     ZavrsniDatum = _dateTime2
                 },
@@ -524,35 +520,11 @@ namespace RentACar.Services
                     KorisnikId = 3,
                     VoziloId = 2,
                     GradId = 2,
-
+                    DodatnaUslugaId=2,
                     PocetniDatum = _dateTime,
                     ZavrsniDatum = _dateTime2
                 });
         }
 
-        private void SeedRezervacijaDodatnaUsluga(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<RezervacijaDodatnaUsluga>().HasData(
-                new RezervacijaDodatnaUsluga
-                {
-                    RezervacijaId = 1,
-                    DodatnaUslugaId = 1
-                },
-                new RezervacijaDodatnaUsluga
-                {
-                    RezervacijaId = 1,
-                    DodatnaUslugaId = 2
-                }, new RezervacijaDodatnaUsluga
-                {
-                    RezervacijaId = 2,
-                    DodatnaUslugaId = 1
-                },
-                new RezervacijaDodatnaUsluga
-                {
-                    RezervacijaId = 2,
-                    DodatnaUslugaId = 2
-                }
-                );
-        }
     }
 }

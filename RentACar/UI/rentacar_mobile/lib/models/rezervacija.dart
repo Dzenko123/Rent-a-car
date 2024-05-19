@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:rentacar_admin/models/vozila.dart';
 
 part 'rezervacija.g.dart';
 
@@ -10,9 +11,9 @@ class Rezervacija {
   int? gradId;
   DateTime? pocetniDatum;
   DateTime? zavrsniDatum;
-
+Vozilo? vozilo;
   Rezervacija(this.rezervacijaId, this.korisnikId, this.voziloId, this.gradId,
-      this.pocetniDatum, this.zavrsniDatum);
+      this.pocetniDatum, this.zavrsniDatum, this.vozilo);
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.

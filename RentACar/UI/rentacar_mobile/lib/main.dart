@@ -2,7 +2,9 @@ import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rentacar_admin/providers/cijene_po_vremenskom_periodu_provider.dart';
 import 'package:rentacar_admin/providers/gorivo_provider.dart';
+import 'package:rentacar_admin/providers/grad_provider.dart';
 import 'package:rentacar_admin/providers/komentari_provider.dart';
 import 'package:rentacar_admin/providers/kontakt_provider.dart';
 import 'package:rentacar_admin/providers/korisnici_provider.dart';
@@ -28,6 +30,8 @@ void main() async {
     ChangeNotifierProvider(create: (_) => RecenzijeProvider()),
     ChangeNotifierProvider(create: (_) => VoziloPregledProvider()),
     ChangeNotifierProvider(create: (_) => RezervacijaProvider()),
+    ChangeNotifierProvider(create: (_) => CijenePoVremenskomPerioduProvider()),
+    ChangeNotifierProvider(create: (_) => GradProvider()),
   ], child: const MyMaterialApp()));
 }
 

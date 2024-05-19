@@ -12,11 +12,9 @@ namespace RentACar.Services.Database
     {
         public int DodatnaUslugaId { get; set; }
 
-        public string Naziv { get; set; } = null!;
-        public string Opis { get; set; }
+        public string Naziv { get; set; }
 
         public decimal Cijena { get; set; }
 
-        public virtual ICollection<RezervacijaDodatnaUsluga> Rezervacije { get;} = new List<RezervacijaDodatnaUsluga>();
     }
 }

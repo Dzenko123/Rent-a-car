@@ -14,8 +14,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddTransient<IKorisniciService, KorisniciService>();
+builder.Services.AddTransient<IDodatnaUslugaService, DodatnaUslugaService>();
 builder.Services.AddTransient<ITipVozilaService, TipVozilaService>();
 builder.Services.AddTransient<IGorivoService, GorivoService>();
+builder.Services.AddTransient<IGradService, GradService>();
 builder.Services.AddTransient<IVozilaService, VozilaService>();
 builder.Services.AddTransient<IVoziloPregledService, VoziloPregledService>();
 builder.Services.AddTransient<IKontaktService, KontaktService>();

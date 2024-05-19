@@ -1,15 +1,27 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rentacar_admin/main.dart';
+import 'package:rentacar_admin/models/grad.dart';
 import 'package:rentacar_admin/models/korisnici.dart';
+import 'package:rentacar_admin/models/rezervacija.dart';
 import 'package:rentacar_admin/models/search_result.dart';
+import 'package:rentacar_admin/models/vozila.dart';
+import 'package:rentacar_admin/providers/grad_provider.dart';
 import 'package:rentacar_admin/providers/korisnici_provider.dart';
+import 'package:rentacar_admin/providers/rezervacija_provider.dart';
+import 'package:rentacar_admin/providers/vozila_provider.dart';
 import 'package:rentacar_admin/utils/util.dart';
 import 'package:rentacar_admin/widgets/master_screen.dart';
 
 class ProfilScreen extends StatefulWidget {
   Korisnici? korisnik;
+  List<Rezervacija>? rezervacija;
+  Vozilo? vozilo;
+  Grad? grad;
   ProfilScreen({Key? key, this.korisnik}) : super(key: key);
 
   @override
@@ -17,8 +29,15 @@ class ProfilScreen extends StatefulWidget {
 }
 
 class _ProfilScreenState extends State<ProfilScreen> {
+  late RezervacijaProvider _rezervacijaProvider;
   late KorisniciProvider _korisniciProvider;
+  late VozilaProvider _vozilaProvider;
+  late GradProvider _gradProvider;
   SearchResult<Korisnici>? korisniciResult;
+  SearchResult<Rezervacija>? rezervacijaResult;
+  SearchResult<Vozilo>? voziloResult;
+  SearchResult<Grad>? gradResult;
+
   int? ulogovaniKorisnikId;
   bool isLoading = true;
   final _formKey = GlobalKey<FormBuilderState>();
@@ -40,6 +59,10 @@ class _ProfilScreenState extends State<ProfilScreen> {
       'telefon': widget.korisnik?.telefon
     };
     _korisniciProvider = context.read<KorisniciProvider>();
+    _rezervacijaProvider = context.read<RezervacijaProvider>();
+    _vozilaProvider = context.read<VozilaProvider>();
+    _gradProvider = context.read<GradProvider>();
+
     getUlogovaniKorisnikId();
     initForm();
   }
@@ -74,10 +97,37 @@ class _ProfilScreenState extends State<ProfilScreen> {
 
   Future<void> initForm() async {
     korisniciResult = await _korisniciProvider.get();
-
+    voziloResult = await _vozilaProvider.get();
+    gradResult = await _gradProvider.get();
+    await getUlogovaniKorisnikId();
+    if (ulogovaniKorisnikId != null) {
+      await _loadRezervacije();
+    }
     setState(() {
       isLoading = false;
     });
+  }
+
+  Future<void> _loadRezervacije() async {
+    try {
+      List<Rezervacija> rezervacije =
+          await _rezervacijaProvider.getByKorisnikId(ulogovaniKorisnikId!);
+      setState(() {
+        widget.rezervacija = rezervacije.isNotEmpty ? rezervacije : null;
+      });
+    } catch (e) {
+      print('Greška prilikom dobijanja rezervacija: $e');
+    }
+  }
+
+  Future<Vozilo?> getVoziloData(int voziloId) async {
+    try {
+      var vozilo = await _vozilaProvider.getById(voziloId);
+      return vozilo;
+    } catch (e) {
+      print('Greška prilikom dobijanja podataka o vozilu: $e');
+      return null;
+    }
   }
 
   @override
@@ -101,175 +151,237 @@ class _ProfilScreenState extends State<ProfilScreen> {
   }
 
   Widget _buildDataListView() {
-    return Column(
-      children: [
-        SizedBox(height: 20),
-        _buildUserIcon(),
-        SizedBox(height: 20),
-        if (widget.korisnik != null && isEditing) ...[
-          FormBuilder(
-            key: _formKey,
-            initialValue: _initialValue,
-            child: Column(
-              children: [
-                FormBuilderTextField(
-                  name: 'ime',
-                  initialValue: widget.korisnik?.ime,
-                  style: TextStyle(color: Colors.black),
-                  decoration: InputDecoration(
-                    labelText: 'Ime',
-                    labelStyle: TextStyle(color: Colors.black),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
+    return Column(children: [
+      SizedBox(height: 20),
+      _buildUserIcon(),
+      SizedBox(height: 20),
+      if (widget.korisnik != null && isEditing) ...[
+        FormBuilder(
+          key: _formKey,
+          initialValue: _initialValue,
+          child: Column(
+            children: [
+              FormBuilderTextField(
+                name: 'ime',
+                initialValue: widget.korisnik?.ime,
+                style: TextStyle(color: Colors.black),
+                decoration: InputDecoration(
+                  labelText: 'Ime',
+                  labelStyle: TextStyle(color: Colors.black),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.black),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Polje je obavezno';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 10),
-                FormBuilderTextField(
-                  name: 'prezime',
-                  initialValue: widget.korisnik?.prezime,
-                  style: TextStyle(color: Colors.black),
-                  decoration: InputDecoration(
-                    labelText: 'Prezime',
-                    labelStyle: TextStyle(color: Colors.black),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.black),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Polje je obavezno';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 10),
-                FormBuilderTextField(
-                  name: 'email',
-                  initialValue: widget.korisnik?.email,
-                  style: TextStyle(color: Colors.black),
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    labelStyle: TextStyle(color: Colors.black),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.black),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Polje je obavezno';
-                    }
-                    return null;
-                  },
                 ),
-                SizedBox(height: 10),
-                FormBuilderTextField(
-                  name: 'telefon',
-                  initialValue: widget.korisnik?.telefon,
-                  style: TextStyle(color: Colors.black),
-                  decoration: InputDecoration(
-                    labelText: 'Telefon',
-                    labelStyle: TextStyle(color: Colors.black),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Polje je obavezno';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 10),
+              FormBuilderTextField(
+                name: 'prezime',
+                initialValue: widget.korisnik?.prezime,
+                style: TextStyle(color: Colors.black),
+                decoration: InputDecoration(
+                  labelText: 'Prezime',
+                  labelStyle: TextStyle(color: Colors.black),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.black),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Polje je obavezno';
-                    }
-                    return null;
-                  },
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
                 ),
-                SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Polje je obavezno';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 10),
+              FormBuilderTextField(
+                name: 'email',
+                initialValue: widget.korisnik?.email,
+                style: TextStyle(color: Colors.black),
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  labelStyle: TextStyle(color: Colors.black),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Polje je obavezno';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 10),
+              FormBuilderTextField(
+                name: 'telefon',
+                initialValue: widget.korisnik?.telefon,
+                style: TextStyle(color: Colors.black),
+                decoration: InputDecoration(
+                  labelText: 'Telefon',
+                  labelStyle: TextStyle(color: Colors.black),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Polje je obavezno';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      _updateUserProfile();
+                    },
+                    child: Text('Spasi'),
+                  ),
+                  SizedBox(width: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        isEditing = false;
+                      });
+                    },
+                    child: Text('Odustani'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ] else if (widget.korisnik != null) ...[
+        Padding(
+          padding: EdgeInsets.only(bottom: 20),
+          child: _buildCombinedInfo('Ime i prezime:',
+              '${widget.korisnik!.ime} ${widget.korisnik!.prezime}'),
+        ),
+        SizedBox(height: 10),
+        Padding(
+          padding: EdgeInsets.only(left: 20),
+          child: _buildInfoRow(Icons.email, 'Email:', widget.korisnik!.email),
+        ),
+        SizedBox(height: 10),
+        Padding(
+          padding: EdgeInsets.only(left: 20),
+          child:
+              _buildInfoRow(Icons.phone, 'Telefon:', widget.korisnik!.telefon),
+        ),
+        SizedBox(height: 10),
+      ] else ...[
+        CircularProgressIndicator(),
+      ],
+      if (widget.rezervacija != null) ...[
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Vaše aktivne rezervacije',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+            for (var rezervacija in widget.rezervacija!) ...[
+              ListTile(
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        _updateUserProfile();
+                    FutureBuilder(
+                      future: getVoziloData(rezervacija.voziloId!),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return CircularProgressIndicator();
+                        } else if (snapshot.hasError) {
+                          return Text(
+                              'Greška prilikom dohvaćanja podataka o vozilu');
+                        } else if (snapshot.hasData && snapshot.data != null) {
+                          var vozilo = snapshot.data as Vozilo;
+                          return Image.memory(
+                            base64Decode(vozilo.slika!),
+                            fit: BoxFit.cover,
+                          );
+                        } else {
+                          return Text('Nema dostupnih informacija o vozilu');
+                        }
                       },
-                      child: Text('Spasi'),
                     ),
-                    SizedBox(width: 20),
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          isEditing = false;
-                        });
+                    FutureBuilder(
+                      future: _gradProvider.getById(rezervacija.gradId!),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return CircularProgressIndicator();
+                        } else if (snapshot.hasError) {
+                          return Text(
+                              'Greška prilikom dohvaćanja podataka o gradu');
+                        } else if (snapshot.hasData && snapshot.data != null) {
+                          var grad = snapshot.data as Grad;
+                          return Text('Grad: ${grad.naziv}');
+                        } else {
+                          return Text('Nema dostupnih informacija o gradu');
+                        }
                       },
-                      child: Text('Odustani'),
                     ),
+                    Text(
+                        'Datum početka: ${DateFormat('dd.MM.yyyy').format(rezervacija.pocetniDatum!)}'),
+                    Text(
+                        'Datum završetka: ${DateFormat('dd.MM.yyyy').format(rezervacija.zavrsniDatum!)}'),
                   ],
                 ),
-              ],
-            ),
-          ),
-        ] else if (widget.korisnik != null) ...[
-          Padding(
-            padding: EdgeInsets.only(bottom: 20),
-            child: _buildCombinedInfo('Ime i prezime:',
-                '${widget.korisnik!.ime} ${widget.korisnik!.prezime}'),
-          ),
-          SizedBox(height: 10),
-          Padding(
-            padding: EdgeInsets.only(left: 20),
-            child: _buildInfoRow(Icons.email, 'Email:', widget.korisnik!.email),
-          ),
-          SizedBox(height: 10),
-          Padding(
-            padding: EdgeInsets.only(left: 20),
-            child: _buildInfoRow(
-                Icons.phone, 'Telefon:', widget.korisnik!.telefon),
-          ),
-          SizedBox(height: 10),
-        ] else ...[
-          CircularProgressIndicator(),
-        ],
+              ),
+            ],
+          ],
+        )
       ],
-    );
+    ]);
   }
 
   Future<void> _updateUserProfile() async {

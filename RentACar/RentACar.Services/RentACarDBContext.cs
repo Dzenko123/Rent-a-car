@@ -15,7 +15,6 @@ namespace RentACar.Services
         public DbSet<Recenzije> Recenzije { get; set;}
         public DbSet<Komentari> Komentari { get; set;}
         public DbSet<Rezervacija> Rezervacija { get; set; }
-        public DbSet<RezervacijaDodatnaUsluga> RezervacijaDodatnaUsluga { get; set; }
         public DbSet<TipVozila> TipVozila { get; set; }
         public DbSet<Uloge> Uloge { get; set; }
         public DbSet<Vozila> Vozila { get; set; }

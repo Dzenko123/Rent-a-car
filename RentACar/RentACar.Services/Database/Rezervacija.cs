@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RentACar.Model.Models;
 
 namespace RentACar.Services.Database
 {
@@ -20,16 +21,20 @@ namespace RentACar.Services.Database
 
         public Vozila Vozilo { get; set; } = null!;
 
+
         public int GradId { get; set; }
 
         public Grad Grad { get; set; } = null!;
 
-      
+
+        public int DodatnaUslugaId { get; set; }
+
+        public DodatnaUsluga DodatnaUsluga { get; set; } = null!;
+
 
         public DateTime PocetniDatum { get; set; }
 
         public DateTime ZavrsniDatum { get; set; }
 
-        public virtual ICollection<RezervacijaDodatnaUsluga> DodatneUsluge { get; } = new List<RezervacijaDodatnaUsluga>();
     }
 }

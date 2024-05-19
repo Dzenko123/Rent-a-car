@@ -4,14 +4,17 @@ using Microsoft.EntityFrameworkCore.Storage;
 using RentACar.Model.Models;
 using RentACar.Model.SearchObject;
 using RentACar.Services;
+using RentACar.Services.IServices;
 
 namespace RentACar.Controllers
 {
     [ApiController]
-    public class DodatnaUslugaController : BaseController<DodatnaUsluga, BaseSearchObject>
+    [Route("[controller]")]
+
+    public class DodatnaUslugaController : BaseCRUDController<DodatnaUsluga, Model.SearchObject.DodatnaUslugaSearchObject, Model.Requests.DodatnaUslugaInsertRequest, Model.Requests.DodatnaUslugaUpdateRequest, Model.Requests.DodatnaUslugaDeleteRequest>
     {
-        public DodatnaUslugaController(ILogger<BaseController<DodatnaUsluga, BaseSearchObject>> logger, 
-            IService<DodatnaUsluga, BaseSearchObject> service) : base(logger, service)
+        public DodatnaUslugaController(ILogger<BaseController<DodatnaUsluga, Model.SearchObject.DodatnaUslugaSearchObject>> logger,
+            IDodatnaUslugaService service) : base(logger, service)
         {
         }
     }

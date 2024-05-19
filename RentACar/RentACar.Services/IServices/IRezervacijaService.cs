@@ -11,5 +11,6 @@ namespace RentACar.Services.IServices
 {
     public interface IRezervacijaService : ICRUDService<Rezervacija, RezervacijaSearchObject, RezervacijaInsertRequest, RezervacijaUpdateRequest, RezervacijaDeleteRequest>
     {
+        Task<IEnumerable<Rezervacija>> GetByKorisnikId(int korisnikId);
     }
 }

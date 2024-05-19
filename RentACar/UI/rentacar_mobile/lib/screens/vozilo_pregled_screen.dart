@@ -80,9 +80,9 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color(0xFF000000),
-              Color.fromARGB(255, 68, 68, 68),
-              Color.fromARGB(255, 148, 147, 147),
+              Color.fromARGB(255, 33, 33, 33),
+              Color(0xFF333333),
+              Color.fromARGB(255, 150, 149, 149),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -101,6 +101,54 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                       Container(),
                       const SizedBox(height: 20),
                       _buildCalendar(),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(69, 255, 230, 0),
+                              shape: BoxShape.circle,
+                            ),
+                            padding: EdgeInsets.all(6),
+                            child: Icon(
+                              Icons.car_repair,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(width: 5),
+                          Text(
+                            '- Vozilo na popravci',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 5),
+                      Row(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(69, 255, 230, 0),
+                              shape: BoxShape.circle,
+                            ),
+                            padding: EdgeInsets.all(6),
+                            child: Icon(
+                              Icons.bookmark_add_rounded,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(width: 5),
+                          Text(
+                            '- Vozilo je rezervisano',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -182,15 +230,11 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
           var rezervacije = rezervacijaResult!.result
               .where((rezervacija) =>
                   rezervacija.voziloId == widget.vozilo!.voziloId &&
-                  (day.isAfter(rezervacija.pocetniDatum!) ||
-                      day.isAtSameMomentAs(rezervacija.pocetniDatum!)) &&
-                  (day.isBefore(rezervacija.zavrsniDatum!) ||
-                      day.isAtSameMomentAs(rezervacija.zavrsniDatum!)))
-              .map((rezervacija) => rezervacija.pocetniDatum!)
-              .where((rezervacijaDatum) => rezervacijaDatum.isAfter(
-                  DateTime.now().subtract(Duration(
-                      days:
-                          1)))); // filtriranje samo za današnji dan i buduće datume
+                  (isSameDay(rezervacija.pocetniDatum!, day) ||
+                      day.isAfter(rezervacija.pocetniDatum!)) &&
+                  (isSameDay(rezervacija.zavrsniDatum!, day) ||
+                      day.isBefore(rezervacija.zavrsniDatum!)))
+              .map((rezervacija) => rezervacija.pocetniDatum!);
 
           return [...pregledi, ...rezervacije].toList();
         } else {
@@ -210,10 +254,11 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                 rezervacija.voziloId == widget.vozilo!.voziloId &&
                 rezervacija.pocetniDatum != null &&
                 rezervacija.zavrsniDatum != null &&
-                date.isAfter(rezervacija.pocetniDatum!) &&
-                date.isBefore(rezervacija.zavrsniDatum!) &&
-                date.isAfter(DateTime
-                    .now())); // Provjerava da li je rezervacija za današnji dan ili buduće datume
+                (isSameDay(rezervacija.pocetniDatum!, date) ||
+                    date.isAfter(rezervacija.pocetniDatum!)) &&
+                (isSameDay(rezervacija.zavrsniDatum!, date) ||
+                    date.isBefore(rezervacija.zavrsniDatum!)) &&
+                date.isAfter(DateTime.now()));
             bool voziloNaPregledu = voziloPregledResult!.result.any((pregled) =>
                 pregled.datum != null &&
                 isSameDay(pregled.datum!, date) &&
@@ -344,9 +389,14 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
           bool isToday = isSameDay(date, DateTime.now());
           bool isAfterToday = date.isAfter(DateTime.now());
           bool isReserved = rezervacijaResult!.result.any((rezervacija) =>
-              rezervacija.voziloId == widget.vozilo?.voziloId &&
-              date.isAfter(rezervacija.pocetniDatum!) &&
-              date.isBefore(rezervacija.zavrsniDatum!));
+              rezervacija.voziloId == widget.vozilo!.voziloId &&
+              rezervacija.pocetniDatum != null &&
+              rezervacija.zavrsniDatum != null &&
+              (isSameDay(rezervacija.pocetniDatum!, date) ||
+                  date.isAfter(rezervacija.pocetniDatum!)) &&
+              (isSameDay(rezervacija.zavrsniDatum!, date) ||
+                  date.isBefore(rezervacija.zavrsniDatum!)) &&
+              date.isAfter(DateTime.now()));
           bool voziloNaPregledu = voziloPregledResult!.result.any((pregled) =>
               isSameDay(pregled.datum!, date) &&
               pregled.voziloId == widget.vozilo?.voziloId);
@@ -376,7 +426,7 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
           }
           if (rezervacijaResult != null &&
               rezervacijaResult!.result.isNotEmpty) {
-            if (isReserved && !isToday) {
+            if (isReserved) {
               return Container(
                 margin: EdgeInsets.all(1),
                 decoration: BoxDecoration(
@@ -555,21 +605,38 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
             if (preglediZaDatum.isNotEmpty) {
               if (widget.vozilo != null) {
                 return Positioned(
-                  top: 10,
+                  top: 7,
                   child: Center(
                     child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          color: const Color.fromARGB(111, 0, 0, 0),
-                        ),
-                        padding: EdgeInsets.symmetric(horizontal: 4.0),
-                        child: Icon(
-                          Icons.car_repair,
-                          color: Colors.white,
-                        )),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: const Color.fromARGB(111, 0, 0, 0),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 4.0),
+                      child: Icon(
+                        Icons.car_repair,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 );
               }
+            } else {
+              return Positioned(
+                top: 7,
+                child: Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 4.0),
+                    child: Icon(
+                      Icons.bookmark_add_rounded,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              );
             }
           }
           return null;

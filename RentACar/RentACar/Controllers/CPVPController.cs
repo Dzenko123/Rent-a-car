@@ -14,5 +14,26 @@ namespace RentACar.Controllers
             ICPVPService service) : base(logger, service)
         {
         }
+        [HttpGet("GetByVoziloId/{voziloId}")]
+        public async Task<ActionResult<IEnumerable<CijenePoVremenskomPeriodu>>> GetByVoziloId(int voziloId)
+        {
+            if (voziloId <= 0)
+            {
+                return BadRequest("VoziloId je obavezno polje.");
+            }
+
+            var searchObject = new CPVPSearchObject { VoziloId = voziloId, IsPeriodIncluded = true };
+            var result = await _service.Get(searchObject);
+
+            if (result == null || result.Count == 0)
+            {
+                return NotFound("Nema pronađenih rezultata za dati VoziloId.");
+            }
+
+            return Ok(result.Result);
+        }
+
+
+
     }
 }
