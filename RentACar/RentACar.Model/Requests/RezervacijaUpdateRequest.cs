@@ -15,12 +15,13 @@ namespace RentACar.Model.Requests
         public int VoziloId { get; set; }
 
 
-        public int GradId { get; set; }
+        public int? GradId { get; set; }
+        public int? DodatnaUslugaId { get; set; }
 
 
-        public DateTime PocetniDatum { get; set; }
+        public DateTime? PocetniDatum { get; set; }
 
-        public DateTime ZavrsniDatum { get; set; }
+        public DateTime? ZavrsniDatum { get; set; }
 
     }
 }
