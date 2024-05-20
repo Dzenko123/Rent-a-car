@@ -31,7 +31,7 @@ namespace RentACar.Services.Configurations
 
             builder.HasOne(r => r.DodatnaUsluga)
                    .WithMany()
-                   .HasForeignKey(r => r.DodatnaUslugaId);
+                   .HasForeignKey(r => r.DodatnaUslugaId).IsRequired(false);
         }
     }
 }
