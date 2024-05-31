@@ -29,9 +29,10 @@ namespace RentACar.Services.Configurations
                    .WithMany()
                    .HasForeignKey(r => r.GradId);
 
-            builder.HasOne(r => r.DodatnaUsluga)
-                   .WithMany()
-                   .HasForeignKey(r => r.DodatnaUslugaId).IsRequired(false);
+            builder.HasMany(r => r.DodatnaUsluga)
+                     .WithOne(rd => rd.Rezervacija)
+                     .HasForeignKey(rd => rd.RezervacijaId)
+                     .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

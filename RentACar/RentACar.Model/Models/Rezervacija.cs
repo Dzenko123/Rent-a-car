@@ -18,12 +18,11 @@ namespace RentACar.Model.Models
 
         public int GradId { get; set; }
 
-        public int? DodatnaUslugaId { get; set; }
-
 
         public DateTime PocetniDatum { get; set; }
 
         public DateTime ZavrsniDatum { get; set; }
+        public ICollection<RezervacijaDodatnaUsluga> DodatnaUsluga { get; set; }= new List<RezervacijaDodatnaUsluga>();
 
     }
 }

@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:rentacar_admin/main.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:rentacar_admin/screens/cijene_po_vremenskom_periodu_screen.dart';
 import 'package:rentacar_admin/screens/kontakt_screen.dart';
 import 'package:rentacar_admin/screens/profil_screen.dart';
 import 'package:rentacar_admin/screens/recenzije_screen.dart';
-import 'package:rentacar_admin/screens/rezervacija_screen.dart';
-import 'package:rentacar_admin/screens/vozila_detail_screen.dart';
 import 'package:rentacar_admin/screens/vozila_list_screen.dart';
-import 'package:rentacar_admin/screens/vozilo_pregled_screen.dart';
 
-class MasterScreenWidget extends StatefulWidget {
-  Widget? child;
+class MasterScreenWidget extends StatefulWidget {  final NavigationController navigationController = Get.put(NavigationController());
+
+Widget? child;
   String? title;
   Widget? title_widget;
 
@@ -21,89 +20,82 @@ class MasterScreenWidget extends StatefulWidget {
 }
 
 class _MasterScreenWidgetState extends State<MasterScreenWidget> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: widget.title_widget ?? Text(widget.title ?? ""),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            ListTile(
-              title: const Text("Back"),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const LoginPage(),
-                  ),
-                );
-              },
+      bottomNavigationBar: NavigationBarTheme(
+        data:  NavigationBarThemeData(
+            labelTextStyle: MaterialStateProperty.all(
+              const TextStyle(
+                fontSize: 12.0,
+                color: Colors.black,
+              ),
+            )),
+        child: NavigationBar(
+          height: 60,
+          key: ValueKey(widget.navigationController.selectedIndex.value),
+          elevation: 8,
+          selectedIndex: widget.navigationController.selectedIndex.value,
+          onDestinationSelected: (index) {
+            setState(() {
+              widget.navigationController.selectedIndex.value = index;
+            });
+            switch (index) {
+              case 0:
+                Get.toNamed(VozilaListScreen.routeName);
+                break;
+              case 1:
+                Get.toNamed(CijenePoVremenskomPerioduScreen.routeName);
+                break;
+              case 2:
+                Get.toNamed(RecenzijeScreen.routeName);
+                break;
+              case 3:
+                Get.toNamed(KontaktScreen.routeName);
+                break;
+              case 4:
+                Get.toNamed(ProfilScreen.routeName);
+                break;
+
+            // Add cases for other screens if needed
+            }
+          },
+          backgroundColor:Colors.grey.shade200,
+          destinations: const [
+            NavigationDestination(
+              selectedIcon: Icon(Icons.directions_car,color: Colors.blue,),
+              icon: Icon(Icons.directions_car_outlined,color: Colors.black),
+              label: 'Vozila',
+
             ),
-            ListTile(
-              title: const Text("Vozila"),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => VozilaListScreen(),
-                  ),
-                );
-              },
+            NavigationDestination(
+              selectedIcon: Icon(Icons.attach_money,color: Colors.blue),
+              icon: Icon(Icons.attach_money_outlined,color: Colors.black),
+              label: 'Cijene',
             ),
-            ListTile(
-              title: const Text("Kontakt"),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => KontaktScreen(),
-                  ),
-                );
-              },
+            NavigationDestination(
+              selectedIcon: Icon(Icons.star,color: Colors.blue),
+              icon: Icon(Icons.star_border_outlined,color: Colors.black),
+              label: 'Recenzije',
             ),
-            ListTile(
-              title: const Text("Cijene po periodu"),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => CijenePoVremenskomPerioduScreen(),
-                  ),
-                );
-              },
+            NavigationDestination(
+              selectedIcon: Icon(Icons.contact_phone,color: Colors.blue),
+              icon: Icon(Icons.contact_phone_outlined,color: Colors.black),
+              label: 'Kontakt',
             ),
-            ListTile(
-              title: const Text("Rezervacije"),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => RezervacijaScreen(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text("Profil"),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => ProfilScreen(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text("Recenzije"),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => RecenzijeScreen(),
-                  ),
-                );
-              },
+            NavigationDestination(
+              selectedIcon: Icon(Icons.person,color: Colors.blue),
+              icon: Icon(Icons.person_outline,color: Colors.black),
+              label: 'Profil',
             ),
           ],
         ),
       ),
-      body: widget.child!,
+      body: widget.child,
     );
   }
+}
+class NavigationController extends GetxController {
+  var selectedIndex = 0.obs;
 }

@@ -7,10 +7,10 @@ part of 'rezervacija.dart';
 // **************************************************************************
 
 Rezervacija _$RezervacijaFromJson(Map<String, dynamic> json) => Rezervacija(
-      json['rezervacijaId'] as int?,
-      json['korisnikId'] as int?,
-      json['voziloId'] as int?,
-      json['gradId'] as int?,
+      (json['rezervacijaId'] as num?)?.toInt(),
+      (json['korisnikId'] as num?)?.toInt(),
+      (json['voziloId'] as num?)?.toInt(),
+      (json['gradId'] as num?)?.toInt(),
       json['pocetniDatum'] == null
           ? null
           : DateTime.parse(json['pocetniDatum'] as String),
@@ -20,6 +20,12 @@ Rezervacija _$RezervacijaFromJson(Map<String, dynamic> json) => Rezervacija(
       json['vozilo'] == null
           ? null
           : Vozilo.fromJson(json['vozilo'] as Map<String, dynamic>),
+      (json['dodatnaUslugaId'] as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
+          .toList(),
+      (json['dodatnaUsluga'] as List<dynamic>?)
+          ?.map((e) => DodatnaUsluga.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$RezervacijaToJson(Rezervacija instance) =>
@@ -31,4 +37,6 @@ Map<String, dynamic> _$RezervacijaToJson(Rezervacija instance) =>
       'pocetniDatum': instance.pocetniDatum?.toIso8601String(),
       'zavrsniDatum': instance.zavrsniDatum?.toIso8601String(),
       'vozilo': instance.vozilo,
+      'dodatnaUslugaId': instance.dodatnaUslugaId,
+      'dodatnaUsluga': instance.dodatnaUsluga,
     };

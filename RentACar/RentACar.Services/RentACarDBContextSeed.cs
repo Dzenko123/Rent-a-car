@@ -38,6 +38,7 @@ namespace RentACar.Services
             SeedDodatnaUsluga(modelBuilder);
             SeedRezervacija(modelBuilder);
             SeedPeriod(modelBuilder);
+            SeedRezervacijaDodatnaUsluga(modelBuilder);
         }
 
         private void SeedKorisnici(ModelBuilder modelBuilder)
@@ -510,7 +511,6 @@ namespace RentACar.Services
                     KorisnikId = 2,
                     VoziloId = 1,
                     GradId = 1,
-                    DodatnaUslugaId=1,
                     PocetniDatum = _dateTime,
                     ZavrsniDatum = _dateTime2
                 },
@@ -520,11 +520,28 @@ namespace RentACar.Services
                     KorisnikId = 3,
                     VoziloId = 2,
                     GradId = 2,
-                    DodatnaUslugaId=2,
                     PocetniDatum = _dateTime,
                     ZavrsniDatum = _dateTime2
                 });
         }
-
+        private void SeedRezervacijaDodatnaUsluga(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<RezervacijaDodatnaUsluga>().HasData(
+                new RezervacijaDodatnaUsluga
+                {
+                    RezervacijaId = 1,
+                    DodatnaUslugaId = 1
+                },
+                new RezervacijaDodatnaUsluga
+                {
+                    RezervacijaId = 1,
+                    DodatnaUslugaId = 3
+                },
+                new RezervacijaDodatnaUsluga
+                {
+                    RezervacijaId = 2,
+                    DodatnaUslugaId = 2
+                });
+        }
     }
 }

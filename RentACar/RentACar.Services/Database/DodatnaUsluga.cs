@@ -15,6 +15,7 @@ namespace RentACar.Services.Database
         public string Naziv { get; set; }
 
         public decimal Cijena { get; set; }
+        public ICollection<RezervacijaDodatnaUsluga> Rezervacija { get; set; } = null!;
 
     }
 }

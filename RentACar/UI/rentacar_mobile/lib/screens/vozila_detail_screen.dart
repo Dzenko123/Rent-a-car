@@ -1,8 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:collection/collection.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
@@ -13,8 +11,6 @@ import 'package:rentacar_admin/models/vozila.dart';
 import 'package:rentacar_admin/providers/gorivo_provider.dart';
 import 'package:rentacar_admin/providers/tip_vozila_provider.dart';
 import 'package:rentacar_admin/providers/vozila_provider.dart';
-import 'package:rentacar_admin/screens/gorivo_screen.dart';
-import 'package:rentacar_admin/screens/tip_opis_screen.dart';
 import 'package:rentacar_admin/screens/vozilo_pregled_screen.dart';
 import 'package:rentacar_admin/widgets/master_screen.dart';
 
@@ -83,26 +79,37 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
     return MasterScreenWidget(
       title:
           'Pregledate model i marku: ${widget.vozilo?.model}, ${widget.vozilo?.marka}',
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 10),
-                    _buildImagePreview(),
-                    const SizedBox(height: 20),
-                    isLoading ? Container() : _buildForm(),
-                    const SizedBox(height: 20),
-                  ],
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Vozilo Detail'),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 10),
+                      _buildImagePreview(),
+                      const SizedBox(height: 20),
+                      isLoading ? Container() : _buildForm(),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -190,8 +197,8 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
               ),
             ),
           ),
-          SizedBox(height: 5),
-          Text(
+          const SizedBox(height: 5),
+          const Text(
             'Pogledajte kada je ovo vozilo slobodno za rezervaciju!',
             style: TextStyle(
               fontSize: 15,

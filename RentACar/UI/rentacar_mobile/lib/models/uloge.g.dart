@@ -7,7 +7,7 @@ part of 'uloge.dart';
 // **************************************************************************
 
 Uloge _$UlogeFromJson(Map<String, dynamic> json) => Uloge(
-      ulogaId: json['ulogaId'] as int?,
+      ulogaId: (json['ulogaId'] as num?)?.toInt(),
       naziv: json['naziv'] as String?,
       opis: json['opis'] as String?,
     );

@@ -1,24 +1,34 @@
 import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 import 'package:rentacar_admin/providers/cijene_po_vremenskom_periodu_provider.dart';
+import 'package:rentacar_admin/providers/dodatna_usluga_provider.dart';
 import 'package:rentacar_admin/providers/gorivo_provider.dart';
 import 'package:rentacar_admin/providers/grad_provider.dart';
 import 'package:rentacar_admin/providers/komentari_provider.dart';
 import 'package:rentacar_admin/providers/kontakt_provider.dart';
 import 'package:rentacar_admin/providers/korisnici_provider.dart';
 import 'package:rentacar_admin/providers/recenzije_provider.dart';
+import 'package:rentacar_admin/providers/rezervacija_dodatna_usluga_provider.dart';
 import 'package:rentacar_admin/providers/rezervacija_provider.dart';
 import 'package:rentacar_admin/providers/tip_vozila_provider.dart';
 import 'package:rentacar_admin/providers/vozila_provider.dart';
 import 'package:rentacar_admin/providers/vozilo_pregled_provider.dart';
+import 'package:rentacar_admin/screens/cijene_po_vremenskom_periodu_screen.dart';
+import 'package:rentacar_admin/screens/kontakt_screen.dart';
+import 'package:rentacar_admin/screens/profil_screen.dart';
+import 'package:rentacar_admin/screens/recenzije_screen.dart';
+import 'package:rentacar_admin/screens/vozila_detail_screen.dart';
 import 'package:rentacar_admin/utils/util.dart';
 import './screens/vozila_list_screen.dart';
-import 'package:http/http.dart' as http;
 
 void main() async {
-  HttpOverrides.global = new MyHttpOverrides();
+  WidgetsFlutterBinding.ensureInitialized();
+
+  HttpOverrides.global = MyHttpOverrides();
 
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => VozilaProvider()),
@@ -32,17 +42,59 @@ void main() async {
     ChangeNotifierProvider(create: (_) => RezervacijaProvider()),
     ChangeNotifierProvider(create: (_) => CijenePoVremenskomPerioduProvider()),
     ChangeNotifierProvider(create: (_) => GradProvider()),
+    ChangeNotifierProvider(create: (_) => DodatnaUslugaProvider()),
+    ChangeNotifierProvider(create: (_) => RezervacijaDodatnaUslugaProvider()),
   ], child: const MyMaterialApp()));
 }
 
 class MyMaterialApp extends StatelessWidget {
-  const MyMaterialApp({Key? key}) : super(key: key);
+  const MyMaterialApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'RS II Material App',
       home: const LoginPage(),
+      onGenerateRoute: (settings) {
+        if (settings.name == VozilaListScreen.routeName) {
+          // Provjeri je li ruta trenutno otvorena
+          if (!Get.isDialogOpen!) {
+            return GetPageRoute(
+              settings: settings,
+              page: () => VozilaListScreen(),
+            );
+          }
+        } else if (settings.name == CijenePoVremenskomPerioduScreen.routeName) {
+          if (!Get.isDialogOpen!) {
+            return GetPageRoute(
+              settings: settings,
+              page: () => CijenePoVremenskomPerioduScreen(),
+            );
+          }
+        }else if (settings.name == RecenzijeScreen.routeName) {
+          if (!Get.isDialogOpen!) {
+            return GetPageRoute(
+              settings: settings,
+              page: () => RecenzijeScreen(),
+            );
+          }
+        }else if (settings.name == KontaktScreen.routeName) {
+          if (!Get.isDialogOpen!) {
+            return GetPageRoute(
+              settings: settings,
+              page: () => KontaktScreen(),
+            );
+          }
+        }else if (settings.name == ProfilScreen.routeName) {
+          if (!Get.isDialogOpen!) {
+            return GetPageRoute(
+              settings: settings,
+              page: () => ProfilScreen(),
+            );
+          }
+        }
+        return null;
+      },
       theme: ThemeData(
         inputDecorationTheme: InputDecorationTheme(
           focusedBorder: const UnderlineInputBorder(
@@ -59,7 +111,7 @@ class MyMaterialApp extends StatelessWidget {
 }
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -221,10 +273,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                       var korisnikId = await _korisniciProvider
                                           .getLoged(username, password);
 
-                                      if (korisnikId != null) {
-                                        print("Korisnik ID: $korisnikId");
-                                      }
-                                      await _vozilaProvider.get();
+                                      print("Korisnik ID: $korisnikId");
+                                                                          await _vozilaProvider.get();
 
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
@@ -292,7 +342,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         child: ScrollbarTheme(
                           data: ScrollbarThemeData(
                             thumbColor:
-                                MaterialStateProperty.all<Color>(Colors.white),
+                                WidgetStateProperty.all<Color>(Colors.white),
                           ),
                           child: Scrollbar(
                             controller: _scrollController,
@@ -310,19 +360,19 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                       cursorColor: Colors.white,
                                       decoration: InputDecoration(
                                           labelText: "Ime",
-                                          prefixIcon: Icon(
+                                          prefixIcon: const Icon(
                                             Icons.person,
                                             color: Colors.white,
                                           ),
                                           labelStyle:
-                                              TextStyle(color: Colors.white),
+                                              const TextStyle(color: Colors.white),
                                           contentPadding:
-                                              EdgeInsets.symmetric(vertical: 5),
+                                              const EdgeInsets.symmetric(vertical: 5),
                                           errorText: _imeController.text.isEmpty
                                               ? 'Polje ne smije biti prazno'
                                               : null,
                                           errorStyle:
-                                              TextStyle(color: Colors.white)),
+                                              const TextStyle(color: Colors.white)),
                                       style:
                                           const TextStyle(color: Colors.white),
                                       controller: _imeController,
@@ -337,20 +387,20 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                       cursorColor: Colors.white,
                                       decoration: InputDecoration(
                                           labelText: "Prezime",
-                                          prefixIcon: Icon(
+                                          prefixIcon: const Icon(
                                             Icons.person,
                                             color: Colors.white,
                                           ),
                                           labelStyle:
-                                              TextStyle(color: Colors.white),
+                                              const TextStyle(color: Colors.white),
                                           contentPadding:
-                                              EdgeInsets.symmetric(vertical: 5),
+                                              const EdgeInsets.symmetric(vertical: 5),
                                           errorText:
                                               _prezimeController.text.isEmpty
                                                   ? 'Polje ne smije biti prazno'
                                                   : null,
                                           errorStyle:
-                                              TextStyle(color: Colors.white)),
+                                              const TextStyle(color: Colors.white)),
                                       style:
                                           const TextStyle(color: Colors.white),
                                       controller: _prezimeController,
@@ -365,21 +415,21 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                         cursorColor: Colors.white,
                                         decoration: InputDecoration(
                                             labelText: "Email",
-                                            prefixIcon: Icon(
+                                            prefixIcon: const Icon(
                                               Icons.email,
                                               color: Colors.white,
                                             ),
                                             labelStyle:
-                                                TextStyle(color: Colors.white),
+                                                const TextStyle(color: Colors.white),
                                             contentPadding:
-                                                EdgeInsets.symmetric(
+                                                const EdgeInsets.symmetric(
                                                     vertical: 5),
                                             errorText: _emailController
                                                     .text.isEmpty
                                                 ? 'Polje ne smije biti prazno'
                                                 : null,
                                             errorStyle:
-                                                TextStyle(color: Colors.white)),
+                                                const TextStyle(color: Colors.white)),
                                         style: const TextStyle(
                                             color: Colors.white),
                                         controller: _emailController),
@@ -390,20 +440,20 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                       cursorColor: Colors.white,
                                       decoration: InputDecoration(
                                           labelText: "Telefon",
-                                          prefixIcon: Icon(
+                                          prefixIcon: const Icon(
                                             Icons.phone,
                                             color: Colors.white,
                                           ),
                                           labelStyle:
-                                              TextStyle(color: Colors.white),
+                                              const TextStyle(color: Colors.white),
                                           contentPadding:
-                                              EdgeInsets.symmetric(vertical: 5),
+                                              const EdgeInsets.symmetric(vertical: 5),
                                           errorText:
                                               _telefonController.text.isEmpty
                                                   ? 'Polje ne smije biti prazno'
                                                   : null,
                                           errorStyle:
-                                              TextStyle(color: Colors.white)),
+                                              const TextStyle(color: Colors.white)),
                                       style:
                                           const TextStyle(color: Colors.white),
                                       controller: _telefonController,
@@ -414,7 +464,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                     const SizedBox(
                                       height: 30,
                                     ),
-                                    Divider(
+                                    const Divider(
                                       color: Colors.white,
                                       height: 1,
                                       thickness: 5,
@@ -423,20 +473,20 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                       cursorColor: Colors.white,
                                       decoration: InputDecoration(
                                           labelText: "Korisnicko ime",
-                                          prefixIcon: Icon(
+                                          prefixIcon: const Icon(
                                             Icons.person,
                                             color: Colors.white,
                                           ),
                                           labelStyle:
-                                              TextStyle(color: Colors.white),
+                                              const TextStyle(color: Colors.white),
                                           contentPadding:
-                                              EdgeInsets.symmetric(vertical: 5),
+                                              const EdgeInsets.symmetric(vertical: 5),
                                           errorText: _korisnickoImeController
                                                   .text.isEmpty
                                               ? 'Polje ne smije biti prazno'
                                               : null,
                                           errorStyle:
-                                              TextStyle(color: Colors.white)),
+                                              const TextStyle(color: Colors.white)),
                                       style:
                                           const TextStyle(color: Colors.white),
                                       controller: _korisnickoImeController,
@@ -451,20 +501,20 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                       cursorColor: Colors.white,
                                       decoration: InputDecoration(
                                         labelText: "Password",
-                                        prefixIcon: Icon(
+                                        prefixIcon: const Icon(
                                           Icons.password_sharp,
                                           color: Colors.white,
                                         ),
                                         labelStyle:
-                                            TextStyle(color: Colors.white),
+                                            const TextStyle(color: Colors.white),
                                         contentPadding:
-                                            EdgeInsets.symmetric(vertical: 5),
+                                            const EdgeInsets.symmetric(vertical: 5),
                                         errorText:
                                             _noviPasswordController.text.isEmpty
                                                 ? 'Polje ne smije biti prazno'
                                                 : null,
                                         errorStyle:
-                                            TextStyle(color: Colors.white),
+                                            const TextStyle(color: Colors.white),
                                       ),
                                       style:
                                           const TextStyle(color: Colors.white),
@@ -481,20 +531,20 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                       cursorColor: Colors.white,
                                       decoration: InputDecoration(
                                         labelText: "Password potvrda",
-                                        prefixIcon: Icon(
+                                        prefixIcon: const Icon(
                                           Icons.password_sharp,
                                           color: Colors.white,
                                         ),
                                         labelStyle:
-                                            TextStyle(color: Colors.white),
+                                            const TextStyle(color: Colors.white),
                                         contentPadding:
-                                            EdgeInsets.symmetric(vertical: 5),
+                                            const EdgeInsets.symmetric(vertical: 5),
                                         errorText: _passwordPotvrdaController
                                                 .text.isEmpty
                                             ? 'Polje ne smije biti prazno'
                                             : null,
                                         errorStyle:
-                                            TextStyle(color: Colors.white),
+                                            const TextStyle(color: Colors.white),
                                       ),
                                       style:
                                           const TextStyle(color: Colors.white),
@@ -543,7 +593,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       _isSignUpMode = false;
                     });
                   },
-                  child: Row(
+                  child: const Row(
                     children: [
                       Icon(Icons.arrow_back, color: Colors.white),
                       SizedBox(width: 5),
@@ -557,12 +607,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               RichText(
                 text: TextSpan(
                   text: _isSignUpMode ? "" : "Nemate profil? Kreirajte ga  ",
-                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
                   children: [
                     if (!_isSignUpMode)
                       TextSpan(
                         text: "ovdje",
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           decoration: TextDecoration.underline,
                           fontSize: 18,
@@ -640,7 +690,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          final Duration duration = const Duration(seconds: 2);
+          const Duration duration = Duration(seconds: 2);
 
           return AlertDialog(
             title: const Text("Uspješno ste kreirali nalog!"),
@@ -651,10 +701,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 return Stack(
                   alignment: Alignment.center,
                   children: [
-                    Container(
+                    SizedBox(
                       width: 50 * value,
                       height: 50 * value,
-                      child: CircularProgressIndicator(
+                      child: const CircularProgressIndicator(
                         backgroundColor: Colors.grey,
                         valueColor: AlwaysStoppedAnimation<Color>(
                           Colors.blue,
@@ -662,7 +712,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       ),
                     ),
                     if (value == 1)
-                      Icon(
+                      const Icon(
                         Icons.check,
                         color: Colors.green,
                         size: 50,

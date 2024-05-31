@@ -13,9 +13,10 @@ import 'package:rentacar_admin/screens/rezervacija_screen.dart';
 import 'package:rentacar_admin/screens/vozila_detail_screen.dart';
 import 'package:rentacar_admin/utils/util.dart';
 import 'package:rentacar_admin/widgets/master_screen.dart';
-import 'package:rentacar_admin/screens/vozilo_pregled_screen.dart';
 
 class VozilaListScreen extends StatefulWidget {
+  static const String routeName = "/vozila";
+
   Vozilo? vozilo;
   VozilaListScreen({super.key, this.vozilo});
 
@@ -90,8 +91,11 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Column(
-          children: [_buildSearch(), _buildDataListView()],
+        child: Padding(
+          padding: const EdgeInsets.only(top:30.0),
+          child: Column(
+            children: [_buildSearch(), _buildDataListView()],
+          ),
         ),
       ),
     );
@@ -252,7 +256,7 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
                                       const SizedBox(width: 5),
                                       Expanded(
                                         child: Text(
-                                          '${gorivoResult?.result.firstWhere((g) => g.gorivoId == e.gorivoId).tip ?? ""}',
+                                          gorivoResult?.result.firstWhere((g) => g.gorivoId == e.gorivoId).tip ?? "",
                                           style: const TextStyle(
                                               color: Colors.white,
                                               fontStyle: FontStyle.italic,

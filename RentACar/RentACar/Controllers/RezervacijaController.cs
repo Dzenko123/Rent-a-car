@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RentACar.Controllers;
 using RentACar.Model.Models;
+using RentACar.Model.Requests;
 using RentACar.Model.SearchObject;
 using RentACar.Services.IServices;
 using RentACar.Services.Services;
@@ -25,5 +26,19 @@ namespace RentACar.Controllers
             var rezervacije = await _rezervacijeService.GetByKorisnikId(korisnikId);
             return Ok(rezervacije);
         }
+        [HttpPost("InsertWithDodatneUsluge")]
+        public async Task<ActionResult<Rezervacija>> InsertRezervacijaWithDodatneUsluge(RezervacijaInsertRequest request)
+        {
+            try
+            {
+                var rezervacija = await _rezervacijeService.InsertRezervacijaWithDodatneUsluge(request);
+                return Ok(rezervacija);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

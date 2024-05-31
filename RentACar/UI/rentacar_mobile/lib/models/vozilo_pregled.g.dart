@@ -8,8 +8,8 @@ part of 'vozilo_pregled.dart';
 
 VoziloPregled _$VoziloPregledFromJson(Map<String, dynamic> json) =>
     VoziloPregled(
-      voziloPregledId: json['voziloPregledId'] as int?,
-      voziloId: json['voziloId'] as int?,
+      voziloPregledId: (json['voziloPregledId'] as num?)?.toInt(),
+      voziloId: (json['voziloId'] as num?)?.toInt(),
       datum: json['datum'] == null
           ? null
           : DateTime.parse(json['datum'] as String),

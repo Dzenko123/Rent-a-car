@@ -7,8 +7,8 @@ part of 'kontakt.dart';
 // **************************************************************************
 
 Kontakt _$KontaktFromJson(Map<String, dynamic> json) => Kontakt(
-      json['kontaktId'] as int?,
-      json['korisnikId'] as int?,
+      (json['kontaktId'] as num?)?.toInt(),
+      (json['korisnikId'] as num?)?.toInt(),
       json['imePrezime'] as String?,
       json['poruka'] as String?,
       json['telefon'] as String?,

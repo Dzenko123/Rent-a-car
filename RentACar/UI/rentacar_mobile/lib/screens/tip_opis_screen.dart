@@ -8,7 +8,7 @@ import 'package:rentacar_admin/providers/tip_vozila_provider.dart';
 class TipOpisScreen extends StatefulWidget {
   final TipVozila? tipVozila;
 
-  const TipOpisScreen({Key? key, this.tipVozila}) : super(key: key);
+  const TipOpisScreen({super.key, this.tipVozila});
 
   @override
   _TipOpisScreenState createState() => _TipOpisScreenState();

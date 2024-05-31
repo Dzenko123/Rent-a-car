@@ -8,15 +8,13 @@ import 'package:rentacar_admin/models/vozilo_pregled.dart';
 import 'package:rentacar_admin/providers/rezervacija_provider.dart';
 import 'package:rentacar_admin/providers/vozila_provider.dart';
 import 'package:rentacar_admin/providers/vozilo_pregled_provider.dart';
-import 'package:rentacar_admin/widgets/master_screen.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:rentacar_admin/utils/util.dart';
 
 class VoziloPregledScreen extends StatefulWidget {
   VoziloPregled? voziloPregled;
   Vozilo? vozilo;
   Rezervacija? rezervacija;
-  VoziloPregledScreen({Key? key, this.vozilo}) : super(key: key);
+  VoziloPregledScreen({super.key, this.vozilo});
   @override
   State<VoziloPregledScreen> createState() => _VoziloPregledScreenState();
 }
@@ -105,18 +103,18 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                       Row(
                         children: [
                           Container(
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               color: Color.fromARGB(69, 255, 230, 0),
                               shape: BoxShape.circle,
                             ),
-                            padding: EdgeInsets.all(6),
-                            child: Icon(
+                            padding: const EdgeInsets.all(6),
+                            child: const Icon(
                               Icons.car_repair,
                               color: Colors.white,
                             ),
                           ),
-                          SizedBox(width: 5),
-                          Text(
+                          const SizedBox(width: 5),
+                          const Text(
                             '- Vozilo na popravci',
                             style: TextStyle(
                               color: Colors.white,
@@ -125,22 +123,22 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 5),
+                      const SizedBox(height: 5),
                       Row(
                         children: [
                           Container(
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               color: Color.fromARGB(69, 255, 230, 0),
                               shape: BoxShape.circle,
                             ),
-                            padding: EdgeInsets.all(6),
-                            child: Icon(
+                            padding: const EdgeInsets.all(6),
+                            child: const Icon(
                               Icons.bookmark_add_rounded,
                               color: Colors.white,
                             ),
                           ),
-                          SizedBox(width: 5),
-                          Text(
+                          const SizedBox(width: 5),
+                          const Text(
                             '- Vozilo je rezervisano',
                             style: TextStyle(
                               color: Colors.white,
@@ -183,20 +181,20 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
       calendarFormat: _calendarFormat,
       focusedDay: _focusedDay,
       headerStyle: HeaderStyle(
-          titleTextStyle: TextStyle(color: Colors.white),
-          formatButtonTextStyle: TextStyle(color: Colors.white),
-          leftChevronIcon: Icon(
+          titleTextStyle: const TextStyle(color: Colors.white),
+          formatButtonTextStyle: const TextStyle(color: Colors.white),
+          leftChevronIcon: const Icon(
             color: Colors.white,
             Icons.chevron_left,
           ),
-          rightChevronIcon: Icon(
+          rightChevronIcon: const Icon(
             Icons.chevron_right,
             color: Colors.white,
           ),
           formatButtonDecoration: BoxDecoration(
               border: Border.all(color: Colors.white),
               borderRadius: BorderRadius.circular(8.0))),
-      daysOfWeekStyle: DaysOfWeekStyle(
+      daysOfWeekStyle: const DaysOfWeekStyle(
           weekdayStyle: TextStyle(color: Colors.white),
           weekendStyle: TextStyle(color: Colors.white)),
       selectedDayPredicate: (day) =>
@@ -242,7 +240,7 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
         }
       },
       enabledDayPredicate: (day) =>
-          day.isAfter(DateTime.now().subtract(Duration(days: 1))),
+          day.isAfter(DateTime.now().subtract(const Duration(days: 1))),
       daysOfWeekHeight: 50,
       rowHeight: 70,
       calendarBuilders: CalendarBuilders(
@@ -267,7 +265,7 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
             bool isAfterToday = date.isAfter(DateTime.now());
             if (isAfterToday && !isReserved && !voziloNaPregledu) {
               return Container(
-                margin: EdgeInsets.all(1),
+                margin: const EdgeInsets.all(1),
                 decoration: BoxDecoration(
                   color: Colors.green,
                   border: Border.all(color: Colors.white),
@@ -281,7 +279,7 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                       child: Center(
                         child: Text(
                           '${date.day}',
-                          style: TextStyle(fontSize: 15, color: Colors.white),
+                          style: const TextStyle(fontSize: 15, color: Colors.white),
                         ),
                       ),
                     ),
@@ -291,7 +289,7 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
             }
             if (isReserved) {
               return Container(
-                margin: EdgeInsets.all(1),
+                margin: const EdgeInsets.all(1),
                 decoration: BoxDecoration(
                   color: Colors.red,
                   border: Border.all(color: Colors.white),
@@ -305,7 +303,7 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                       child: Center(
                         child: Text(
                           '${date.day}',
-                          style: TextStyle(fontSize: 15, color: Colors.white),
+                          style: const TextStyle(fontSize: 15, color: Colors.white),
                         ),
                       ),
                     ),
@@ -315,9 +313,9 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
             }
             if (!voziloNaPregledu) {
               return Container(
-                margin: EdgeInsets.all(1),
+                margin: const EdgeInsets.all(1),
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(16, 158, 158, 158),
+                  color: const Color.fromARGB(16, 158, 158, 158),
                   border: Border.all(color: Colors.white),
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -329,7 +327,7 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                       child: Center(
                         child: Text(
                           '${date.day}',
-                          style: TextStyle(fontSize: 15, color: Colors.white),
+                          style: const TextStyle(fontSize: 15, color: Colors.white),
                         ),
                       ),
                     ),
@@ -338,9 +336,9 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
               );
             } else {
               return Container(
-                margin: EdgeInsets.all(1),
+                margin: const EdgeInsets.all(1),
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(128, 116, 180, 249),
+                  color: const Color.fromARGB(128, 116, 180, 249),
                   border: Border.all(color: Colors.white),
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -352,7 +350,7 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                       child: Center(
                         child: Text(
                           '${date.day}',
-                          style: TextStyle(fontSize: 15, color: Colors.white),
+                          style: const TextStyle(fontSize: 15, color: Colors.white),
                         ),
                       ),
                     ),
@@ -362,9 +360,9 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
             }
           } else {
             return Container(
-              margin: EdgeInsets.all(1),
+              margin: const EdgeInsets.all(1),
               decoration: BoxDecoration(
-                color: Color.fromARGB(166, 158, 158, 158),
+                color: const Color.fromARGB(166, 158, 158, 158),
                 border: Border.all(color: Colors.white),
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -376,7 +374,7 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                     child: Center(
                       child: Text(
                         '${date.day}',
-                        style: TextStyle(fontSize: 15, color: Colors.white),
+                        style: const TextStyle(fontSize: 15, color: Colors.white),
                       ),
                     ),
                   ),
@@ -402,9 +400,9 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
               pregled.voziloId == widget.vozilo?.voziloId);
           if (isAfterToday && !isReserved && !voziloNaPregledu) {
             return Container(
-              margin: EdgeInsets.all(1),
+              margin: const EdgeInsets.all(1),
               decoration: BoxDecoration(
-                color: Color.fromARGB(255, 114, 228, 118),
+                color: const Color.fromARGB(255, 114, 228, 118),
                 border: Border.all(color: Colors.white),
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -416,7 +414,7 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                     child: Center(
                       child: Text(
                         '${date.day}',
-                        style: TextStyle(fontSize: 15, color: Colors.white),
+                        style: const TextStyle(fontSize: 15, color: Colors.white),
                       ),
                     ),
                   ),
@@ -428,7 +426,7 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
               rezervacijaResult!.result.isNotEmpty) {
             if (isReserved) {
               return Container(
-                margin: EdgeInsets.all(1),
+                margin: const EdgeInsets.all(1),
                 decoration: BoxDecoration(
                   color: const Color.fromARGB(255, 252, 128, 119),
                   border: Border.all(color: Colors.white),
@@ -442,7 +440,7 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                       child: Center(
                         child: Text(
                           '${date.day}',
-                          style: TextStyle(fontSize: 15, color: Colors.white),
+                          style: const TextStyle(fontSize: 15, color: Colors.white),
                         ),
                       ),
                     ),
@@ -454,9 +452,9 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
           if (widget.vozilo != null && voziloPregledResult != null) {
             if (voziloNaPregledu) {
               return Container(
-                margin: EdgeInsets.all(1),
+                margin: const EdgeInsets.all(1),
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(128, 116, 180, 249),
+                  color: const Color.fromARGB(128, 116, 180, 249),
                   border: Border.all(color: Colors.white),
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -468,7 +466,7 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                       child: Center(
                         child: Text(
                           '${date.day}',
-                          style: TextStyle(fontSize: 15, color: Colors.white),
+                          style: const TextStyle(fontSize: 15, color: Colors.white),
                         ),
                       ),
                     ),
@@ -477,9 +475,9 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
               );
             } else if (!voziloNaPregledu && !isToday) {
               return Container(
-                margin: EdgeInsets.all(1),
+                margin: const EdgeInsets.all(1),
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(128, 116, 180, 249),
+                  color: const Color.fromARGB(128, 116, 180, 249),
                   border: Border.all(color: Colors.white),
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -490,7 +488,7 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                     child: Center(
                       child: Text(
                         '${date.day}',
-                        style: TextStyle(fontSize: 15, color: Colors.white),
+                        style: const TextStyle(fontSize: 15, color: Colors.white),
                       ),
                     ),
                   ),
@@ -498,9 +496,9 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
               );
             } else {
               return Container(
-                margin: EdgeInsets.all(1),
+                margin: const EdgeInsets.all(1),
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(128, 116, 249, 229),
+                  color: const Color.fromARGB(128, 116, 249, 229),
                   border: Border.all(color: Colors.white),
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -512,7 +510,7 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                       child: Center(
                         child: Text(
                           '${date.day}',
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 15,
                               color: Color.fromARGB(255, 118, 0, 0)),
                         ),
@@ -524,9 +522,9 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
             }
           } else if (widget.vozilo == null && !isToday) {
             return Container(
-              margin: EdgeInsets.all(1),
+              margin: const EdgeInsets.all(1),
               decoration: BoxDecoration(
-                color: Color.fromARGB(128, 116, 180, 249),
+                color: const Color.fromARGB(128, 116, 180, 249),
                 border: Border.all(color: Colors.white),
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -538,7 +536,7 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                     child: Center(
                       child: Text(
                         '${date.day}',
-                        style: TextStyle(fontSize: 15, color: Colors.white),
+                        style: const TextStyle(fontSize: 15, color: Colors.white),
                       ),
                     ),
                   ),
@@ -547,9 +545,9 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
             );
           } else {
             return Container(
-              margin: EdgeInsets.all(1),
+              margin: const EdgeInsets.all(1),
               decoration: BoxDecoration(
-                color: Color.fromARGB(128, 116, 249, 229),
+                color: const Color.fromARGB(128, 116, 249, 229),
                 border: Border.all(color: Colors.white),
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -561,7 +559,7 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                     child: Center(
                       child: Text(
                         '${date.day}',
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 15,
                             color: Color.fromARGB(255, 118, 0, 0)),
                       ),
@@ -574,9 +572,9 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
         },
         todayBuilder: (context, date, _) {
           return Container(
-            margin: EdgeInsets.all(1),
+            margin: const EdgeInsets.all(1),
             decoration: BoxDecoration(
-              color: Color.fromARGB(166, 158, 158, 158),
+              color: const Color.fromARGB(166, 158, 158, 158),
               border: Border.all(color: Colors.white),
               borderRadius: BorderRadius.circular(8),
             ),
@@ -588,7 +586,7 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                   child: Center(
                     child: Text(
                       '${date.day}',
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontSize: 15, color: Color.fromARGB(255, 118, 0, 0)),
                     ),
                   ),
@@ -612,8 +610,8 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                         borderRadius: BorderRadius.circular(5),
                         color: const Color.fromARGB(111, 0, 0, 0),
                       ),
-                      padding: EdgeInsets.symmetric(horizontal: 4.0),
-                      child: Icon(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: const Icon(
                         Icons.car_repair,
                         color: Colors.white,
                       ),
@@ -629,8 +627,8 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 4.0),
-                    child: Icon(
+                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                    child: const Icon(
                       Icons.bookmark_add_rounded,
                       color: Colors.white,
                     ),

@@ -27,9 +27,7 @@ namespace RentACar.Services.Database
         public Grad Grad { get; set; } = null!;
 
 
-        public int? DodatnaUslugaId { get; set; }
-
-        public DodatnaUsluga? DodatnaUsluga { get; set; }
+        public ICollection<RezervacijaDodatnaUsluga> DodatnaUsluga { get; set; } = null!;
 
 
         public DateTime PocetniDatum { get; set; }

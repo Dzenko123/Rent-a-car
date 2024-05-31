@@ -7,11 +7,11 @@ part of 'vozila.dart';
 // **************************************************************************
 
 Vozilo _$VoziloFromJson(Map<String, dynamic> json) => Vozilo(
-      json['voziloId'] as int?,
-      json['godinaProizvodnje'] as int?,
+      (json['voziloId'] as num?)?.toInt(),
+      (json['godinaProizvodnje'] as num?)?.toInt(),
       (json['cijena'] as num?)?.toDouble(),
-      json['tipVozilaId'] as int?,
-      json['gorivoId'] as int?,
+      (json['tipVozilaId'] as num?)?.toInt(),
+      (json['gorivoId'] as num?)?.toInt(),
       json['slika'] as String?,
       (json['kilometraza'] as num?)?.toDouble(),
       json['stateMachine'] as String?,

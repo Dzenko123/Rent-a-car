@@ -9,9 +9,10 @@ part of 'cijene_po_vremenskom_periodu.dart';
 CijenePoVremenskomPeriodu _$CijenePoVremenskomPerioduFromJson(
         Map<String, dynamic> json) =>
     CijenePoVremenskomPeriodu(
-      cijenePoVremenskomPerioduId: json['cijenePoVremenskomPerioduId'] as int?,
-      voziloId: json['voziloId'] as int?,
-      periodId: json['periodId'] as int?,
+      cijenePoVremenskomPerioduId:
+          (json['cijenePoVremenskomPerioduId'] as num?)?.toInt(),
+      voziloId: (json['voziloId'] as num?)?.toInt(),
+      periodId: (json['periodId'] as num?)?.toInt(),
       cijena: (json['cijena'] as num?)?.toDouble(),
       period: json['period'] == null
           ? null

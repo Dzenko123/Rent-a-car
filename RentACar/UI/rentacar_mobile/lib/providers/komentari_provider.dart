@@ -1,5 +1,4 @@
 import 'package:rentacar_admin/models/komentari.dart';
-import 'package:rentacar_admin/models/search_result.dart';
 import 'package:rentacar_admin/providers/base_provider.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;

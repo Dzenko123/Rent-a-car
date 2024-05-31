@@ -122,7 +122,7 @@ class _GorivoScreenState extends State<GorivoScreen> {
         if (widget.gorivo == null) {
           await _gorivoProvider.insert(request);
         } else {
-          await _gorivoProvider.update(widget.gorivo!.gorivoId!, request);
+          await _gorivoProvider.update(widget.gorivo!.gorivoId, request);
         }
 
         ScaffoldMessenger.of(context).showSnackBar(

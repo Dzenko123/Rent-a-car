@@ -17,7 +17,7 @@ namespace RentACar.Model.Requests
 
         public int GradId { get; set; }
 
-        public int? DodatnaUslugaId { get; set; }
+        public List<int> DodatnaUslugaId { get; set; } = new List<int>();
 
         public DateTime PocetniDatum { get; set; }
 

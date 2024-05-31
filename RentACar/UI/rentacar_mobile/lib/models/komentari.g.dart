@@ -7,9 +7,9 @@ part of 'komentari.dart';
 // **************************************************************************
 
 Komentari _$KomentariFromJson(Map<String, dynamic> json) => Komentari(
-      json['komentarId'] as int?,
-      json['korisnikId'] as int?,
-      json['voziloId'] as int?,
+      (json['komentarId'] as num?)?.toInt(),
+      (json['korisnikId'] as num?)?.toInt(),
+      (json['voziloId'] as num?)?.toInt(),
       json['komentar'] as String?,
     );
 

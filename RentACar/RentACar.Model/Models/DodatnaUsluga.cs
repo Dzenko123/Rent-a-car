@@ -14,5 +14,6 @@ namespace RentACar.Model.Models
         public string Naziv { get; set; }
 
         public decimal Cijena { get; set; }
+
     }
 }

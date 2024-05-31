@@ -11,7 +11,7 @@ import 'package:rentacar_admin/utils/util.dart';
 class KomentariScreen extends StatefulWidget {
   final Vozilo? vozilo;
 
-  KomentariScreen({Key? key, this.vozilo}) : super(key: key);
+  const KomentariScreen({super.key, this.vozilo});
 
   @override
   State<KomentariScreen> createState() => _KomentariScreenState();
@@ -80,13 +80,13 @@ class _KomentariScreenState extends State<KomentariScreen> {
                 future: _komentariFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Greška: ${snapshot.error}'));
                   } else {
                     var komentari = snapshot.data!;
                     if (komentari.isEmpty) {
-                      return Center(
+                      return const Center(
                         child: Text(
                           'Vozilo nema komentara.',
                           style: TextStyle(fontSize: 16),
@@ -103,7 +103,7 @@ class _KomentariScreenState extends State<KomentariScreen> {
                           orElse: () => Korisnici.fromJson({}),
                         );
                         return Card(
-                          margin: EdgeInsets.symmetric(vertical: 10),
+                          margin: const EdgeInsets.symmetric(vertical: 10),
                           elevation: 8,
                           child: Padding(
                             padding: const EdgeInsets.all(15),
@@ -112,29 +112,29 @@ class _KomentariScreenState extends State<KomentariScreen> {
                               children: [
                                 Text(
                                   '${korisnik?.ime ?? 'Nepoznato'} ${korisnik?.prezime ?? 'Nepoznato'}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontWeight: FontWeight.w900,
                                     fontSize: 14,
                                   ),
                                 ),
-                                SizedBox(height: 2),
+                                const SizedBox(height: 2),
                                 Text(
                                   komentar.komentar ?? '',
-                                  style: TextStyle(fontSize: 16),
+                                  style: const TextStyle(fontSize: 16),
                                 ),
                                 if (komentar.korisnikId == ulogovaniKorisnikId)
                                   Row(
                                     children: [
                                       IconButton(
                                         onPressed: () => _editComment(komentar),
-                                        icon: Icon(Icons.edit_outlined),
+                                        icon: const Icon(Icons.edit_outlined),
                                         color: Colors.blue,
                                         iconSize: 25,
                                       ),
                                       IconButton(
                                         onPressed: () =>
                                             _deleteComment(komentar),
-                                        icon: Icon(Icons.delete_forever),
+                                        icon: const Icon(Icons.delete_forever),
                                         color: Colors.red,
                                         iconSize: 25,
                                       ),
@@ -153,17 +153,17 @@ class _KomentariScreenState extends State<KomentariScreen> {
           ),
           Container(
             decoration: BoxDecoration(
-              color: Color.fromARGB(255, 226, 226, 226),
+              color: const Color.fromARGB(255, 226, 226, 226),
               borderRadius: BorderRadius.circular(20),
             ),
-            margin: EdgeInsets.all(10),
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            margin: const EdgeInsets.all(10),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: _commentController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Napišite komentar...',
                       border: InputBorder.none,
                     ),
@@ -171,7 +171,7 @@ class _KomentariScreenState extends State<KomentariScreen> {
                 ),
                 IconButton(
                   onPressed: _saveForm,
-                  icon: Icon(Icons.send),
+                  icon: const Icon(Icons.send),
                   color: Theme.of(context).primaryColor,
                 ),
               ],
@@ -187,8 +187,8 @@ class _KomentariScreenState extends State<KomentariScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Brisanje komentara'),
-          content: Text(
+          title: const Text('Brisanje komentara'),
+          content: const Text(
             'Da li ste sigurni da želite obrisati ovaj komentar?',
             style: TextStyle(fontSize: 16),
           ),
@@ -203,7 +203,7 @@ class _KomentariScreenState extends State<KomentariScreen> {
                   print('Greška pri brisanju komentara: $e');
                 }
               },
-              child: Text(
+              child: const Text(
                 'Da',
                 style: TextStyle(fontSize: 16),
               ),
@@ -212,7 +212,7 @@ class _KomentariScreenState extends State<KomentariScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text(
+              child: const Text(
                 'Ne',
                 style: TextStyle(fontSize: 16),
               ),
@@ -228,7 +228,7 @@ class _KomentariScreenState extends State<KomentariScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Uredi komentar'),
+          title: const Text('Uredi komentar'),
           content: TextField(
             controller: TextEditingController(text: komentar.komentar),
             onChanged: (value) {
@@ -250,13 +250,13 @@ class _KomentariScreenState extends State<KomentariScreen> {
                   print('Greška pri ažuriranju komentara: $e');
                 }
               },
-              child: Text('Spremi'),
+              child: const Text('Spremi'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Odustani'),
+              child: const Text('Odustani'),
             ),
           ],
         );

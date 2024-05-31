@@ -7,7 +7,7 @@ part of 'gorivo.dart';
 // **************************************************************************
 
 Gorivo _$GorivoFromJson(Map<String, dynamic> json) => Gorivo(
-      json['gorivoId'] as int,
+      (json['gorivoId'] as num).toInt(),
       json['tip'] as String?,
     );
 

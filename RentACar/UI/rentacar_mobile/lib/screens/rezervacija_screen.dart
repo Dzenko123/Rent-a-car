@@ -1,29 +1,34 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rentacar_admin/models/cijene_po_vremenskom_periodu.dart';
+import 'package:rentacar_admin/models/dodatna_usluga.dart';
 import 'package:rentacar_admin/models/grad.dart';
 import 'package:rentacar_admin/models/korisnici.dart';
 import 'package:rentacar_admin/models/rezervacija.dart';
+import 'package:rentacar_admin/models/rezervacija_dodatna_usluga.dart';
 import 'package:rentacar_admin/models/search_result.dart';
 import 'package:rentacar_admin/models/vozila.dart';
 import 'package:rentacar_admin/models/vozilo_pregled.dart';
 import 'package:rentacar_admin/providers/cijene_po_vremenskom_periodu_provider.dart';
+import 'package:rentacar_admin/providers/dodatna_usluga_provider.dart';
 import 'package:rentacar_admin/providers/grad_provider.dart';
 import 'package:rentacar_admin/providers/korisnici_provider.dart';
+import 'package:rentacar_admin/providers/rezervacija_dodatna_usluga_provider.dart';
 import 'package:rentacar_admin/providers/rezervacija_provider.dart';
 import 'package:rentacar_admin/providers/vozila_provider.dart';
 import 'package:rentacar_admin/providers/vozilo_pregled_provider.dart';
 import 'package:rentacar_admin/screens/vozila_list_screen.dart';
 import 'package:rentacar_admin/utils/util.dart';
-import 'package:rentacar_admin/widgets/master_screen.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class RezervacijaScreen extends StatefulWidget {
+
   Rezervacija? rezervacija;
   Vozilo? vozilo;
   Korisnici? korisnik;
@@ -41,6 +46,8 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
   SearchResult<Vozilo>? vozilaResult;
   SearchResult<VoziloPregled>? voziloPregledResult;
   SearchResult<Grad>? gradResult;
+  SearchResult<DodatnaUsluga>? dodatnaUslugaResult;
+  SearchResult<RezervacijaDodatnaUsluga>? rezervacijaDodatnaUslugaResult;
 
   late RezervacijaProvider _rezervacijaProvider;
   late KorisniciProvider _korisniciProvider;
@@ -48,6 +55,8 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
   late CijenePoVremenskomPerioduProvider _cijenePoVremenskomPerioduProvider;
   late VoziloPregledProvider _voziloPregledProvider;
   late GradProvider _gradProvider;
+  late DodatnaUslugaProvider _dodatnaUslugaProvider;
+  late RezervacijaDodatnaUslugaProvider _rezervacijaDodatnaUslugaProvider;
 
   DateTime? _selectedStartDate;
   DateTime? _selectedEndDate;
@@ -62,7 +71,7 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
   Uint8List? _imageBytes;
   bool isStartDateSelected = false;
   bool isInfoVisible = false;
-  bool _autoValidate = false;
+  final bool _autoValidate = false;
 
   @override
   void initState() {
@@ -81,6 +90,8 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
         context.read<CijenePoVremenskomPerioduProvider>();
     _voziloPregledProvider = context.read<VoziloPregledProvider>();
     _gradProvider = context.read<GradProvider>();
+    _dodatnaUslugaProvider=context.read<DodatnaUslugaProvider>();
+    _rezervacijaDodatnaUslugaProvider=context.read<RezervacijaDodatnaUslugaProvider>();
 
     getUlogovaniKorisnikId();
 
@@ -94,12 +105,14 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
         Authorization.username ?? '',
         Authorization.password ?? '',
       );
-      setState(() {
-        ulogovaniKorisnikId = ulogovaniKorisnik;
-        if (ulogovaniKorisnikId != null) {
-          getKorisnikData(ulogovaniKorisnikId!);
-        }
-      });
+      if (mounted) {
+        setState(() {
+          ulogovaniKorisnikId = ulogovaniKorisnik;
+          if (ulogovaniKorisnikId != null) {
+            getKorisnikData(ulogovaniKorisnikId!);
+          }
+        });
+      }
     } catch (e) {
       print('Greška prilikom dobijanja ID-a ulogovanog korisnika: $e');
     }
@@ -107,50 +120,67 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
 
   void _loadImage() {
     if (widget.vozilo != null && widget.vozilo!.slika != null) {
-      setState(() {
-        _imageBytes = base64Decode(widget.vozilo!.slika!);
-      });
+      if (mounted) {
+        setState(() {
+          _imageBytes = base64Decode(widget.vozilo!.slika!);
+        });
+      }
     }
   }
 
   Future<void> getKorisnikData(int korisnikId) async {
     try {
       var result = await _korisniciProvider.getById(korisnikId);
-      setState(() {
-        widget.korisnik = result;
-      });
+      if (mounted) {
+        setState(() {
+          widget.korisnik = result;
+        });
+      }
     } catch (e) {
       print('Greška prilikom dobijanja podataka o korisniku: $e');
     }
   }
 
   Future<void> initForm() async {
-    rezervacijaResult = await _rezervacijaProvider.get();
-    korisniciResult = await _korisniciProvider.get();
-    vozilaResult = await _vozilaProvider.get();
-    voziloPregledResult = await _voziloPregledProvider.get();
-    gradResult = await _gradProvider.get();
-
-    print('${vozilaResult}');
-    print('${widget.vozilo?.voziloId}');
-    print('$gradResult');
     try {
+      rezervacijaResult = await _rezervacijaProvider.get();
+      korisniciResult = await _korisniciProvider.get();
+      vozilaResult = await _vozilaProvider.get();
+      voziloPregledResult = await _voziloPregledProvider.get();
+      gradResult = await _gradProvider.get();
+      dodatnaUslugaResult=await _dodatnaUslugaProvider.get();
+      rezervacijaDodatnaUslugaResult=await _rezervacijaDodatnaUslugaProvider.get();
+
+      print('$vozilaResult');
+      print('${widget.vozilo?.voziloId}');
+      print('$gradResult');
+      print('$dodatnaUslugaResult');
+
       final cijenePoVremenskomPerioduResult =
-          await _cijenePoVremenskomPerioduProvider
-              .getByVoziloId(widget.vozilo?.voziloId ?? 0);
-      setState(() {
-        _cijenePoVremenskomPerioduList = cijenePoVremenskomPerioduResult;
-      });
-      print('CijenePoVremenskomPeriodu: $cijenePoVremenskomPerioduResult');
+      await _cijenePoVremenskomPerioduProvider
+          .getByVoziloId(widget.vozilo?.voziloId ?? 0);
+      if (mounted) {
+        setState(() {
+          _cijenePoVremenskomPerioduList = cijenePoVremenskomPerioduResult;
+        });
+        print('CijenePoVremenskomPeriodu: $cijenePoVremenskomPerioduResult');
+      }
     } catch (e) {
       print('Error fetching data: $e');
     }
 
-    setState(() {
-      isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
+  @override
+  void dispose() {
+    _ftsController.dispose();
+    super.dispose();
+  }
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
@@ -220,30 +250,30 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
             _autoValidate ? AutovalidateMode.always : AutovalidateMode.disabled,
         child: Column(
           children: [
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             if (widget.korisnik != null) ...[
               Padding(
-                padding: EdgeInsets.only(left: 20, right: 20),
+                padding: const EdgeInsets.only(left: 20, right: 20),
                 child: _buildInfoRow(
                     Icons.person_pin, 'Ime', widget.korisnik!.ime),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 20, right: 20),
+                padding: const EdgeInsets.only(left: 20, right: 20),
                 child: _buildInfoRow(
                     Icons.person_pin, 'Prezime', widget.korisnik!.prezime),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 20, right: 20),
+                padding: const EdgeInsets.only(left: 20, right: 20),
                 child: _buildInfoRow(
                     Icons.email, 'Email:', widget.korisnik!.email),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 20, right: 20),
+                padding: const EdgeInsets.only(left: 20, right: 20),
                 child: _buildInfoRow(
                     Icons.phone, 'Telefon:', widget.korisnik!.telefon),
               ),
               IconButton(
-                icon: Icon(Icons.info),
+                icon: const Icon(Icons.info),
                 color: Colors.red,
                 onPressed: () {
                   setState(() {
@@ -253,7 +283,7 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
               ),
               Visibility(
                 visible: isInfoVisible,
-                child: Padding(
+                child: const Padding(
                   padding: EdgeInsets.only(left: 20, right: 20),
                   child: Text(
                     'Vaše podatke možete urediti na stavci "Profil"!',
@@ -265,11 +295,14 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
                 ),
               ),
             ] else ...[
-              CircularProgressIndicator(),
+              const CircularProgressIndicator(),
             ],
             _buildGradDropdown(),
-            SizedBox(height: 10),
-            _buildCijenaDropdown(),
+            _buildDodatnaUslugaDropdown(),
+
+            const SizedBox(height: 10),
+
+            _buildPeriodDropdown(),
             if (_selectedStartDate != null || _selectedEndDate != null) ...[
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -290,7 +323,7 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
                     if (_selectedEndDate != null) ...[
                       FormBuilderTextField(
                         name: 'zavrsniDatum',
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: 'End Date',
                         ),
                         initialValue:
@@ -298,31 +331,66 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
                         readOnly: true,
                       ),
                     ],
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          _selectedStartDate = null;
-                          _selectedEndDate = null;
+                         resetSelectedDates();
                           _selectedPeriod = null;
                         });
                       },
-                      child: Text('Očisti odabrani period'),
+                      child: const Text('Očisti odabrani period'),
                     ),
                   ],
                 ),
               ),
-            ],
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: insertRezervacija,
-              child: Text('Potvrdi rezervaciju'),
+            ],Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Ukupna cijena: ${_calculateTotalPrice().toStringAsFixed(2)}',
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+              ),
             ),
+
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                showConfirmationDialog(_calculateTotalPrice());
+              },
+              child: const Text('Potvrdi rezervaciju'),
+            ),
+
           ],
         ),
       ),
     );
   }
+  double _calculateTotalPrice() {
+    double totalPrice = 0.0;
+    _selectedDodatneUsluge.clear();
+    if (_formKey.currentState != null &&
+        _formKey.currentState!.fields['dodatnaUslugaId'] != null &&
+        dodatnaUslugaResult != null) {
+      List<String>? selectedUsluge = _formKey.currentState!.fields['dodatnaUslugaId']!.value?.cast<String>();
+      if (selectedUsluge != null) {
+        for (String uslugaId in selectedUsluge) {
+          DodatnaUsluga? usluga = dodatnaUslugaResult!.result.firstWhereOrNull(
+                (element) => element.dodatnaUslugaId.toString() == uslugaId,
+          );
+          if (usluga != null) {
+            totalPrice += usluga.cijena ?? 0.0;
+            _selectedDodatneUsluge.add(usluga);
+          }
+        }
+      }
+    }
+    if (_selectedPeriod != null) {
+      totalPrice += _selectedPeriod!.cijena ?? 0.0;
+    }
+
+    return totalPrice;
+  }
+
 
   Future<void> insertRezervacija() async {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
@@ -330,32 +398,116 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
       request['korisnikId'] = ulogovaniKorisnikId;
       request['voziloId'] = widget.vozilo?.voziloId;
       request['gradId'] = int.parse(request['gradId']);
-      await _rezervacijaProvider.insert(request);
 
+      List<int> selectedDodatnaUslugaIds = [];
+      for (String uslugaId in request['dodatnaUslugaId'] ?? []) {
+        selectedDodatnaUslugaIds.add(int.parse(uslugaId));
+      }
+      request['dodatnaUslugaId'] = selectedDodatnaUslugaIds;
+
+      var requestJson = jsonEncode(request);
+
+      Rezervacija rezervacija = Rezervacija.fromJson(jsonDecode(requestJson));
+
+      await _rezervacijaProvider.insertRezervacijaWithDodatneUsluge(rezervacija);
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Uspješna rezervacija'),
-          content: Text(
+          title: const Text('Uspješna rezervacija'),
+          content: const Text(
             'Uspješno ste rezervisali vozilo. Vaše rezervacije možete pogledati u stavci "Profil". Hvala Vam na povjerenju!',
           ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => VozilaListScreen()),
                 );
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         ),
       );
     }
   }
+  Future<void> showConfirmationDialog(double totalPrice) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Potvrda rezervacije'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Ukupna cijena rezervacije: ${totalPrice.toStringAsFixed(2)} KM'),
+                Text('Da li ste sigurni da želite potvrditi rezervaciju?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Odustani'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                insertRezervacija();
+              },
+              child: Text('Potvrdi'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  List<DodatnaUsluga> _selectedDodatneUsluge = [];
+
+  Widget _buildDodatnaUslugaDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+          child: Text(
+            'Odaberite dodatne usluge ukoliko želite',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left:8.0,right:8, bottom:8),
+          child: FormBuilderCheckboxGroup(
+            name: "dodatnaUslugaId",
+            options: dodatnaUslugaResult?.result.map((item) {
+              return FormBuilderFieldOption(
+                value: item.dodatnaUslugaId.toString(),
+                child: Text(
+                  '${item.naziv ?? ""} (${item.cijena?.toStringAsFixed(2)} KM)',
+                  style: const TextStyle(color: Colors.black),
+                ),
+              );
+            }).toList() ?? [],
+            onChanged: (_) {
+              setState(() {
+                _calculateTotalPrice();
+              });
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+
+
+
 
   Widget _buildGradDropdown() {
     return Padding(
@@ -363,7 +515,7 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
       child: FormBuilderDropdown<String>(
         name: "gradId",
         decoration: InputDecoration(
-          labelText: 'Grad *', // Dodajte zvjezdicu kao oznaku obaveznog polja
+          labelText: 'Grad *',
           labelStyle: const TextStyle(color: Colors.blue),
           prefixIcon: const Icon(
             Icons.location_city,
@@ -412,7 +564,6 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
             }).toList() ??
             [],
         style: const TextStyle(fontSize: 16.0),
-        // Postavite validator koji će provjeriti je li odabran grad
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'Polje grad je obavezno';
@@ -423,38 +574,34 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
     );
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
+
 
   void _showErrorDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Pogrešan period'),
-        content: Text('Za odabrani datum nije moguć odabrani period.'),
+        title: const Text('Pogrešan period'),
+        content: const Text('Za odabrani datum nije moguć odabrani period.'),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
               setState(() {
-                _selectedStartDate = null;
-                _selectedEndDate = null;
+                resetSelectedDates();
               });
             },
-            child: Text('OK'),
+            child: const Text('OK'),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCijenaDropdown() {
+  Widget _buildPeriodDropdown() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: DropdownButtonFormField<CijenePoVremenskomPeriodu>(
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           labelText: 'Period *',
           border: OutlineInputBorder(),
         ),
@@ -462,7 +609,7 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
         items: _cijenePoVremenskomPerioduList.map((period) {
           return DropdownMenuItem<CijenePoVremenskomPeriodu>(
             value: period,
-            child: Text('${period.period?.trajanje}'),
+            child: Text('${period.period?.trajanje} (${period.cijena?.toStringAsFixed(2)} KM)'),
           );
         }).toList(),
         onChanged: (newValue) {
@@ -513,6 +660,9 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
               ?.didChange(DateFormat('yyyy-MM-dd').format(picked));
           _pickEndDate(context);
         });
+      } else {
+        resetSelectedDates();
+
       }
     } catch (e) {
       print('Error picking start date: $e');
@@ -535,7 +685,7 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
 
       for (DateTime date = startDate;
           date.isBefore(initialEndDate.add(Duration(days: maxDays)));
-          date = date.add(Duration(days: 1))) {
+          date = date.add(const Duration(days: 1))) {
         if (!isDateAvailable(date)) {
           isAnyDateUnavailable = true;
           break;
@@ -572,7 +722,7 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
   DateTime _findFirstSelectableDate(DateTime start) {
     DateTime date = start;
     while (!isDateAvailable(date)) {
-      date = date.add(Duration(days: 1));
+      date = date.add(const Duration(days: 1));
     }
     return date;
   }
@@ -609,7 +759,7 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
 
   Widget _buildInfoRow(IconData icon, String label, String? value) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -617,13 +767,13 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
             icon,
             color: Colors.black,
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           Expanded(
             child: TextFormField(
               initialValue: value,
               decoration: InputDecoration(
                 labelText: label,
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
               ),
               readOnly: !isEditing,
               onChanged: (newValue) {},

@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:rentacar_admin/models/cijene_po_vremenskom_periodu.dart';
 import 'package:rentacar_admin/models/period.dart';
 import 'package:rentacar_admin/models/search_result.dart';
@@ -10,10 +9,11 @@ import 'package:rentacar_admin/models/vozila.dart';
 import 'package:rentacar_admin/providers/cijene_po_vremenskom_periodu_provider.dart';
 import 'package:rentacar_admin/providers/period_provider.dart';
 import 'package:rentacar_admin/providers/vozila_provider.dart';
-import 'package:rentacar_admin/screens/period_screen.dart';
 import 'package:rentacar_admin/widgets/master_screen.dart';
 
 class CijenePoVremenskomPerioduScreen extends StatefulWidget {
+  static const String routeName = "/cijene";
+
   CijenePoVremenskomPeriodu? cijenePoVremenskomPeriodu;
   CijenePoVremenskomPerioduScreen({super.key});
 
@@ -121,17 +121,20 @@ class _CijenePoVremenskomPerioduScreenState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     isLoading
-                        ? Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(10),
+                        ? Padding(
+                          padding: const EdgeInsets.only(top:30.0),
+                          child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: _buildDataListView(),
                             ),
-                            child: _buildDataListView(),
-                          )
+                        )
                         : Container(),
                     const SizedBox(height: 10),
                     if (canMovePrevious || canMoveNext)
@@ -156,13 +159,13 @@ class _CijenePoVremenskomPerioduScreenState
                                 onPressed: () {
                                   _movePrevious();
                                 },
-                                icon: Row(
+                                icon: const Row(
                                   children: [
                                     Icon(
                                       Icons.arrow_back,
                                       color: Colors.white,
                                     ),
-                                    const SizedBox(width: 5),
+                                    SizedBox(width: 5),
                                     Text(
                                       "Prethodna stranica",
                                       style: TextStyle(color: Colors.white),
@@ -171,7 +174,7 @@ class _CijenePoVremenskomPerioduScreenState
                                 ),
                               ),
                             ),
-                          SizedBox(
+                          const SizedBox(
                             width: 30,
                           ),
                           if (canMoveNext)
@@ -192,13 +195,13 @@ class _CijenePoVremenskomPerioduScreenState
                                 onPressed: () {
                                   _moveNext();
                                 },
-                                icon: Row(
+                                icon: const Row(
                                   children: [
                                     Text(
                                       "Sljedeća stranica",
                                       style: TextStyle(color: Colors.white),
                                     ),
-                                    const SizedBox(width: 5),
+                                    SizedBox(width: 5),
                                     Icon(
                                       Icons.arrow_forward,
                                       color: Colors.white,
@@ -254,8 +257,8 @@ class _CijenePoVremenskomPerioduScreenState
             columns: [
               DataColumn(
                 label: Container(
-                  padding: EdgeInsets.symmetric(vertical: 5),
-                  child: Text(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: const Text(
                     'Vozilo',
                     style: TextStyle(
                       fontStyle: FontStyle.italic,
@@ -268,8 +271,8 @@ class _CijenePoVremenskomPerioduScreenState
               ),
               DataColumn(
                 label: Container(
-                  padding: EdgeInsets.symmetric(vertical: 5),
-                  child: Text(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: const Text(
                     'Model',
                     style: TextStyle(
                       fontStyle: FontStyle.italic,
@@ -282,8 +285,8 @@ class _CijenePoVremenskomPerioduScreenState
               ),
               DataColumn(
                 label: Container(
-                  padding: EdgeInsets.symmetric(vertical: 5),
-                  child: Text(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: const Text(
                     'Marka',
                     style: TextStyle(
                       fontStyle: FontStyle.italic,
@@ -299,13 +302,13 @@ class _CijenePoVremenskomPerioduScreenState
                       label: Row(
                         children: [
                           Container(
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 1, vertical: 4),
                             child: SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Text(
                                 period.trajanje ?? "",
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -327,9 +330,9 @@ class _CijenePoVremenskomPerioduScreenState
                   .firstWhere((vozilo) => vozilo.voziloId == voziloId);
 
               return DataRow(
-                color: MaterialStateProperty.resolveWith<Color?>(
-                  (Set<MaterialState> states) {
-                    if (states.contains(MaterialState.selected)) {
+                color: WidgetStateProperty.resolveWith<Color?>(
+                  (Set<WidgetState> states) {
+                    if (states.contains(WidgetState.selected)) {
                       return Theme.of(context)
                           .colorScheme
                           .primary
@@ -365,7 +368,7 @@ class _CijenePoVremenskomPerioduScreenState
                           fontSize: 14,
                           shadows: [
                             Shadow(
-                              offset: Offset(2.0, 2.0),
+                              offset: const Offset(2.0, 2.0),
                               blurRadius: 3.0,
                               color: Colors.grey.withOpacity(0.5),
                             ),
@@ -385,7 +388,7 @@ class _CijenePoVremenskomPerioduScreenState
                           fontSize: 14,
                           shadows: [
                             Shadow(
-                              offset: Offset(2.0, 2.0),
+                              offset: const Offset(2.0, 2.0),
                               blurRadius: 3.0,
                               color: Colors.grey.withOpacity(0.5),
                             ),

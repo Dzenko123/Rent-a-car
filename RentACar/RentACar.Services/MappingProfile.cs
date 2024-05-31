@@ -38,6 +38,12 @@ namespace RentACar.Services
             CreateMap<Model.Requests.RecenzijeInsertRequest, Database.Recenzije>();
             CreateMap<Model.Requests.RecenzijeUpdateRequest, Database.Recenzije>();
             CreateMap<Model.Requests.RecenzijeDeleteRequest, Database.Recenzije>();
+
+            CreateMap<Database.RezervacijaDodatnaUsluga, RezervacijaDodatnaUsluga>();
+            CreateMap<Model.Requests.RezervacijaDodatnaUslugaInsertRequest, Database.RezervacijaDodatnaUsluga>();
+            CreateMap<Model.Requests.RezervacijaDodatnaUslugaUpdateRequest, Database.RezervacijaDodatnaUsluga>();
+            CreateMap<Model.Requests.RezervacijaDodatnaUslugaDeleteRequest, Database.RezervacijaDodatnaUsluga>();
+
             CreateMap<Database.Komentari, Komentari>();
             CreateMap<Model.Requests.KomentariInsertRequest, Database.Komentari>();
             CreateMap<Model.Requests.KomentariUpdateRequest, Database.Komentari>();
@@ -61,18 +67,26 @@ namespace RentACar.Services
             CreateMap<Model.Requests.GradInsertRequest, Database.Grad>();
             CreateMap<Model.Requests.GradUpdateRequest, Database.Grad>();
             CreateMap<Model.Requests.GradDeleteRequest, Database.Grad>();
+
             CreateMap<Database.CijenePoVremenskomPeriodu, CijenePoVremenskomPeriodu>();
             CreateMap<Model.Requests.CPVPInsertRequest, Database.CijenePoVremenskomPeriodu>();
             CreateMap<Model.Requests.CPVPUpdateRequest, Database.CijenePoVremenskomPeriodu>();
             CreateMap<Model.Requests.CPVPDeleteRequest, Database.CijenePoVremenskomPeriodu>();
+
             CreateMap<Database.Period, Period>();
             CreateMap<Model.Requests.PeriodInsertRequest, Database.Period>();
             CreateMap<Model.Requests.PeriodUpdateRequest, Database.Period>();
             CreateMap<Model.Requests.PeriodDeleteRequest, Database.Period>();
+
             CreateMap<Database.Rezervacija, Rezervacija>();
             CreateMap<Model.Requests.RezervacijaInsertRequest, Database.Rezervacija>();
             CreateMap<Model.Requests.RezervacijaUpdateRequest, Database.Rezervacija>();
             CreateMap<Model.Requests.RezervacijaDeleteRequest, Database.Rezervacija>();
+
+            CreateMap<Database.Rezervacija, Rezervacija>()
+           .ForMember(dest => dest.DodatnaUsluga, opt => opt.MapFrom(src => src.DodatnaUsluga));
+            CreateMap<Database.RezervacijaDodatnaUsluga, RezervacijaDodatnaUsluga>();
+            CreateMap<Database.DodatnaUsluga, DodatnaUsluga>();
         }
     }
 }

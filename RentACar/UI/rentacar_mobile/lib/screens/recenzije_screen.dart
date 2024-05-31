@@ -19,6 +19,8 @@ import 'package:rentacar_admin/utils/util.dart';
 import 'package:rentacar_admin/widgets/master_screen.dart';
 
 class RecenzijeScreen extends StatefulWidget {
+  static const String routeName = "/recenzije";
+
   final Korisnici? korisnik;
   Vozilo? vozilo;
   Komentari? komentar;
@@ -134,7 +136,7 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
   Widget _buildDataListView() {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.all(30.0),
+        padding: const EdgeInsets.only(top:30.0, left:30, right: 30),
         child: GridView.count(
           crossAxisCount: 1,
           children: result?.result
@@ -253,7 +255,7 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                         const SizedBox(width: 5),
                                         Expanded(
                                           child: Text(
-                                            '${gorivoResult?.result.firstWhere((g) => g.gorivoId == e.gorivoId).tip ?? ""}',
+                                            gorivoResult?.result.firstWhere((g) => g.gorivoId == e.gorivoId).tip ?? "",
                                             style: const TextStyle(
                                                 color: Colors.white,
                                                 fontStyle: FontStyle.italic,
@@ -278,7 +280,7 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                                 Flexible(
@@ -290,18 +292,18 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                         Container(
                                           width: 18,
                                           height: 18,
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             shape: BoxShape.circle,
                                             color: Color.fromARGB(
                                                 255, 5, 102, 182),
                                           ),
-                                          child: Icon(
+                                          child: const Icon(
                                             Icons.thumb_up_alt_rounded,
                                             color: Colors.white,
                                             size: 12,
                                           ),
                                         ),
-                                        SizedBox(width: 5),
+                                        const SizedBox(width: 5),
                                         if (recenzijeResult?.result.any(
                                                 (recenzija) =>
                                                     recenzija.voziloId ==
@@ -320,7 +322,7 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                                       .length ==
                                                   1 ??
                                               false)
-                                            Text(
+                                            const Text(
                                               'Sviđa vam se',
                                               style: TextStyle(
                                                 color: Colors.white,
@@ -331,7 +333,7 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                           else
                                             Text(
                                               'Vi i ${recenzijeResult!.result.where((recenzija) => recenzija.voziloId == e.voziloId && recenzija.isLiked == true).length - 1}',
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 color: Colors.white,
                                                 fontStyle: FontStyle.italic,
                                                 fontSize: 14,
@@ -340,28 +342,28 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                         else
                                           Text(
                                             '${recenzijeResult?.result.where((recenzija) => recenzija.voziloId == e.voziloId && recenzija.isLiked == true).length ?? 0}',
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               color: Colors.white,
                                               fontStyle: FontStyle.italic,
                                               fontSize: 14,
                                             ),
                                           ),
-                                        SizedBox(width: 10),
+                                        const SizedBox(width: 10),
                                         Container(
                                           width: 18,
                                           height: 18,
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             shape: BoxShape.circle,
                                             color:
                                                 Color.fromARGB(255, 182, 5, 5),
                                           ),
-                                          child: Icon(
+                                          child: const Icon(
                                             Icons.thumb_down_alt_rounded,
                                             color: Colors.white,
                                             size: 12,
                                           ),
                                         ),
-                                        SizedBox(width: 5),
+                                        const SizedBox(width: 5),
                                         if (recenzijeResult?.result.any(
                                                 (recenzija) =>
                                                     recenzija.voziloId ==
@@ -380,7 +382,7 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                                       .length ==
                                                   1 ??
                                               false)
-                                            Text(
+                                            const Text(
                                               'Ne sviđa vam se',
                                               style: TextStyle(
                                                 color: Colors.white,
@@ -391,7 +393,7 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                           else
                                             Text(
                                               'Vi i ${recenzijeResult!.result.where((recenzija) => recenzija.voziloId == e.voziloId && recenzija.isLiked == false).length - 1}',
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 color: Colors.white,
                                                 fontStyle: FontStyle.italic,
                                                 fontSize: 14,
@@ -400,30 +402,30 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                         else
                                           Text(
                                             '${recenzijeResult?.result.where((recenzija) => recenzija.voziloId == e.voziloId && recenzija.isLiked == false).length ?? 0}',
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               color: Colors.white,
                                               fontStyle: FontStyle.italic,
                                               fontSize: 14,
                                             ),
                                           ),
-                                        SizedBox(width: 10),
+                                        const SizedBox(width: 10),
                                         Container(
                                           width: 18,
                                           height: 18,
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             shape: BoxShape.circle,
                                             color: Colors.grey,
                                           ),
-                                          child: Icon(
+                                          child: const Icon(
                                             Icons.message_rounded,
                                             color: Colors.white,
                                             size: 12,
                                           ),
                                         ),
-                                        SizedBox(width: 5),
+                                        const SizedBox(width: 5),
                                         Text(
                                           '${komentariResult?.result.where((komentar) => komentar.voziloId == e.voziloId).length ?? 0} komentar/a',
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             color: Colors.white,
                                             fontStyle: FontStyle.italic,
                                             fontSize: 14,
@@ -433,8 +435,8 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                     ),
                                   ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
+                                const Padding(
+                                  padding: EdgeInsets.only(
                                       right: 8.0, left: 8.0),
                                   child: Divider(
                                     color: Colors.white,
@@ -450,7 +452,7 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(5),
-                                          color: Color.fromARGB(
+                                          color: const Color.fromARGB(
                                               200, 255, 255, 255),
                                         ),
                                         child: Row(
@@ -483,9 +485,9 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                                                 ulogovaniKorisnikId &&
                                                             recenzija.isLiked ==
                                                                 true)
-                                                    ? Color.fromARGB(
+                                                    ? const Color.fromARGB(
                                                         255, 5, 102, 182)
-                                                    : Color.fromARGB(
+                                                    : const Color.fromARGB(
                                                         210, 0, 0, 0),
                                               ),
                                               label: Text(
@@ -503,20 +505,20 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                                               recenzija
                                                                       .isLiked ==
                                                                   true)
-                                                      ? Color.fromARGB(
+                                                      ? const Color.fromARGB(
                                                           255, 5, 102, 182)
-                                                      : Color.fromARGB(
+                                                      : const Color.fromARGB(
                                                           210, 0, 0, 0),
                                                 ),
                                               ),
                                               style: ButtonStyle(
                                                 backgroundColor:
-                                                    MaterialStateProperty.all(
+                                                    WidgetStateProperty.all(
                                                   Colors.transparent,
                                                 ),
                                               ),
                                             ),
-                                            SizedBox(width: 5),
+                                            const SizedBox(width: 5),
                                             TextButton.icon(
                                               onPressed: () {
                                                 dislikeButtonPressed(
@@ -547,9 +549,9 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                                                 ulogovaniKorisnikId &&
                                                             recenzija.isLiked ==
                                                                 false)
-                                                    ? Color.fromARGB(
+                                                    ? const Color.fromARGB(
                                                         255, 182, 5, 5)
-                                                    : Color.fromARGB(
+                                                    : const Color.fromARGB(
                                                         210, 0, 0, 0),
                                               ),
                                               label: Text(
@@ -566,20 +568,20 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                                               recenzija
                                                                       .isLiked ==
                                                                   false)
-                                                      ? Color.fromARGB(
+                                                      ? const Color.fromARGB(
                                                           255, 182, 5, 5)
-                                                      : Color.fromARGB(
+                                                      : const Color.fromARGB(
                                                           210, 0, 0, 0),
                                                 ),
                                               ),
                                               style: ButtonStyle(
                                                 backgroundColor:
-                                                    MaterialStateProperty.all(
+                                                    WidgetStateProperty.all(
                                                   Colors.transparent,
                                                 ),
                                               ),
                                             ),
-                                            SizedBox(width: 5),
+                                            const SizedBox(width: 5),
                                             TextButton.icon(
                                               onPressed: () {
                                                 Navigator.push(
@@ -591,12 +593,12 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                                   ),
                                                 );
                                               },
-                                              icon: Icon(
+                                              icon: const Icon(
                                                 Icons.messenger_outline_rounded,
                                                 color: Color.fromARGB(
                                                     210, 0, 0, 0),
                                               ),
-                                              label: Text(
+                                              label: const Text(
                                                 'Komentar',
                                                 style: TextStyle(
                                                   color: Color.fromARGB(
@@ -605,7 +607,7 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                               ),
                                               style: ButtonStyle(
                                                 backgroundColor:
-                                                    MaterialStateProperty.all(
+                                                    WidgetStateProperty.all(
                                                   Colors.transparent,
                                                 ),
                                               ),
@@ -684,8 +686,8 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         content: Container(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
+          padding: const EdgeInsets.all(16.0),
+          child: const Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               CircularProgressIndicator(),

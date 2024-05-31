@@ -26,6 +26,7 @@ builder.Services.AddTransient<IPeriodService, PeriodService>();
 builder.Services.AddTransient<IRecenzijeService, RecenzijeService>();
 builder.Services.AddTransient<IKomentariService, KomentariService>();
 builder.Services.AddTransient<IRezervacijaService, RezervacijaService>();
+builder.Services.AddTransient<IRezervacijaDodatnaUslugaService, RezervacijaDodatnaUslugaService>();
 builder.Services.AddTransient<IService<DodatnaUsluga, BaseSearchObject>,
     BaseService<DodatnaUsluga, RentACar.Services.Database.DodatnaUsluga, BaseSearchObject>>();
 

@@ -7,7 +7,7 @@ part of 'tip_vozila.dart';
 // **************************************************************************
 
 TipVozila _$TipVozilaFromJson(Map<String, dynamic> json) => TipVozila(
-      json['tipVozilaId'] as int?,
+      (json['tipVozilaId'] as num?)?.toInt(),
       json['tip'] as String?,
       json['opis'] as String?,
     );

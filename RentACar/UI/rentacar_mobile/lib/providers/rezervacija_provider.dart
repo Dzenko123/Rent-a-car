@@ -33,4 +33,24 @@ class RezervacijaProvider extends BaseProvider<Rezervacija> {
       throw Exception("Greška prilikom dohvaćanja komentara: $e");
     }
   }
+
+  Future<Rezervacija> insertRezervacijaWithDodatneUsluge(Rezervacija rezervacija) async {
+    try {
+      String url = "$_baseUrl$_endpoint/InsertWithDodatneUsluge";
+      var response = await http.post(
+        Uri.parse(url),
+        headers: createHeaders(),
+        body: jsonEncode(rezervacija.toJson()),
+      );
+
+      if (isValidResponse(response)) {
+        var data = jsonDecode(response.body);
+        return fromJson(data);
+      } else {
+        throw Exception("Nepoznato!");
+      }
+    } catch (e) {
+      throw Exception("Greška prilikom kreiranja rezervacije: $e");
+    }
+  }
 }
