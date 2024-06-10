@@ -424,56 +424,57 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                     const SizedBox(
                                       height: 8,
                                     ),
-                                    TextField(
-                                        cursorColor: Colors.white,
-                                        decoration: InputDecoration(
-                                            labelText: "Email",
-                                            prefixIcon: const Icon(
-                                              Icons.email,
-                                              color: Colors.white,
-                                            ),
-                                            labelStyle:
-                                                const TextStyle(color: Colors.white),
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    vertical: 5),
-                                            errorText: _emailController
-                                                    .text.isEmpty
-                                                ? 'Polje ne smije biti prazno'
-                                                : null,
-                                            errorStyle:
-                                                const TextStyle(color: Colors.white)),
-                                        style: const TextStyle(
-                                            color: Colors.white),
-                                        controller: _emailController),
+                                    TextFormField(
+                                      cursorColor: Colors.white,
+                                      decoration: InputDecoration(
+                                        labelText: "Email",
+                                        prefixIcon: const Icon(
+                                          Icons.email,
+                                          color: Colors.white,
+                                        ),
+                                        labelStyle: const TextStyle(color: Colors.white),
+                                        contentPadding: const EdgeInsets.symmetric(vertical: 5),
+                                        errorText: _emailController.text.isNotEmpty &&
+                                            !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                                .hasMatch(_emailController.text)
+                                            ? 'Neispravan format email adrese'
+                                            : null,
+                                        errorStyle: const TextStyle(color: Colors.white),
+                                      ),
+                                      style: const TextStyle(color: Colors.white),
+                                      controller: _emailController,
+                                      onChanged: (_) {
+                                        setState(() {});
+                                      },
+                                    ),
+
                                     const SizedBox(
                                       height: 8,
                                     ),
-                                    TextField(
+
+                                    TextFormField(
                                       cursorColor: Colors.white,
                                       decoration: InputDecoration(
-                                          labelText: "Telefon",
-                                          prefixIcon: const Icon(
-                                            Icons.phone,
-                                            color: Colors.white,
-                                          ),
-                                          labelStyle:
-                                              const TextStyle(color: Colors.white),
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(vertical: 5),
-                                          errorText:
-                                              _telefonController.text.isEmpty
-                                                  ? 'Polje ne smije biti prazno'
-                                                  : null,
-                                          errorStyle:
-                                              const TextStyle(color: Colors.white)),
-                                      style:
-                                          const TextStyle(color: Colors.white),
+                                        labelText: "Telefon",
+                                        prefixIcon: const Icon(
+                                          Icons.phone,
+                                          color: Colors.white,
+                                        ),
+                                        labelStyle: const TextStyle(color: Colors.white),
+                                        contentPadding: const EdgeInsets.symmetric(vertical: 5),
+                                        errorText: _telefonController.text.isNotEmpty &&
+                                            !RegExp(r'^[0-9]+$').hasMatch(_telefonController.text)
+                                            ? 'Unesite samo brojeve'
+                                            : null,
+                                        errorStyle: const TextStyle(color: Colors.white),
+                                      ),
+                                      style: const TextStyle(color: Colors.white),
                                       controller: _telefonController,
                                       onChanged: (_) {
                                         setState(() {});
                                       },
                                     ),
+
                                     const SizedBox(
                                       height: 30,
                                     ),
@@ -773,6 +774,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       print('Greška prilikom dodavanja korisnika: $e');
     }
   }
+
 }
 
 class MyHttpOverrides extends HttpOverrides {

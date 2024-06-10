@@ -26,9 +26,6 @@ builder.Services.AddTransient<IPeriodService, PeriodService>();
 builder.Services.AddTransient<IRecenzijeService, RecenzijeService>();
 builder.Services.AddTransient<IKomentariService, KomentariService>();
 
-var stripePublishableKey = builder.Configuration.GetValue<string>("Stripe:PublishableKey");
-var stripeSecretKey = builder.Configuration.GetValue<string>("Stripe:SecretKey");
-StripeConfiguration.ApiKey = stripeSecretKey;
 
 builder.Services.AddTransient<IRezervacijaService, RezervacijaService>();
 builder.Services.AddTransient<IRezervacijaDodatnaUslugaService, RezervacijaDodatnaUslugaService>();
