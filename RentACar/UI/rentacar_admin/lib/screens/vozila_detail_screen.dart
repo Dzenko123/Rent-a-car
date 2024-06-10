@@ -44,7 +44,7 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
     super.initState();
     _initialValue = {
       'godinaProizvodnje': widget.vozilo?.godinaProizvodnje.toString(),
-      'cijena': widget.vozilo?.cijena.toString(),
+      'motor': widget.vozilo?.motor,
       'tipVozilaId': widget.vozilo?.tipVozilaId.toString(),
       'gorivoId': widget.vozilo?.gorivoId.toString(),
       'kilometraza': widget.vozilo?.kilometraza.toString(),
@@ -72,8 +72,6 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
     setState(() {
       isLoading = false;
     });
-
-    //print(tipVozilaResult);
   }
 
   @override
@@ -190,10 +188,10 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
               Expanded(
                 child: FormBuilderTextField(
                   decoration: InputDecoration(
-                    labelText: "Cijena",
+                    labelText: "Motor",
                     labelStyle:
                         const TextStyle(color: Color.fromARGB(255, 6, 77, 6)),
-                    prefixIcon: const Icon(Icons.attach_money_outlined,
+                    prefixIcon: const Icon(Icons.miscellaneous_services,
                         color: Color.fromARGB(255, 6, 77, 6)),
                     contentPadding: const EdgeInsets.symmetric(
                         vertical: 20.0, horizontal: 15.0),
@@ -211,10 +209,10 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                     ),
                     filled: true,
                     fillColor: Colors.grey[200],
-                    hintText: "Unesite cijenu",
+                    hintText: "Unesite snagu motora",
                     hintStyle: const TextStyle(color: Colors.grey),
                   ),
-                  name: "cijena",
+                  name: "motor",
                   style: const TextStyle(fontSize: 16.0),
                 ),
               ),
@@ -599,7 +597,6 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                                 Expanded(
                                   child: Image.file(
                                     _image!,
-                                    //fit: BoxFit.cover,
                                     height: 150,
                                     width: 150,
                                   ),
@@ -633,9 +630,7 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
               ElevatedButton(
                 onPressed: () async {
                   _formKey.currentState?.saveAndValidate();
-                  print(_formKey.currentState?.value);
                   var request = Map.from(_formKey.currentState!.value);
-                  print("Opis: ${_formKey.currentState!.value['opis']}");
                   request['opis'] = _formKey.currentState!.value['opis'];
 
                   if (_base64Image != null) {

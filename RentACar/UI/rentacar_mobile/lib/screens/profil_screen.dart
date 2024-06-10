@@ -342,10 +342,10 @@ class _ProfilScreenState extends State<ProfilScreen> {
                 fontSize: 18,
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ...widget.rezervacija!.map((rezervacija) {
               return Card(
-                margin: EdgeInsets.symmetric(vertical: 10),
+                margin: const EdgeInsets.symmetric(vertical: 10),
                 elevation: 8,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -390,7 +390,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                                   var grad = snapshot.data as Grad;
                                   return Text(
                                     'Grad: ${grad.naziv}',
-                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                    style: const TextStyle(fontWeight: FontWeight.bold),
                                   );
                                 } else {
                                   return const Text('Nema dostupnih informacija o gradu');
@@ -400,11 +400,11 @@ class _ProfilScreenState extends State<ProfilScreen> {
                             const SizedBox(height: 10),
                             Text(
                               'Datum početka: ${DateFormat('dd.MM.yyyy').format(rezervacija.pocetniDatum!)}',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             Text(
                               'Datum završetka: ${DateFormat('dd.MM.yyyy').format(rezervacija.zavrsniDatum!)}',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 10),
                             FutureBuilder(
@@ -428,7 +428,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                                       for (var naziv in nazivi)
                                         Text(
                                           '- $naziv',
-                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                          style: const TextStyle(fontWeight: FontWeight.bold),
                                         ),
                                     ],
                                   );
@@ -438,15 +438,28 @@ class _ProfilScreenState extends State<ProfilScreen> {
                               },
                             ),
                             const SizedBox(height: 10),
-                            ElevatedButton(
+                            Text(
+                              'Ukupna cijena: ${formatNumber(rezervacija.totalPrice)}',
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 10),
+                            rezervacija.zahtjev!
+                                ? const Text(
+                              'Zahtjev za otkazivanje na čekanju.',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                                fontSize: 18
+                              ),
+                            )
+                                : ElevatedButton(
                               onPressed: () {
                                 _showCancelConfirmationDialog(rezervacija.rezervacijaId);
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red
+                                backgroundColor: Colors.red,
                               ),
-                              child: const Text('Poništi rezervaciju',
-                              style:TextStyle(color: Colors.white)),
+                              child: const Text('Poništi rezervaciju', style: TextStyle(color:Colors.white),),
                             ),
                           ],
                         ),
@@ -455,7 +468,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   ),
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ],
@@ -466,7 +479,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
 
   void _cancelReservation(int rezervacijaId) async{
     try{
-      await _rezervacijaProvider.delete(rezervacijaId);
+      await _rezervacijaProvider.cancelReservation(rezervacijaId);
       await _loadRezervacije();
       _showSuccessDialog();
     }
@@ -479,21 +492,21 @@ class _ProfilScreenState extends State<ProfilScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Potvrda'),
-          content: Text('Da li sigurno želite poništiti ovu rezervaciju?'),
+          title: const Text('Potvrda'),
+          content: const Text('Da li sigurno želite poništiti ovu rezervaciju?'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Ne'),
+              child: const Text('Ne'),
             ),
             TextButton(
               onPressed: () {
                 _cancelReservation(rezervacijaId!);
                 Navigator.of(context).pop();
               },
-              child: Text('Da'),
+              child: const Text('Da'),
             ),
           ],
         );
@@ -505,14 +518,14 @@ class _ProfilScreenState extends State<ProfilScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Uspješno'),
-          content: Text('Uspješno ste poništili rezervaciju.'),
+          title: const Text('Uspješno'),
+          content: const Text('Zahtjev za poništavanje je poslan administraciji. Uskoro ćete biti obaviješteni.'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );
@@ -533,7 +546,6 @@ class _ProfilScreenState extends State<ProfilScreen> {
           nazivi.add(usluga.naziv!);
 
         }
-        print('$nazivi');
       } catch (e) {
         print('Greška prilikom dobijanja naziva dodatne usluge: $e');
       }
@@ -554,7 +566,6 @@ class _ProfilScreenState extends State<ProfilScreen> {
           'telefon': _formKey.currentState?.fields['telefon']?.value ?? '',
         };
 
-        print('$request');
         await _korisniciProvider.update(ulogovaniKorisnikId!, request);
 
         ScaffoldMessenger.of(context).showSnackBar(

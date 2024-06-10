@@ -2,9 +2,17 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rentacar_admin/providers/dodatna_usluga_provider.dart';
 import 'package:rentacar_admin/providers/gorivo_provider.dart';
+import 'package:rentacar_admin/providers/grad_provider.dart';
+import 'package:rentacar_admin/providers/komentari_provider.dart';
+import 'package:rentacar_admin/providers/korisnici_provider.dart';
+import 'package:rentacar_admin/providers/recenzije_provider.dart';
+import 'package:rentacar_admin/providers/rezervacija_dodatna_usluga_provider.dart';
+import 'package:rentacar_admin/providers/rezervacija_provider.dart';
 import 'package:rentacar_admin/providers/tip_vozila_provider.dart';
 import 'package:rentacar_admin/providers/vozila_provider.dart';
+import 'package:rentacar_admin/providers/vozilo_pregled_provider.dart';
 import 'package:rentacar_admin/utils/util.dart';
 import './screens/vozila_list_screen.dart';
 import 'package:window_manager/window_manager.dart';
@@ -19,8 +27,18 @@ void main() async {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => VozilaProvider()),
     ChangeNotifierProvider(create: (_) => TipVozilaProvider()),
-    ChangeNotifierProvider(create: (_) => GorivoProvider())
+    ChangeNotifierProvider(create: (_) => GorivoProvider()),
+    ChangeNotifierProvider(create: (_) => RezervacijaProvider()),
+    ChangeNotifierProvider(create: (_) => VoziloPregledProvider()),
+    ChangeNotifierProvider(create: (_) => KomentariProvider()),
+    ChangeNotifierProvider(create: (_) => RecenzijeProvider()),
+    ChangeNotifierProvider(create: (_) => KorisniciProvider()),
+    ChangeNotifierProvider(create: (_) => DodatnaUslugaProvider()),
+    ChangeNotifierProvider(create: (_) => RezervacijaDodatnaUslugaProvider()),
+        ChangeNotifierProvider(create: (_) => GradProvider()),
+
   ], child: const MyMaterialApp()));
+  
 }
 
 class MyMaterialApp extends StatelessWidget {
@@ -57,21 +75,16 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+late KorisniciProvider _korisniciProvider;
   late VozilaProvider _vozilaProvider;
   bool _isPasswordObscured = true;
 
   @override
   Widget build(BuildContext context) {
     _vozilaProvider = context.read<VozilaProvider>();
+    _korisniciProvider=context.read<KorisniciProvider>();
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(
-      //     "Welcome to login page.",
-      //     style: TextStyle(
-      //         fontWeight: FontWeight.bold, color: Colors.white, fontSize: 13),
-      //   ),
-      //   backgroundColor: Color.fromARGB(255, 23, 22, 22),
-      // ),
+
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
@@ -168,43 +181,59 @@ class _LoginPageState extends State<LoginPage> {
                                 height: 40,
                               ),
                               ElevatedButton(
-                                onPressed: () async {
-                                  var username = _usernameController.text;
-                                  var password = _passwordController.text;
-                                  Authorization.username = username;
-                                  Authorization.password = password;
+  onPressed: () async {
+    var username = _usernameController.text;
+    var password = _passwordController.text;
+    Authorization.username = username;
+    Authorization.password = password;
 
-                                  try {
-                                    await _vozilaProvider.get();
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            VozilaListScreen(),
-                                      ),
-                                    );
-                                  } on Exception catch (e) {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) =>
-                                          AlertDialog(
-                                        title: const Text("Error"),
-                                        content: Text(e.toString()),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context),
-                                            child: const Text("OK"),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }
-                                },
-                                child: const Text(
-                                  "Login",
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                              )
+    try {
+      var loginData = await _korisniciProvider.getLogedWithRole(username, password);
+
+      if (loginData != null && loginData['uloga'] == 'admin') {
+        await _vozilaProvider.get();
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => VozilaListScreen(),
+          ),
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: Text("Unauthorized"),
+            content: Text("Nemate dozvolu za pristup."),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text("OK"),
+              ),
+            ],
+          ),
+        );
+      }
+    } on Exception catch (e) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: Text("Error"),
+          content: Text(e.toString()),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("OK"),
+            ),
+          ],
+        ),
+      );
+    }
+  },
+  child: Text(
+    "Login",
+    style: TextStyle(color: Colors.black),
+  ),
+)
+
                             ],
                           ),
                         ),

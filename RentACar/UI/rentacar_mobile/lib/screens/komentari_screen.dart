@@ -47,10 +47,11 @@ class _KomentariScreenState extends State<KomentariScreen> {
         Authorization.username ?? '',
         Authorization.password ?? '',
       );
-      setState(() {
-        ulogovaniKorisnikId = ulogovaniKorisnik;
-        print("ID je...:$ulogovaniKorisnikId");
-      });
+      if (mounted) {
+        setState(() {
+          ulogovaniKorisnikId = ulogovaniKorisnik;
+        });
+      }
     } catch (e) {
       print('Greška prilikom dobijanja ID-a ulogovanog korisnika: $e');
     }
@@ -60,9 +61,11 @@ class _KomentariScreenState extends State<KomentariScreen> {
     korisniciResult = await _korisniciProvider.get();
     komentariResult = await _komentariProvider.get();
 
-    setState(() {
-      isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -286,6 +289,7 @@ class _KomentariScreenState extends State<KomentariScreen> {
   Future<void> _refreshComments() async {
     _komentariFuture = Provider.of<KomentariProvider>(context, listen: false)
         .getCommentsForVehicle(widget.vozilo?.voziloId ?? 0);
-    setState(() {});
-  }
+    if (mounted) {
+      setState(() {});
+    }  }
 }

@@ -3,6 +3,7 @@ using EasyNetQ;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RentACar.Model;
+using RentACar.Model.Messages;
 using RentACar.Model.Models;
 using RentACar.Model.Requests;
 using System;
@@ -28,14 +29,6 @@ namespace RentACar.Services.VozilaStateMachine
             var entity = await set.FindAsync(id);
 
             _mapper.Map(request, entity);
-            if (entity.Cijena < 0)
-            {
-                throw new Exception("Cijena ne smije biti u minusu!");
-            }
-            if(entity.Cijena<1)
-            {
-                throw new UserException("Cijena ispod minimuma!");
-            }
 
             await _context.SaveChangesAsync();
             return _mapper.Map<Vozila>(entity);
@@ -66,9 +59,6 @@ namespace RentACar.Services.VozilaStateMachine
 
         public override async Task<Vozila> Activate(int id)
         {
-            _logger.LogInformation($"Aktivacija vozila:{id}");
-            _logger.LogWarning($"W: Aktivacija vozila:{id}");
-            _logger.LogError($"E: Aktivacija vozila:{id}");
 
             var set = _context.Set<Database.Vozila>();
             var entity = await set.FindAsync(id);
@@ -76,24 +66,11 @@ namespace RentACar.Services.VozilaStateMachine
             entity.StateMachine = "active";
             await _context.SaveChangesAsync();
 
-
-            //var factory = new ConnectionFactory { HostName = "localhost" };
-            //using var connection = factory.CreateConnection();
-            //using var channel = connection.CreateModel();
-
-            //const string message = "Hello World";
-            //var body = Encoding.UTF8.GetBytes(message);
-            //channel.BasicPublish(exchange: string.Empty,
-            //                     routingKey: "vozilo_added",
-            //                     basicProperties: null,
-            //                     body: body);
-
-
-
             var mappedEntity = _mapper.Map<Vozila>(entity);
 
             using var bus = RabbitHutch.CreateBus("host=localhost");
-            bus.PubSub.Publish(mappedEntity);
+            VozilaActivated message=new VozilaActivated { Vozilo = mappedEntity };
+            bus.PubSub.Publish(message);
 
             return mappedEntity;
         }

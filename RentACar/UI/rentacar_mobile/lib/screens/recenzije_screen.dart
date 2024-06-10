@@ -81,7 +81,6 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
       );
       setState(() {
         ulogovaniKorisnikId = ulogovaniKorisnik;
-        print("ID je...:$ulogovaniKorisnikId");
       });
     } catch (e) {
       print('Greška prilikom dobijanja ID-a ulogovanog korisnika: $e');
@@ -222,14 +221,16 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                           ),
                                         ),
                                         const Icon(
-                                          Icons.attach_money_outlined,
+                                          Icons.miscellaneous_services,
                                           color:
                                               Color.fromARGB(255, 77, 255, 83),
                                           size: 15,
                                         ),
+                                        const SizedBox(width: 5),
+
                                         Expanded(
                                           child: Text(
-                                            '${formatNumber(e.cijena)} KM',
+                                            '${(e.motor)}',
                                             style: const TextStyle(
                                                 color: Colors.white,
                                                 fontStyle: FontStyle.italic,

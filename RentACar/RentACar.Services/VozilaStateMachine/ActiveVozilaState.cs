@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using RentACar.Model.Models;
 using RentACar.Model.Requests;
 
@@ -24,6 +25,13 @@ namespace RentACar.Services.VozilaStateMachine
             var list = await base.AllowedActions();
             list.Add("Hide");
             return list;
+        }
+
+        public override async Task<List<Vozila>> GetActiveVehicles()
+        {
+            var set = _context.Set<Database.Vozila>();
+            var activeVehicles = await set.Where(v => v.StateMachine == "active").ToListAsync();
+            return _mapper.Map<List<Vozila>>(activeVehicles);
         }
     }
 }

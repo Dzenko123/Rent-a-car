@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 import 'package:rentacar_admin/providers/cijene_po_vremenskom_periodu_provider.dart';
 import 'package:rentacar_admin/providers/dodatna_usluga_provider.dart';
@@ -21,12 +21,16 @@ import 'package:rentacar_admin/screens/cijene_po_vremenskom_periodu_screen.dart'
 import 'package:rentacar_admin/screens/kontakt_screen.dart';
 import 'package:rentacar_admin/screens/profil_screen.dart';
 import 'package:rentacar_admin/screens/recenzije_screen.dart';
-import 'package:rentacar_admin/screens/vozila_detail_screen.dart';
 import 'package:rentacar_admin/utils/util.dart';
 import './screens/vozila_list_screen.dart';
+import 'package:flutter/material.dart' as FlutterMaterial;
+
+import '.env';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey= stripePublishableKey;
+  await Stripe.instance.applySettings();
 
   HttpOverrides.global = MyHttpOverrides();
 
@@ -57,7 +61,6 @@ class MyMaterialApp extends StatelessWidget {
       home: const LoginPage(),
       onGenerateRoute: (settings) {
         if (settings.name == VozilaListScreen.routeName) {
-          // Provjeri je li ruta trenutno otvorena
           if (!Get.isDialogOpen!) {
             return GetPageRoute(
               settings: settings,
@@ -182,7 +185,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   Container(
                     constraints:
                         const BoxConstraints(maxHeight: 280, maxWidth: 320),
-                    child: Card(
+                    child: FlutterMaterial.Card(
                       elevation: 5,
                       color: Colors.transparent,
                       shape: RoundedRectangleBorder(
@@ -270,41 +273,51 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                     Authorization.password = password;
 
                                     try {
-                                      var korisnikId = await _korisniciProvider
-                                          .getLoged(username, password);
+                                      var loginData = await _korisniciProvider.getLogedWithRole(username, password);
 
-                                      print("Korisnik ID: $korisnikId");
-                                                                          await _vozilaProvider.get();
-
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              VozilaListScreen(),
-                                        ),
-                                      );
+                                      if (loginData != null && loginData['uloga'] == 'user') {
+                                        await _vozilaProvider.get();
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) => VozilaListScreen(),
+                                          ),
+                                        );
+                                      } else {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) => AlertDialog(
+                                            title: Text("Unauthorized"),
+                                            content: Text("Nemate dozvolu za pristup."),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(context),
+                                                child: Text("OK"),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      }
                                     } on Exception catch (e) {
                                       showDialog(
                                         context: context,
-                                        builder: (BuildContext context) =>
-                                            AlertDialog(
-                                          title: const Text("Error"),
+                                        builder: (BuildContext context) => AlertDialog(
+                                          title: Text("Error"),
                                           content: Text(e.toString()),
                                           actions: [
                                             TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
-                                              child: const Text("OK"),
+                                              onPressed: () => Navigator.pop(context),
+                                              child: Text("OK"),
                                             ),
                                           ],
                                         ),
                                       );
                                     }
                                   },
-                                  child: const Text(
+                                  child: Text(
                                     "Login",
                                     style: TextStyle(color: Colors.black),
                                   ),
-                                ),
+                                )
                               ],
                             ),
                           ),
@@ -316,7 +329,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   Container(
                     constraints:
                         const BoxConstraints(maxHeight: 350, maxWidth: 320),
-                    child: Card(
+                    child: FlutterMaterial.Card(
                       elevation: 5,
                       color: Colors.transparent,
                       shape: RoundedRectangleBorder(

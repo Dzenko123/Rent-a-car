@@ -24,5 +24,8 @@ namespace RentACar.Model.Models
         public DateTime ZavrsniDatum { get; set; }
         public ICollection<RezervacijaDodatnaUsluga> DodatnaUsluga { get; set; }= new List<RezervacijaDodatnaUsluga>();
 
+        public decimal TotalPrice { get; set; }
+        public bool Zahtjev { get; set; }
+
     }
 }

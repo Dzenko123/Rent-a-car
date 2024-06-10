@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:rentacar_admin/main.dart';
 import 'package:rentacar_admin/screens/cijene_po_vremenskom_periodu_screen.dart';
+import 'package:rentacar_admin/screens/grad_dodatneUsluge_screen.dart';
+import 'package:rentacar_admin/screens/izvjestaj_screen.dart';
 import 'package:rentacar_admin/screens/kontakt_screen.dart';
 import 'package:rentacar_admin/screens/korisnici_screen.dart';
+import 'package:rentacar_admin/screens/profil_screen.dart';
+import 'package:rentacar_admin/screens/recenzije_screen.dart';
 import 'package:rentacar_admin/screens/rezervacija_screen.dart';
 import 'package:rentacar_admin/screens/vozila_detail_screen.dart';
 import 'package:rentacar_admin/screens/vozila_list_screen.dart';
@@ -30,16 +34,6 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
         child: ListView(
           children: [
             ListTile(
-              title: const Text("Back"),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const LoginPage(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
               title: const Text("Vozila"),
               onTap: () {
                 Navigator.of(context).push(
@@ -49,12 +43,60 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 );
               },
             ),
+
             ListTile(
-              title: const Text("Detalji"),
+              title: const Text("Cijene po periodu"),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => VozilaDetailScreen(),
+                    builder: (context) => CijenePoVremenskomPerioduScreen(),
+                  ),
+                );
+              },
+            ), 
+            ListTile(
+              title: const Text("Rezervacije"),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => RezervacijaScreen(),
+                  ),
+                );
+              },
+            ),
+           ListTile(
+              title: const Text("Grad/dodatne usluge"),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => GradDodatneUslugeScreen(),
+                  ),
+                );
+              },
+            ),ListTile(
+              title: const Text("Recenzije"),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => RecenzijeScreen(),
+                  ),
+                );
+              },
+            ), ListTile(
+              title: const Text("Kalendar rezervacija"),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => VoziloPregledScreen(),
+                  ),
+                );
+              },
+            ),  ListTile(
+              title: const Text("Kontakt"),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => KontaktScreen(),
                   ),
                 );
               },
@@ -69,42 +111,22 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 );
               },
             ),
+          
             ListTile(
-              title: const Text("Kontakt"),
+              title: const Text("Izvjestaj"),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => KontaktScreen(),
+                    builder: (context) =>  IzvjestajiPage(),
                   ),
                 );
               },
-            ),
-            ListTile(
-              title: const Text("Cijene po periodu"),
+            ),ListTile(
+              title: const Text("Profil"),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => CijenePoVremenskomPerioduScreen(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text("Rezervacije"),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => RezervacijaScreen(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text("Kalendar rezervacija"),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => VoziloPregledScreen(),
+                    builder: (context) =>  ProfilScreen(),
                   ),
                 );
               },

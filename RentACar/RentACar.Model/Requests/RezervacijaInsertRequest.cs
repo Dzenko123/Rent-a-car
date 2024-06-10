@@ -23,5 +23,8 @@ namespace RentACar.Model.Requests
 
         public DateTime ZavrsniDatum { get; set; }
 
+        public decimal TotalPrice { get; set; }
+
+
     }
 }

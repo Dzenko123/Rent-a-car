@@ -46,10 +46,6 @@ namespace RentACar.Services.Services
             }
         }
 
-
-        //public override async Task BeforeUpdate(Database.Korisnici entity, KorisniciUpdateRequest update)
-        //{
-        //}
         public async Task<bool> VerifyOldPassword(int id, string oldPassword)
         {
             var entity = await _context.Korisnicis.FindAsync(id);
@@ -83,6 +79,29 @@ namespace RentACar.Services.Services
 
             return entity.KorisnikId;
         }
+        public async Task<(int? korisnikId, string uloga)> GetLogedWithRole(string username, string password)
+        {
+            var entity = await _context.Korisnicis
+                .Include(x => x.KorisniciUloge)
+                .ThenInclude(x => x.Uloga)
+                .FirstOrDefaultAsync(x => x.KorisnickoIme == username);
+
+            if (entity == null)
+            {
+                return (null, null);
+            }
+
+            var hash = GenerateHash(entity.LozinkaSalt, password);
+
+            if (hash != entity.LozinkaHash)
+            {
+                return (null, null);
+            }
+
+            var uloga = entity.KorisniciUloge.FirstOrDefault()?.Uloga.Naziv;
+
+            return (entity.KorisnikId, uloga);
+        }
 
         public static string GenerateSalt()
         {
@@ -106,14 +125,6 @@ namespace RentACar.Services.Services
             return Convert.ToBase64String(inArray);
 
         }
-
-        //public Model.Models.Korisnici Update(int id, KorisniciUpdateRequest request)
-        //{
-        //    var entity = _context.Korisnicis.Find(id);
-        //    _mapper.Map(request, entity);
-        //    _context.SaveChanges();
-        //    return _mapper.Map<Model.Models.Korisnici>(entity);
-        //}
 
         public override IQueryable<Database.Korisnici> AddInclude(IQueryable<Database.Korisnici> query, KorisniciSearchObject? search = null)
         {

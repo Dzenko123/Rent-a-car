@@ -59,6 +59,19 @@ namespace RentACar.Controllers
         {
             return await _service.Insert(insert);
         }
+        [HttpGet("GetLogedWithRole")]
+        public virtual async Task<IActionResult> GetLogedWithRole(string username, string password)
+        {
+            var (korisnikId, uloga) = await _korisniciService.GetLogedWithRole(username, password);
+            if (korisnikId != null && uloga != null)
+            {
+                return Ok(new { korisnikId, uloga });
+            }
+            else
+            {
+                return NotFound("Korisnik nije pronađen ili pogrešna lozinka.");
+            }
+        }
 
     }
 }

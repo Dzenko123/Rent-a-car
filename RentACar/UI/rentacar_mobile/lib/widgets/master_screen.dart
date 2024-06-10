@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:rentacar_admin/screens/cijene_po_vremenskom_periodu_screen.dart';
 import 'package:rentacar_admin/screens/kontakt_screen.dart';
 import 'package:rentacar_admin/screens/profil_screen.dart';
@@ -26,7 +25,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
     return Scaffold(
       bottomNavigationBar: NavigationBarTheme(
         data:  NavigationBarThemeData(
-            labelTextStyle: MaterialStateProperty.all(
+            labelTextStyle: WidgetStateProperty.all(
               const TextStyle(
                 fontSize: 12.0,
                 color: Colors.black,
@@ -58,7 +57,6 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 Get.toNamed(ProfilScreen.routeName);
                 break;
 
-            // Add cases for other screens if needed
             }
           },
           backgroundColor:Colors.grey.shade200,

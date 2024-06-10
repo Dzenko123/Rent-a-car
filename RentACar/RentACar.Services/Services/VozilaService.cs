@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using RentACar.Model;
 using RentACar.Model.Models;
 using RentACar.Model.Requests;
@@ -95,5 +96,58 @@ namespace RentACar.Services.Services
             var state = _baseState.CreateState(entity?.StateMachine ?? "initial");
             return await state.AllowedActions();
         }
+
+        public async Task<PagedResult<Vozila>> GetActiveVehicles(VozilaSearchObject search)
+        {
+            var state = _baseState.CreateState("active") as ActiveVozilaState;
+            if (state == null)
+            {
+                throw new UserException("Invalid state for retrieving active vehicles");
+            }
+
+            var activeVehiclesQuery = _context.Vozila.AsQueryable();
+
+            activeVehiclesQuery = activeVehiclesQuery.Where(v => v.StateMachine == "active");
+
+            activeVehiclesQuery = AddFilter(activeVehiclesQuery, search);
+            activeVehiclesQuery = AddInclude(activeVehiclesQuery, search);
+
+            var count = await activeVehiclesQuery.CountAsync();
+
+            if (search?.Page.HasValue == true && search?.PageSize.HasValue == true)
+            {
+                activeVehiclesQuery = activeVehiclesQuery.Skip(search.Page.Value * search.PageSize.Value).Take(search.PageSize.Value);
+            }
+
+            var vehiclesList = await activeVehiclesQuery.ToListAsync();
+
+            var vehicles = _mapper.Map<List<Vozila>>(vehiclesList);
+
+            return new PagedResult<Vozila>
+            {
+                Result = vehicles,
+                Count = count
+            };
+        }
+
+
+        public async Task<Vozila> GetActiveVehicleById(int id)
+        {
+
+            var entity = await _context.Vozila.FindAsync(id);
+
+            if (entity == null)
+            {
+                return null;
+            }
+
+            if (entity.StateMachine != "active")
+            {
+                return null;
+            }
+
+            return _mapper.Map<Vozila>(entity);
+        }
+
     }
 }

@@ -105,4 +105,18 @@ class KorisniciProvider extends BaseProvider<Korisnici> {
       print('Greška prilikom dodavanja korisnika: ${response.reasonPhrase}');
     }
   }
+  Future<Map<String, dynamic>> getLogedWithRole(String username, String password) async {
+    var url = "$_baseUrl$_endpoint/GetLogedWithRole?username=$username&password=$password";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+
+    var response = await http.get(uri, headers: headers);
+
+    if (isValidResponse(response)) {
+      var data = jsonDecode(response.body);
+      return data;
+    } else {
+      throw Exception("Unexpected error occurred while logging in");
+    }
+  }
 }

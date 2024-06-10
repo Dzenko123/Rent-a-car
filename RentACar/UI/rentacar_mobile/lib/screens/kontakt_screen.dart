@@ -59,7 +59,6 @@ class _KontaktScreenState extends State<KontaktScreen> {
       );
       setState(() {
         ulogovaniKorisnikId = ulogovaniKorisnik;
-        print("ID je...:$ulogovaniKorisnikId");
       });
     } catch (e) {
       print('Greška prilikom dobijanja ID-a ulogovanog korisnika: $e');
@@ -83,7 +82,7 @@ class _KontaktScreenState extends State<KontaktScreen> {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.only(top:30.0),
+          padding: const EdgeInsets.only(top:100.0),
           child: Column(
               children: [const SizedBox(height: 20), _buildDataListView()]),
         ),

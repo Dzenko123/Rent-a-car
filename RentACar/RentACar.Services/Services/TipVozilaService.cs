@@ -17,23 +17,5 @@ namespace RentACar.Services.Services
         {
         }
 
-
-
-        //public override IQueryable<Database.TipVozila> AddFilter(IQueryable<Database.TipVozila> query, TipVozilaSearchObject? search = null)
-        //{
-        //    if (!string.IsNullOrWhiteSpace(search?.Marka))
-        //    {
-        //        query = query.Where(x => x.Marka.StartsWith(search.Marka));
-        //    }
-        //    if (!string.IsNullOrWhiteSpace(search?.FTS))
-        //    {
-        //        query = query.Where(x => x.Marka.Contains(search.FTS));
-        //    }
-        //    return base.AddFilter(query, search);
-        //}
-
-
-
-
     }
 }

@@ -33,6 +33,7 @@ namespace RentACar.Services.Configurations
                      .WithOne(rd => rd.Rezervacija)
                      .HasForeignKey(rd => rd.RezervacijaId)
                      .OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 }

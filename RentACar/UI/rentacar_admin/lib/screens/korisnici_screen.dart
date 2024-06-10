@@ -57,18 +57,15 @@ class _KorisniciListScreenState extends State<KorisniciListScreen> {
   }
 
   Future<void> fetchUloge() async {
-    print("Fetching uloge...");
     if (korisniciResult != null) {
       for (var korisnik in korisniciResult!.result) {
-        print("Uloge korisnika ${korisnik.korisnikId}: ${korisnik.uloge}");
+        print("${korisnik.uloge}");
       }
     }
   }
 
   Future initForm() async {
-    print("Fetching korisnici...");
     korisniciResult = await _korisniciProvider.get();
-    print("Korisnici fetched: $korisniciResult");
     await fetchUloge();
 
     var data =
@@ -200,13 +197,7 @@ class _KorisniciListScreenState extends State<KorisniciListScreen> {
                     style: TextStyle(
                         fontStyle: FontStyle.italic, color: Colors.white),
                   ))),
-                  DataColumn(
-                      label: Expanded(
-                          child: Text(
-                    'Status',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.white),
-                  ))),
+                 
                   DataColumn(
                     label: Expanded(
                         child: Text('Uloge',
@@ -218,8 +209,7 @@ class _KorisniciListScreenState extends State<KorisniciListScreen> {
                 rows: korisniciResult?.result
                         .map(
                           (Korisnici k) => DataRow(
-                            // onSelectChanged: (selected) =>
-                            //     {if (selected == true) {}},
+                            
                             cells: [
                               DataCell(Text(k.korisnikId?.toString() ?? "",
                                   style: const TextStyle(color: Colors.white))),
@@ -233,8 +223,7 @@ class _KorisniciListScreenState extends State<KorisniciListScreen> {
                                   style: const TextStyle(color: Colors.white))),
                               DataCell(Text(k.telefon ?? "",
                                   style: const TextStyle(color: Colors.white))),
-                              DataCell(Text(k.status?.toString() ?? "",
-                                  style: const TextStyle(color: Colors.white))),
+                            
                               DataCell(
                                 Padding(
                                   padding: const EdgeInsets.only(top: 15),

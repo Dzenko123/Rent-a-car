@@ -12,12 +12,15 @@ class Rezervacija {
   int? gradId;
   DateTime? pocetniDatum;
   DateTime? zavrsniDatum;
+  double? totalPrice;
+  bool? zahtjev;
+
   Vozilo? vozilo;
   List<int>? dodatnaUslugaId;
   List<DodatnaUsluga>? dodatnaUsluga;
 
   Rezervacija(this.rezervacijaId, this.korisnikId, this.voziloId, this.gradId,
-      this.pocetniDatum, this.zavrsniDatum, this.vozilo, this.dodatnaUslugaId, [this.dodatnaUsluga]);
+      this.pocetniDatum, this.zavrsniDatum,this.totalPrice, this.vozilo, this.dodatnaUslugaId,this.zahtjev, [this.dodatnaUsluga]);
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.

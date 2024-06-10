@@ -26,6 +26,10 @@ import 'package:rentacar_admin/providers/vozilo_pregled_provider.dart';
 import 'package:rentacar_admin/screens/vozila_list_screen.dart';
 import 'package:rentacar_admin/utils/util.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:http/http.dart' as http;
+
+import '../.env';
 
 class RezervacijaScreen extends StatefulWidget {
 
@@ -72,6 +76,7 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
   bool isStartDateSelected = false;
   bool isInfoVisible = false;
   final bool _autoValidate = false;
+  Map<String, dynamic>? paymentIntentData;
 
   @override
   void initState() {
@@ -151,10 +156,6 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
       dodatnaUslugaResult=await _dodatnaUslugaProvider.get();
       rezervacijaDodatnaUslugaResult=await _rezervacijaDodatnaUslugaProvider.get();
 
-      print('$vozilaResult');
-      print('${widget.vozilo?.voziloId}');
-      print('$gradResult');
-      print('$dodatnaUslugaResult');
 
       final cijenePoVremenskomPerioduResult =
       await _cijenePoVremenskomPerioduProvider
@@ -163,7 +164,6 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
         setState(() {
           _cijenePoVremenskomPerioduList = cijenePoVremenskomPerioduResult;
         });
-        print('CijenePoVremenskomPeriodu: $cijenePoVremenskomPerioduResult');
       }
     } catch (e) {
       print('Error fetching data: $e');
@@ -202,6 +202,7 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
               _buildImagePreview(),
               const SizedBox(height: 20),
               _buildDataListView(),
+              const SizedBox(height: 5),
             ],
           ),
         ),
@@ -348,16 +349,20 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 'Ukupna cijena: ${_calculateTotalPrice().toStringAsFixed(2)}',
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
               ),
             ),
 
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                showConfirmationDialog(_calculateTotalPrice());
+              onPressed: () async {
+                await makePayment();
               },
-              child: const Text('Potvrdi rezervaciju'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+
+              ),
+              child: const Text('Dovršite rezervaciju ovdje.', style: TextStyle(color: Colors.white, fontSize: 16),),
             ),
 
           ],
@@ -365,12 +370,15 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
       ),
     );
   }
+
   double _calculateTotalPrice() {
     double totalPrice = 0.0;
     _selectedDodatneUsluge.clear();
+
     if (_formKey.currentState != null &&
         _formKey.currentState!.fields['dodatnaUslugaId'] != null &&
         dodatnaUslugaResult != null) {
+
       List<String>? selectedUsluge = _formKey.currentState!.fields['dodatnaUslugaId']!.value?.cast<String>();
       if (selectedUsluge != null) {
         for (String uslugaId in selectedUsluge) {
@@ -384,12 +392,14 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
         }
       }
     }
+
     if (_selectedPeriod != null) {
       totalPrice += _selectedPeriod!.cijena ?? 0.0;
     }
 
     return totalPrice;
   }
+
 
 
   Future<void> insertRezervacija() async {
@@ -408,74 +418,19 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
       var requestJson = jsonEncode(request);
 
       Rezervacija rezervacija = Rezervacija.fromJson(jsonDecode(requestJson));
-
+      rezervacija.totalPrice = _calculateTotalPrice();
       await _rezervacijaProvider.insertRezervacijaWithDodatneUsluge(rezervacija);
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Uspješna rezervacija'),
-          content: const Text(
-            'Uspješno ste rezervisali vozilo. Vaše rezervacije možete pogledati u stavci "Profil". Hvala Vam na povjerenju!',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => VozilaListScreen()),
-                );
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
     }
   }
-  Future<void> showConfirmationDialog(double totalPrice) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Potvrda rezervacije'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Ukupna cijena rezervacije: ${totalPrice.toStringAsFixed(2)} KM'),
-                Text('Da li ste sigurni da želite potvrditi rezervaciju?'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Odustani'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                insertRezervacija();
-              },
-              child: Text('Potvrdi'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
-  List<DodatnaUsluga> _selectedDodatneUsluge = [];
+  final List<DodatnaUsluga> _selectedDodatneUsluge = [];
 
   Widget _buildDodatnaUslugaDropdown() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+        const Padding(
+          padding: EdgeInsets.only(left: 8.0, top: 8.0),
           child: Text(
             'Odaberite dodatne usluge ukoliko želite',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
@@ -504,8 +459,6 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
       ],
     );
   }
-
-
 
 
 
@@ -684,7 +637,7 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
       bool isAnyDateUnavailable = false;
 
       for (DateTime date = startDate;
-          date.isBefore(initialEndDate.add(Duration(days: maxDays)));
+          date.isBefore(initialEndDate.add(Duration(days: maxDays -1)));
           date = date.add(const Duration(days: 1))) {
         if (!isDateAvailable(date)) {
           isAnyDateUnavailable = true;
@@ -783,4 +736,170 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
       ),
     );
   }
+
+  Future<void> makePayment() async {
+    try {
+      double totalPrice = _calculateTotalPrice();
+
+      if (ulogovaniKorisnikId != null) {
+        Korisnici? ulogovaniKorisnik = await _korisniciProvider.getById(ulogovaniKorisnikId!);
+
+        if (ulogovaniKorisnik != null) {
+          String customerId = await createStripeCustomer(ulogovaniKorisnik);
+
+          paymentIntentData = await createPaymentIntent(
+            totalPrice.toString(),
+            'USD',
+            ulogovaniKorisnik.email ?? '',
+            customerId,
+          );
+
+          await Stripe.instance
+              .initPaymentSheet(
+            paymentSheetParameters: SetupPaymentSheetParameters(
+              setupIntentClientSecret:
+              secretKey,
+              paymentIntentClientSecret: paymentIntentData!['client_secret'],
+              customFlow: true,
+              style: ThemeMode.dark,
+              merchantDisplayName: 'test',
+            ),
+          )
+              .then((value) {});
+
+          displayPaymentSheet();
+        }
+      }
+    } catch (e, s) {
+      print('Payment exception:$e$s');
+    }
+  }
+  Future<String> createStripeCustomer(Korisnici ulogovaniKorisnik) async {
+    try {
+      var response = await http.post(
+        Uri.parse('https://api.stripe.com/v1/customers'),
+        body: {
+          'email': ulogovaniKorisnik.email,
+          'name': '${ulogovaniKorisnik.ime} ${ulogovaniKorisnik.prezime}',
+        },
+        headers: {
+          'Authorization':
+          'Bearer sk_test_51PMVHpRrJwr9yxSmTmLhu9D6rFknT703NS22C6gJ45NJ3iwOfwWCtuSpGgT3WvmwUKKsCSkLA1MoR3ZkZsywN40P00G3FljD5O',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      );
+
+      var customerResponse = jsonDecode(response.body);
+      String customerId = customerResponse['id'];
+      return customerId;
+    } catch (err) {
+      print('err creating stripe customer: ${err.toString()}');
+      throw err;
+    }
+  }
+
+
+  Future<void> displayPaymentSheet() async {
+    try {
+      final result = await Stripe.instance.presentPaymentSheet();
+      if (result == null) {
+        return;
+      }
+      final confirmed = await confirmPaymentSheetPayment();
+      if (confirmed) {
+        await insertRezervacija();
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Uspješna rezervacija'),
+            content: const Text(
+              'Uspješno ste rezervisali vozilo. Vaše rezervacije možete pogledati u stavci "Profil". Hvala Vam na povjerenju!',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => VozilaListScreen()),
+                  );
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      } else {
+        print('Payment failed.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Payment failed")),
+        );
+      }
+    } on StripeException catch (e) {
+      print('Exception/DISPLAYPAYMENTSHEET==> $e');
+      showDialog(
+        context: context,
+        builder: (_) => const AlertDialog(
+          content: Text("Cancelled "),
+        ),
+      );
+    } catch (e) {
+      print('$e');
+    }
+  }
+
+
+
+        Future<bool> confirmPaymentSheetPayment() async {
+    try {
+      await Stripe.instance.confirmPaymentSheetPayment();
+      return true;
+    } on StripeException catch (e) {
+      print('Error confirming payment: $e');
+      return false;
+    }
+  }
+
+  Future<Map<String, dynamic>> createPaymentIntent(
+      String amount, String currency, String customerEmail, String customerId) async {
+    try {
+      if (ulogovaniKorisnikId != null) {
+        Korisnici? ulogovaniKorisnik = await _korisniciProvider.getById(ulogovaniKorisnikId!);
+
+        if (ulogovaniKorisnik != null) {
+          Map<String, dynamic> body = {
+            'amount': calculateAmount(amount),
+            'currency': currency,
+            'payment_method_types[]': 'card',
+            'customer': customerId,
+            'receipt_email': ulogovaniKorisnik.email,
+            'description': 'Payment for car reservation by ${ulogovaniKorisnik.ime} ${ulogovaniKorisnik.prezime}',
+          };
+          var response = await http.post(
+            Uri.parse('https://api.stripe.com/v1/payment_intents'),
+            body: body,
+            headers: {
+              'Authorization':
+              'Bearer $secretKey',
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+          );
+          print('Create Intent reponse ===> ${response.body.toString()}');
+          return jsonDecode(response.body);
+        }
+      }
+    } catch (err) {
+      print('err charging user: ${err.toString()}');
+      throw err;
+    }
+
+    throw Exception('Failed to create payment intent');
+  }
+
+  String calculateAmount(String amount) {
+    final double parsedAmount = double.parse(amount);
+    final int multipliedAmount = (parsedAmount * 100).toInt();
+    return multipliedAmount.toString();
+  }
+
 }

@@ -22,8 +22,6 @@ class CijenePoVremenskomPerioduProvider
       final response = await http.get(
           Uri.parse('$_baseUrl$_endpoint/GetByVoziloId/$voziloId'),
           headers: createHeaders());
-      print('Status code: ${response.statusCode}');
-      print('Response Body: ${response.body}');
       if (response.statusCode == 200) {
         Iterable list = json.decode(response.body);
         return List<CijenePoVremenskomPeriodu>.from(

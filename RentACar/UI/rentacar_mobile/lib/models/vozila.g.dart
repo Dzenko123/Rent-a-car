@@ -9,7 +9,6 @@ part of 'vozila.dart';
 Vozilo _$VoziloFromJson(Map<String, dynamic> json) => Vozilo(
       (json['voziloId'] as num?)?.toInt(),
       (json['godinaProizvodnje'] as num?)?.toInt(),
-      (json['cijena'] as num?)?.toDouble(),
       (json['tipVozilaId'] as num?)?.toInt(),
       (json['gorivoId'] as num?)?.toInt(),
       json['slika'] as String?,
@@ -19,6 +18,7 @@ Vozilo _$VoziloFromJson(Map<String, dynamic> json) => Vozilo(
           ? null
           : Gorivo.fromJson(json['gorivo'] as Map<String, dynamic>),
       json['marka'] as String?,
+      json['motor'] as String?,
       json['model'] as String?,
       json['tipVozila'] == null
           ? null
@@ -33,12 +33,12 @@ Map<String, dynamic> _$VoziloToJson(Vozilo instance) => <String, dynamic>{
       'tipVozilaId': instance.tipVozilaId,
       'gorivoId': instance.gorivoId,
       'godinaProizvodnje': instance.godinaProizvodnje,
-      'cijena': instance.cijena,
       'kilometraza': instance.kilometraza,
       'slika': instance.slika,
       'stateMachine': instance.stateMachine,
       'model': instance.model,
       'marka': instance.marka,
+      'motor': instance.motor,
       'tipVozila': instance.tipVozila,
       'gorivo': instance.gorivo,
       'komentari': instance.komentari,

@@ -3,8 +3,6 @@ using RentACar.Model.Requests;
 using RentACar.Model.SearchObject;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace RentACar.Services.IServices
@@ -13,5 +11,12 @@ namespace RentACar.Services.IServices
     {
         Task<IEnumerable<Rezervacija>> GetByKorisnikId(int korisnikId);
         Task<Rezervacija> InsertRezervacijaWithDodatneUsluge(RezervacijaInsertRequest request);
+        List<Model.Models.Rezervacija> Recommend(int id);
+
+        Task<bool> Otkazivanje(int rezervacijaId);
+        Task<bool> Potvrda(int rezervacijaId);
+
+        Task<bool> GradIsInUse(int gradId);
+        Task<bool> DodatnaUslugaIsInUse(int dodatnaUslugaId);
     }
 }

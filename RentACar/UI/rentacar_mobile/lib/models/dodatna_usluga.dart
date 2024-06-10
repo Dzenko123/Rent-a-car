@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:rentacar_admin/models/rezervacija_dodatna_usluga.dart';
 part 'dodatna_usluga.g.dart';
 
 @JsonSerializable()

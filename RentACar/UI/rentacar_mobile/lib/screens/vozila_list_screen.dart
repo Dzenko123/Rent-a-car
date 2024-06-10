@@ -32,7 +32,7 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
   late TipVozilaProvider _tipVozilaProvider;
   late GorivoProvider _gorivoProvider;
 
-  SearchResult<Vozilo>? result;
+  SearchResult<Vozilo>? vozilaResult;
   SearchResult<TipVozila>? tipVozilaResult;
   SearchResult<Gorivo>? gorivoResult;
 
@@ -59,14 +59,11 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
   Future<void> initForm() async {
     tipVozilaResult = await _tipVozilaProvider.get();
     gorivoResult = await _gorivoProvider.get();
-
-    var data = await _vozilaProvider.get(filter: {'fts': _ftsController.text});
+    vozilaResult = await _vozilaProvider.getActiveVehicles();
     setState(() {
-      result = data;
       isLoading = false;
     });
 
-    print(tipVozilaResult);
   }
 
   @override
@@ -121,11 +118,10 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
           Flexible(
             child: ElevatedButton(
               onPressed: () async {
-                print("Login uspješan");
                 var data = await _vozilaProvider
-                    .get(filter: {'fts': _ftsController.text});
+                    .getActiveVehicles(filter: {'fts': _ftsController.text});
                 setState(() {
-                  result = data;
+                  vozilaResult = data;
                 });
               },
               style: ElevatedButton.styleFrom(
@@ -143,7 +139,7 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
     return Expanded(
       child: GridView.count(
         crossAxisCount: 2,
-        children: result?.result
+        children: vozilaResult?.result
                 .map(
                   (Vozilo e) => GridTile(
                     child: Card(
@@ -224,13 +220,14 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
                                         ),
                                       ),
                                       const Icon(
-                                        Icons.attach_money_outlined,
+                                        Icons.miscellaneous_services,
                                         color: Color.fromARGB(255, 77, 255, 83),
                                         size: 15,
-                                      ),
+                                      ),                                      const SizedBox(width: 5),
+
                                       Expanded(
                                         child: Text(
-                                          '${formatNumber(e.cijena)} KM',
+                                          '${(e.motor)}',
                                           style: const TextStyle(
                                               color: Colors.white,
                                               fontStyle: FontStyle.italic,

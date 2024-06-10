@@ -39,6 +39,7 @@ namespace RentACar.Services
             CreateMap<Model.Requests.RecenzijeUpdateRequest, Database.Recenzije>();
             CreateMap<Model.Requests.RecenzijeDeleteRequest, Database.Recenzije>();
 
+
             CreateMap<Database.RezervacijaDodatnaUsluga, RezervacijaDodatnaUsluga>();
             CreateMap<Model.Requests.RezervacijaDodatnaUslugaInsertRequest, Database.RezervacijaDodatnaUsluga>();
             CreateMap<Model.Requests.RezervacijaDodatnaUslugaUpdateRequest, Database.RezervacijaDodatnaUsluga>();

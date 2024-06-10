@@ -69,10 +69,6 @@ class _CijenePoVremenskomPerioduScreenState
           .map((period) => period.periodId!)
           .reduce((a, b) => a < b ? a : b);
     }
-
-    print("Cijene po vremenskom periodu: $cijenePoVremenskomPerioduResult");
-    print("Periodi: $periodResult");
-    print("Vozila: $vozilaResult");
     setState(() {});
   }
 
@@ -241,30 +237,6 @@ class _CijenePoVremenskomPerioduScreenState
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Flexible(
-          //   child: TextField(
-          //     decoration: const InputDecoration(
-          //       labelText: "Pretraga:",
-          //       labelStyle: TextStyle(color: Colors.black),
-          //     ),
-          //     controller: _ftsController,r
-          //     style: TextStyle(color: Colors.black),
-          //   ),
-          // ),
-          // SizedBox(width: 8),
-          // Flexible(
-          //   child: ElevatedButton(
-          //     onPressed: () async {
-          //       print("Pretraga uspješna");
-          //       await initForm();
-          //       setState(() {});
-          //     },
-          //     child: const Text("Pretraga"),
-          //     style: ElevatedButton.styleFrom(
-          //       padding: EdgeInsets.symmetric(horizontal: 10.0),
-          //     ),
-          //   ),
-          // ),
           Flexible(
             child: ElevatedButton(
               onPressed: () async {
@@ -386,15 +358,11 @@ class _CijenePoVremenskomPerioduScreenState
                     periodId: periodId,
                     cijena: cijena,
                   );
-                  print("New CijenePoVremenskomPeriodu object: $newCijena");
 
                   try {
-                    print('Novi CijenePoVremenskomPeriodu:');
-                    print(newCijena.toJson());
                     var result = await _cijenePoVremenskomPerioduProvider
                         .insert(newCijena);
 
-                    print("Novi CijenePoVremenskomPeriodu spremljen: $result");
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                           content: Text('Podaci uspješno spremljeni!')),
@@ -880,17 +848,11 @@ class _CijenePoVremenskomPerioduScreenState
                                                     periodId: period.periodId,
                                                     cijena: cijena,
                                                   );
-                                                  print(
-                                                      "New CijenePoVremenskomPeriodu object: $newCijena");
 
                                                   try {
-                                                    print(
-                                                        'Novi CijenePoVremenskomPeriodu:');
-                                                    print(newCijena.toJson());
                                                     var result =
                                                         await _cijenePoVremenskomPerioduProvider
                                                             .insert(newCijena);
-                                                    print('Result: $result');
                                                     ScaffoldMessenger.of(
                                                             context)
                                                         .showSnackBar(

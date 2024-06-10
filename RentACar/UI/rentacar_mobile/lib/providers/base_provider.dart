@@ -24,7 +24,6 @@ abstract class BaseProvider<T> with ChangeNotifier {
     }
     var uri = Uri.parse(url);
     var headers = createHeaders();
-    print("Request Body: $headers");
 
     var response = await http.get(uri, headers: headers);
     print("Status code: ${response.statusCode}");
@@ -113,7 +112,6 @@ abstract class BaseProvider<T> with ChangeNotifier {
     String username = Authorization.username ?? "";
     String password = Authorization.password ?? "";
 
-    print("poslali ste: $username, $password");
     String basicAuth =
         "Basic ${base64Encode(utf8.encode('$username:$password'))}";
     var headers = {

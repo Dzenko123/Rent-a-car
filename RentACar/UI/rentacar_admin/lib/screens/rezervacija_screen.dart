@@ -97,7 +97,6 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
           Flexible(
             child: ElevatedButton(
               onPressed: () async {
-                print("Pretraga uspješna");
                 await initForm();
                 setState(() {});
               },
@@ -150,13 +149,6 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
                         fontStyle: FontStyle.italic, color: Colors.white),
                   ))),
                   DataColumn(
-                      label: Expanded(
-                          child: Text(
-                    'Korisnik ID',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.white),
-                  ))),
-                  DataColumn(
                     label: Expanded(
                       child: Text(
                         'Korisničko ime',
@@ -165,7 +157,6 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
                       ),
                     ),
                   ),
-                  
                   DataColumn(
                       label: Expanded(
                           child: Text(
@@ -198,16 +189,31 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
                     style: TextStyle(
                         fontStyle: FontStyle.italic, color: Colors.white),
                   ))),
+                  DataColumn(
+                    label: Expanded(
+                      child: Text(
+                        'Total Price',
+                        style: TextStyle(
+                            fontStyle: FontStyle.italic, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  DataColumn(
+                    label: Expanded(
+                      child: Text(
+                        'Zahtjev',
+                        style: TextStyle(
+                            fontStyle: FontStyle.italic, color: Colors.white),
+                      ),
+                    ),
+                  ),
                 ],
                 rows: filteredResults
                         .map(
                           (Rezervacija r) => DataRow(
-                            // onSelectChanged: (selected) =>
-                            //     {if (selected == true) {}},
+                         
                             cells: [
                               DataCell(Text(r.rezervacijaId?.toString() ?? "",
-                                  style: const TextStyle(color: Colors.white))),
-                              DataCell(Text(r.korisnikId?.toString() ?? "",
                                   style: const TextStyle(color: Colors.white))),
                               DataCell(
                                 FutureBuilder(
@@ -226,7 +232,6 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
                                   },
                                 ),
                               ),
-                              
                               DataCell(
                                 FutureBuilder(
                                   future: _getVozilo(r.voziloId),
@@ -247,7 +252,6 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
                               DataCell(
                                 SizedBox(
                                   width: 80,
-                                 
                                   child: vozilaResult?.result
                                               .firstWhere(
                                                   (vozilo) =>
@@ -261,7 +265,8 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
                                           base64Decode(vozilaResult!.result
                                               .firstWhere((vozilo) =>
                                                   vozilo.voziloId == r.voziloId)
-                                              .slika!),height: 180,
+                                              .slika!),
+                                          height: 180,
                                           fit: BoxFit.contain,
                                         )
                                       : SizedBox.shrink(),
@@ -271,6 +276,45 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
                                   style: const TextStyle(color: Colors.white))),
                               DataCell(Text(formatDateTime(r.zavrsniDatum),
                                   style: const TextStyle(color: Colors.white))),
+                              DataCell(Text(r.totalPrice?.toString() ?? "",
+                                  style: const TextStyle(color: Colors.white))),
+                              DataCell(
+  Row(
+    children: [
+      Text(
+        r.zahtjev != null && r.zahtjev! ? 'Na čekanju' : '/',
+        style: const TextStyle(color: Colors.white),
+      ),
+      SizedBox(width: 5),
+      if (r.zahtjev == true)
+        ElevatedButton(
+          onPressed: () async {
+            try {
+              bool success = await _rezervacijaProvider.potvrdiOtkazivanje(r.rezervacijaId!);
+              if (success) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Rezervacija uklonjena!'),backgroundColor: Colors.green),
+                  
+                );
+                await initForm();
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Greška')),
+                );
+              }
+            } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Greška')),
+              );
+              print("Error confirming cancellation: $e");
+            }
+          },
+          child: Text("Potvrdi"),
+        ),
+    ],
+  ),
+)
+
                             ],
                           ),
                         )

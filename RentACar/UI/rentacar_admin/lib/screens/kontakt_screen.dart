@@ -93,7 +93,6 @@ class _KontaktScreenState extends State<KontaktScreen> {
           Flexible(
             child: ElevatedButton(
               onPressed: () async {
-                print("Pretraga uspješna");
                 await initForm();
                 setState(() {});
               },
@@ -203,8 +202,7 @@ class _KontaktScreenState extends State<KontaktScreen> {
                 rows: filteredResults
                         .map(
                           (Kontakt k) => DataRow(
-                            // onSelectChanged: (selected) =>
-                            //     {if (selected == true) {}},
+
                             cells: [
                               DataCell(Text(k.kontaktId?.toString() ?? "",
                                   style: const TextStyle(color: Colors.white))),
@@ -263,9 +261,8 @@ class _KontaktScreenState extends State<KontaktScreen> {
                                                 try {
                                                   await _kontaktProvider
                                                       .delete(k.kontaktId!);
-                                                  // Refresh list after deletion
                                                   await initForm();
-                                                  _showDeleteConfirmationSnackBar(); // Prikazuje Snackbar
+                                                  _showDeleteConfirmationSnackBar();
                                                 } catch (e) {
                                                   print(
                                                       "Error deleting contact: $e");

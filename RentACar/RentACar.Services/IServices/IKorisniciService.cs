@@ -9,6 +9,7 @@ namespace RentACar.Services.IServices
         public Task<Model.Models.Korisnici> Login(string username, string password);
         public Task UpdatePasswordAndUsername(int id, KorisniciUpdateRequestLimited request);
         Task<bool> VerifyOldPassword(int id, string oldPassword);
+        Task<(int? korisnikId, string uloga)> GetLogedWithRole(string username, string password);
 
     }
 }

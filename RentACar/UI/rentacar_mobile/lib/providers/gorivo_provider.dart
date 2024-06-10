@@ -30,7 +30,21 @@ class GorivoProvider extends BaseProvider<Gorivo> {
       throw Exception("Nepoznato!");
     }
   }
-
+  Future<Gorivo?> getById(int id) async {
+    try {
+      String url = '$_baseUrl$_endpoint/$id';
+      var response = await http.get(Uri.parse(url), headers: createHeaders());
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        return fromJson(jsonData);
+      } else {
+        throw Exception('Failed to load gorivo');
+      }
+    } catch (e) {
+      print('Error fetching gorivo by ID: $e');
+      return null;
+    }
+  }
   Future<List<Gorivo>> getAllLowerCase() async {
     var goriva = await getAll();
     return goriva.map((gorivo) => gorivo.toLowerCase()).toList();

@@ -243,10 +243,10 @@ namespace RentACar.Services
                 Slika = imageData1,
                 Model = "test1",
                 Marka = "testtest1",
-                Cijena = 1,
+                Motor = "1.6",
                 GodinaProizvodnje = 2000,
                 Kilometraza = 100,
-                StateMachine = "draft",
+                StateMachine = "active",
             },
             new Vozila
             {
@@ -256,10 +256,10 @@ namespace RentACar.Services
                 Slika = imageData2,
                 Model = "test2",
                 Marka = "testtest2",
-                Cijena = 2,
+                Motor = "1.8",
                 GodinaProizvodnje = 2001,
                 Kilometraza = 101,
-                StateMachine = "draft",
+                StateMachine = "active",
 
             },
             new Vozila
@@ -270,7 +270,7 @@ namespace RentACar.Services
                 Slika = imageData3,
                 Model = "test3",
                 Marka = "testtest3",
-                Cijena = 3,
+                Motor="2.0",
                 GodinaProizvodnje = 2002,
                 Kilometraza = 102,
                 StateMachine = "draft",
@@ -284,7 +284,7 @@ namespace RentACar.Services
                 Slika = imageData4,
                 Model = "test4",
                 Marka = "testtest4",
-                Cijena = 4,
+                Motor = "2.2",
                 GodinaProizvodnje = 2003,
                 Kilometraza = 103,
                 StateMachine = "draft",
@@ -298,7 +298,7 @@ namespace RentACar.Services
                 Slika = imageData5,
                 Model = "test5",
                 Marka = "testtest5",
-                Cijena = 5,
+                Motor ="2.7",
                 GodinaProizvodnje = 2004,
                 Kilometraza = 104,
                 StateMachine = "draft",
@@ -312,7 +312,7 @@ namespace RentACar.Services
                 Slika = imageData6,
                 Model = "test6",
                 Marka = "testtest6",
-                Cijena = 6,
+                Motor = "3.0",
                 GodinaProizvodnje = 2005,
                 Kilometraza = 105,
                 StateMachine = "draft",
@@ -326,7 +326,7 @@ namespace RentACar.Services
                 Slika = imageData7,
                 Model = "test7",
                 Marka = "testtest7",
-                Cijena = 7,
+                Motor = "3.2",
                 GodinaProizvodnje = 2006,
                 Kilometraza = 106,
                 StateMachine = "draft",
@@ -340,7 +340,7 @@ namespace RentACar.Services
                 Slika = imageData8,
                 Model = "test8",
                 Marka = "testtest8",
-                Cijena = 8,
+                Motor = "3.5",
                 GodinaProizvodnje = 2007,
                 Kilometraza = 107,
                 StateMachine = "draft",
@@ -360,14 +360,14 @@ namespace RentACar.Services
                 new Recenzije
                 {
                     RecenzijaId = 2,
-                    KorisnikId = 2,
+                    KorisnikId = 3,
                     VoziloId = 1,
                     IsLiked = true,
                 },
                 new Recenzije
                 {
                     RecenzijaId = 3,
-                    KorisnikId = 3,
+                    KorisnikId = 2,
                     VoziloId = 2,
                     IsLiked = false,
                 },
@@ -512,7 +512,9 @@ namespace RentACar.Services
                     VoziloId = 1,
                     GradId = 1,
                     PocetniDatum = _dateTime,
-                    ZavrsniDatum = _dateTime2
+                    ZavrsniDatum = _dateTime2,
+                    TotalPrice = 100.00m,
+                    Zahtjev= false
                 },
                 new Rezervacija
                 {
@@ -521,9 +523,14 @@ namespace RentACar.Services
                     VoziloId = 2,
                     GradId = 2,
                     PocetniDatum = _dateTime,
-                    ZavrsniDatum = _dateTime2
+                    ZavrsniDatum = _dateTime2,
+                    TotalPrice = 150.00m,
+                    Zahtjev = false
                 });
         }
+      
+
+
         private void SeedRezervacijaDodatnaUsluga(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<RezervacijaDodatnaUsluga>().HasData(

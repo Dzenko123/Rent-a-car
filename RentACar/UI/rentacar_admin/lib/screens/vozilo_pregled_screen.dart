@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:provider/provider.dart';
+import 'package:rentacar_admin/models/rezervacija.dart';
 import 'package:rentacar_admin/models/search_result.dart';
 import 'package:rentacar_admin/models/vozila.dart';
 import 'package:rentacar_admin/models/vozilo_pregled.dart';
+import 'package:rentacar_admin/providers/rezervacija_provider.dart';
 import 'package:rentacar_admin/providers/vozila_provider.dart';
 import 'package:rentacar_admin/providers/vozilo_pregled_provider.dart';
 import 'package:rentacar_admin/widgets/master_screen.dart';
@@ -12,6 +15,7 @@ import 'package:rentacar_admin/utils/util.dart';
 class VoziloPregledScreen extends StatefulWidget {
   VoziloPregled? voziloPregled;
   Vozilo? vozilo;
+  Rezervacija? rezervacija;
 
   VoziloPregledScreen({Key? key, this.vozilo}) : super(key: key);
   @override
@@ -21,11 +25,15 @@ class VoziloPregledScreen extends StatefulWidget {
 class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
   SearchResult<VoziloPregled>? voziloPregledResult;
   SearchResult<Vozilo>? vozilaResult;
+  SearchResult<Rezervacija>? rezervacijaResult;
+
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _secondFocusedDay;
   late VoziloPregledProvider _voziloPregledProvider;
   late VozilaProvider _vozilaProvider;
+  late RezervacijaProvider _rezervacijaProvider;
+
   final TextEditingController _ftsController = TextEditingController();
   bool isLoading = true;
   Map<String, dynamic> _initialValue = {};
@@ -39,8 +47,10 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
       'voziloId': widget.voziloPregled?.voziloId.toString(),
       'datum': widget.voziloPregled?.datum,
     };
-    _voziloPregledProvider = VoziloPregledProvider();
-    _vozilaProvider = VozilaProvider();
+    _voziloPregledProvider = context.read<VoziloPregledProvider>();
+    _vozilaProvider = context.read<VozilaProvider>();
+    _rezervacijaProvider = context.read<RezervacijaProvider>();
+
     initForm();
   }
 
@@ -53,13 +63,13 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
   Future<void> initForm() async {
     voziloPregledResult = await _voziloPregledProvider.get();
     vozilaResult = await _vozilaProvider.get();
-    print("Cijene po vremenskom periodu: $voziloPregledResult");
-    print("Vozila: $vozilaResult");
+    rezervacijaResult = await _rezervacijaProvider.get();
     setState(() {
       isLoading = false;
     });
   }
 
+@override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
       title: widget.vozilo != null
@@ -101,7 +111,29 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
     );
   }
 
+  List<DateTime> getReservedDatesForVehicle(
+      DateTime startDate, DateTime endDate) {
+    if (rezervacijaResult != null) {
+      return rezervacijaResult!.result
+          .where((rezervacija) =>
+              rezervacija.voziloId == widget.vozilo?.voziloId &&
+              (rezervacija.pocetniDatum!.isBefore(endDate) ||
+                  rezervacija.pocetniDatum!.isAtSameMomentAs(endDate)) &&
+              (rezervacija.zavrsniDatum!.isAfter(startDate) ||
+                  rezervacija.zavrsniDatum!.isAtSameMomentAs(startDate)))
+          .map((rezervacija) => rezervacija.pocetniDatum!)
+          .toList();
+    }
+    return [];
+  }
+
   Widget _buildCalendar() {
+    if (isLoading) {
+    return Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+
     return TableCalendar(
       firstDay: DateTime.utc(2024, 01, 01),
       lastDay: DateTime.utc(9999, 12, 31),
@@ -150,6 +182,25 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                   pregled.voziloId == widget.vozilo!.voziloId)
               .map((pregled) => pregled.datum!)
               .toList();
+        }else  if (widget.vozilo != null &&
+            voziloPregledResult != null &&
+            rezervacijaResult != null) {
+          var pregledi = voziloPregledResult!.result
+              .where((pregled) =>
+                  isSameDay(pregled.datum!, day) &&
+                  pregled.voziloId == widget.vozilo!.voziloId)
+              .map((pregled) => pregled.datum!);
+
+          var rezervacije = rezervacijaResult!.result
+              .where((rezervacija) =>
+                  rezervacija.voziloId == widget.vozilo!.voziloId &&
+                  (isSameDay(rezervacija.pocetniDatum!, day) ||
+                      day.isAfter(rezervacija.pocetniDatum!)) &&
+                  (isSameDay(rezervacija.zavrsniDatum!, day) ||
+                      day.isBefore(rezervacija.zavrsniDatum!)))
+              .map((rezervacija) => rezervacija.pocetniDatum!);
+
+          return [...pregledi, ...rezervacije].toList();
         } else {
           if (vozilaResult != null && vozilaResult!.result.isNotEmpty) {
             List<DateTime> datumiZaVozila = [];
@@ -177,7 +228,19 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
             bool voziloNaPregledu = voziloPregledResult!.result.any((pregled) =>
                 isSameDay(pregled.datum!, date) &&
                 pregled.voziloId == widget.vozilo?.voziloId);
-            if (!voziloNaPregledu) {
+                 bool isReserved = rezervacijaResult!.result.any((rezervacija) =>
+                rezervacija.voziloId == widget.vozilo!.voziloId &&
+                rezervacija.pocetniDatum != null &&
+                rezervacija.zavrsniDatum != null &&
+                (isSameDay(rezervacija.pocetniDatum!, date) ||
+                    date.isAfter(rezervacija.pocetniDatum!)) &&
+                (isSameDay(rezervacija.zavrsniDatum!, date) ||
+                    date.isBefore(rezervacija.zavrsniDatum!)) &&
+                date.isAfter(DateTime.now()));
+ bool isToday = isSameDay(date, DateTime.now());
+            bool isAfterToday = date.isAfter(DateTime.now());
+
+            if (isAfterToday&& !voziloNaPregledu && !isReserved) {
               return Container(
                 margin: EdgeInsets.all(1),
                 decoration: BoxDecoration(
@@ -219,7 +282,7 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                   ],
                 ),
               );
-            } else {
+            } else if(voziloNaPregledu && !isReserved){
               return Container(
                 margin: EdgeInsets.all(1),
                 decoration: BoxDecoration(
@@ -282,7 +345,30 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                   ],
                 ),
               );
-            }
+            }else if (!voziloNaPregledu && isReserved) {
+      return Container(
+        margin: EdgeInsets.all(1),
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 245, 104, 94),
+          border: Border.all(color: Colors.white),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Stack(
+          children: [
+            Positioned(
+              bottom: 4,
+              right: 4,
+              child: Center(
+                child: Text(
+                  '${date.day}',
+                  style: TextStyle(fontSize: 15, color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } 
           } else {
             return Container(
                 margin: EdgeInsets.all(1),
@@ -312,6 +398,17 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
             bool voziloNaPregledu = voziloPregledResult!.result.any((pregled) =>
                 isSameDay(pregled.datum!, date) &&
                 pregled.voziloId == widget.vozilo?.voziloId);
+                bool isAfterToday = date.isAfter(DateTime.now());
+          bool isReserved = rezervacijaResult!.result.any((rezervacija) =>
+              rezervacija.voziloId == widget.vozilo!.voziloId &&
+              rezervacija.pocetniDatum != null &&
+              rezervacija.zavrsniDatum != null &&
+              (isSameDay(rezervacija.pocetniDatum!, date) ||
+                  date.isAfter(rezervacija.pocetniDatum!)) &&
+              (isSameDay(rezervacija.zavrsniDatum!, date) ||
+                  date.isBefore(rezervacija.zavrsniDatum!)) &&
+              date.isAfter(DateTime.now()));
+
             if (voziloNaPregledu) {
               return Container(
                 margin: EdgeInsets.all(1),
@@ -375,7 +472,30 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                   ],
                 ),
               );
-            } else if (!voziloNaPregledu && !isToday) {
+            } else if (isReserved) {
+      return Container(
+        margin: EdgeInsets.all(1),
+        decoration: BoxDecoration(
+          color: Colors.red,
+          border: Border.all(color: Colors.white),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Stack(
+          children: [
+            Positioned(
+              bottom: 4,
+              right: 4,
+              child: Center(
+                child: Text(
+                  '${date.day}',
+                  style: TextStyle(fontSize: 15, color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else if (!voziloNaPregledu && !isToday) {
               return Container(
                 margin: EdgeInsets.all(1),
                 decoration: BoxDecoration(
@@ -566,9 +686,7 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                                             'Vrijeme pregleda: ${formatDateTime(pregled.datum!)}'),
                                       ),
                                     ),
-                                    SizedBox(
-                                        height:
-                                            20),
+                                    SizedBox(height: 20),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -863,22 +981,13 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Vozilo pregled',
+          
+          const SizedBox(height: 20),
+          Text(
+            'Ukupan broj pregleda: ${_getVoziloPregledIdText()}',
             style: TextStyle(
                 fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
           ),
-          const SizedBox(height: 10),
-          Text(
-            'Prikazano ID pregleda vozila: ${_getVoziloPregledIdText()}',
-            style: TextStyle(color: Colors.white),
-          ),
-          Text(
-            'Prikazano ID vozila: ${_getVoziloIdText()}',
-            style: TextStyle(color: Colors.white),
-          ),
-          Text('Prikazani datumi: ${_getDatumText()}',
-              style: TextStyle(color: Colors.white)),
         ],
       ),
     );
@@ -890,14 +999,10 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
           voziloPregledResult!.result.isNotEmpty &&
           voziloPregledResult!.result
               .any((pregled) => pregled.voziloId == widget.vozilo!.voziloId)) {
-        var ID = voziloPregledResult!.result
-            .where((pregled) => pregled.voziloId == widget.vozilo!.voziloId)
-            .map((pregled) => pregled.voziloPregledId.toString())
-            .join(', ');
         var count = voziloPregledResult!.result
             .where((pregled) => pregled.voziloId == widget.vozilo!.voziloId)
             .length;
-        return '$count, IDs: $ID';
+        return '$count';
       } else {
         return 'Nema pregleda vozila';
       }
@@ -905,53 +1010,12 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
       if (voziloPregledResult != null &&
           voziloPregledResult!.result.isNotEmpty) {
         var count = voziloPregledResult!.result.length;
-        var IDs = voziloPregledResult!.result
-            .map((pregled) => pregled.voziloPregledId.toString())
-            .join('; ');
-        return '$count, ID-jevi: $IDs';
+
+        return '$count';
       } else {
         return 'Nema ID';
       }
     }
   }
 
-  String _getVoziloIdText() {
-    if (widget.vozilo != null) {
-      return '${widget.vozilo!.voziloId}';
-    } else if (vozilaResult != null && vozilaResult!.result.isNotEmpty) {
-      var count = vozilaResult!.result.length;
-
-      var IDs = vozilaResult!.result
-          .map((vozilo) => vozilo.voziloId.toString())
-          .join('; ');
-      return '$count, ID-jevi: $IDs';
-    }
-    return 'Nema dostupnih vozila';
-  }
-
-  String _getDatumText() {
-    if (widget.vozilo != null) {
-      if (voziloPregledResult != null &&
-          voziloPregledResult!.result.isNotEmpty &&
-          voziloPregledResult!.result
-              .any((pregled) => pregled.voziloId == widget.vozilo!.voziloId)) {
-        var datumiZaVozilo = voziloPregledResult!.result
-            .where((pregled) => pregled.voziloId == widget.vozilo!.voziloId)
-            .map((pregled) => formatDateTime(pregled.datum))
-            .join('; ');
-        return datumiZaVozilo;
-      } else {
-        return 'Nema datuma';
-      }
-    } else {
-      if (voziloPregledResult != null &&
-          voziloPregledResult!.result.isNotEmpty) {
-        return voziloPregledResult!.result
-            .map((pregled) => formatDateTime(pregled.datum))
-            .join('; ');
-      } else {
-        return 'Nema datuma';
-      }
-    }
-  }
 }

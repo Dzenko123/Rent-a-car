@@ -5,12 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
 import 'package:rentacar_admin/models/gorivo.dart';
+import 'package:rentacar_admin/models/rezervacija.dart';
 import 'package:rentacar_admin/models/search_result.dart';
 import 'package:rentacar_admin/models/tip_vozila.dart';
 import 'package:rentacar_admin/models/vozila.dart';
 import 'package:rentacar_admin/providers/gorivo_provider.dart';
+import 'package:rentacar_admin/providers/rezervacija_provider.dart';
 import 'package:rentacar_admin/providers/tip_vozila_provider.dart';
 import 'package:rentacar_admin/providers/vozila_provider.dart';
+import 'package:rentacar_admin/screens/recommended_reservations.dart';
 import 'package:rentacar_admin/screens/vozilo_pregled_screen.dart';
 import 'package:rentacar_admin/widgets/master_screen.dart';
 
@@ -30,19 +33,21 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
   late VozilaProvider _vozilaProvider;
   late TipVozilaProvider _tipVozilaProvider;
   late GorivoProvider _gorivoProvider;
+  late RezervacijaProvider _rezervacijaProvider;
 
   SearchResult<TipVozila>? tipVozilaResult;
   SearchResult<Vozilo>? voziloResult;
   SearchResult<Gorivo>? gorivoResult;
-
+  List<Rezervacija> recommendedReservations = [];
   bool isLoading = true;
+  bool _loadingRecommendedReservations = true;
 
   @override
   void initState() {
     super.initState();
     _initialValue = {
       'godinaProizvodnje': widget.vozilo?.godinaProizvodnje.toString(),
-      'cijena': widget.vozilo?.cijena.toString(),
+      'motor': widget.vozilo?.motor,
       'tipVozilaId': widget.vozilo?.tipVozilaId.toString(),
       'gorivoId': widget.vozilo?.gorivoId.toString(),
       'kilometraza': widget.vozilo?.kilometraza.toString(),
@@ -54,7 +59,7 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
     _tipVozilaProvider = context.read<TipVozilaProvider>();
     _vozilaProvider = context.read<VozilaProvider>();
     _gorivoProvider = context.read<GorivoProvider>();
-
+    _rezervacijaProvider=context.read<RezervacijaProvider>();
     initForm();
   }
 
@@ -69,9 +74,10 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
     gorivoResult = await _gorivoProvider.get();
     setState(() {
       isLoading = false;
-    });
 
-    //print(tipVozilaResult);
+    });
+    _loadRecommendedReservations();
+
   }
 
   @override
@@ -81,9 +87,9 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
           'Pregledate model i marku: ${widget.vozilo?.model}, ${widget.vozilo?.marka}',
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Vozilo Detail'),
+          title: const Text('Vozilo Detail'),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.of(context).pop();
             },
@@ -104,6 +110,8 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                       const SizedBox(height: 20),
                       isLoading ? Container() : _buildForm(),
                       const SizedBox(height: 20),
+                      !_loadingRecommendedReservations ? RecommendedReservationsWidget(recommendedReservations: recommendedReservations) : Container(),
+
                     ],
                   ),
                 ),
@@ -114,7 +122,22 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
       ),
     );
   }
+  Future<void> _loadRecommendedReservations() async {
+    try {
+      final rezervacijaProvider = context.read<RezervacijaProvider>();
+      final voziloId = widget.vozilo?.voziloId;
 
+      if (voziloId != null) {
+        final reservations = await rezervacijaProvider.recommend(voziloId);
+        setState(() {
+          recommendedReservations = reservations;
+          _loadingRecommendedReservations = false;
+        });
+      }
+    } catch (e) {
+      print('Error loading recommended reservations: $e');
+    }
+  }
   Widget _buildImagePreview() {
     if (widget.vozilo != null && widget.vozilo!.slika != null) {
       return Align(
@@ -252,10 +275,10 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                 child: FormBuilderTextField(
                   readOnly: true,
                   decoration: InputDecoration(
-                    labelText: "Cijena",
+                    labelText: "Motor",
                     labelStyle:
                         const TextStyle(color: Color.fromARGB(255, 6, 77, 6)),
-                    prefixIcon: const Icon(Icons.attach_money_outlined,
+                    prefixIcon: const Icon(Icons.miscellaneous_services,
                         color: Color.fromARGB(255, 6, 77, 6)),
                     contentPadding: const EdgeInsets.symmetric(
                         vertical: 20.0, horizontal: 15.0),
@@ -275,7 +298,7 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                     fillColor: Colors.grey[200],
                     hintStyle: const TextStyle(color: Colors.grey),
                   ),
-                  name: "cijena",
+                  name: "motor",
                   style: const TextStyle(fontSize: 16.0),
                 ),
               ),

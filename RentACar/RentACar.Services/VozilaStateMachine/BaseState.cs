@@ -44,6 +44,10 @@ namespace RentACar.Services.VozilaStateMachine
         {
             throw new UserException("Not allowed");
         }
+        public virtual Task<List<Vozila>> GetActiveVehicles()
+        {
+            throw new UserException("Not allowed");
+        }
         public virtual Task<Vozila> Delete(int id, VozilaDeleteRequest request)
         {
             throw new UserException("Not allowed");

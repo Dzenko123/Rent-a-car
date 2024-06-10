@@ -1,4 +1,5 @@
-﻿using RentACar.Model.Models;
+﻿using RentACar.Model;
+using RentACar.Model.Models;
 using RentACar.Model.Requests;
 using RentACar.Model.SearchObject;
 using System;
@@ -15,5 +16,8 @@ namespace RentACar.Services.IServices
         Task<Vozila> Activate(int id);
         Task<Vozila> Hide(int id);
         Task<List<string>> AllowedActions(int id);
+        Task<PagedResult<Vozila>> GetActiveVehicles(VozilaSearchObject search);
+        Task<Vozila> GetActiveVehicleById(int id);
+
     }
 }

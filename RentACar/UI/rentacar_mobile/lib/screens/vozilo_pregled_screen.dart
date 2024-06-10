@@ -58,13 +58,14 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
     voziloPregledResult = await _voziloPregledProvider.get();
     vozilaResult = await _vozilaProvider.get();
     rezervacijaResult = await _rezervacijaProvider.get();
-    print("Cijene po vremenskom periodu: $voziloPregledResult");
-    print("Vozila: $vozilaResult");
-    print('Rezervacije: $rezervacijaResult');
-    setState(() {
-      isLoading = false;
-    });
+
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {

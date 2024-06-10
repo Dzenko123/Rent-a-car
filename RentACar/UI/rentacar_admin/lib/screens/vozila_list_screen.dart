@@ -64,7 +64,6 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
       isLoading = false;
     });
 
-    print(tipVozilaResult);
   }
 
   @override
@@ -116,7 +115,6 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
           Flexible(
             child: ElevatedButton(
               onPressed: () async {
-                print("Login uspješan");
                 var data = await _vozilaProvider
                     .get(filter: {'fts': _ftsController.text});
                 setState(() {
@@ -247,12 +245,14 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
                                           ),
                                         ),
                                       ),
-                                      const Icon(Icons.attach_money_outlined,
+                                      const Icon(Icons.miscellaneous_services,
                                           color:
                                               Color.fromARGB(255, 77, 255, 83)),
+                                                                                    const SizedBox(width: 5),
+
                                       Expanded(
                                         child: Text(
-                                          '${formatNumber(e.cijena)} KM',
+                                          '${(e.motor)}',
                                           style: const TextStyle(
                                             color: Colors.white,
                                             fontStyle: FontStyle.italic,
@@ -416,48 +416,79 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
                                 ),
                               ),
                               Flexible(
-                                flex: 1,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20.0),
-                                  child: PopupMenuButton<String>(
-                                    child: const Text(
-                                      'Opcije : Activate/Hide',
-                                      style: TextStyle(
-                                          color:
-                                              Color.fromARGB(206, 255, 255, 2)),
-                                    ),
-                                    onSelected: (String action) async {
-                                      if (action == "Activate") {
-                                        try {
-                                          await _vozilaProvider
-                                              .activate(e.voziloId!);
-                                          print("Vozilo u active stanju.");
-                                        } catch (e) {
-                                          print("Error activating vehicle: $e");
-                                        }
-                                      } else if (action == "Hide") {
-                                        try {
-                                          await _vozilaProvider
-                                              .hide(e.voziloId!);
-                                          print("Vozilo u hide stanju.");
-                                        } catch (e) {
-                                          print("Error hiding vehicle: $e");
-                                        }
-                                      }
-                                    },
-                                    itemBuilder: (BuildContext context) {
-                                      return ["Activate", "Hide"]
-                                          .map((String choice) {
-                                        return PopupMenuItem<String>(
-                                          value: choice,
-                                          child: Text(choice),
-                                        );
-                                      }).toList();
-                                    },
-                                  ),
-                                ),
-                              ),
+  flex: 1,
+  child: Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+    child: Row(
+      children: [
+        PopupMenuButton<String>(
+          child: const Text(
+            'Opcije: Activate/Hide',
+            style: TextStyle(color: Color.fromARGB(206, 255, 255, 2)),
+          ),
+          onSelected: (String action) async {
+            if (action == "Activate") {
+              if (e.stateMachine == "active") {
+                _scaffoldMessengerState.showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Odabrano isto stanje.',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              } else {
+                try {
+                  await _vozilaProvider.activate(e.voziloId!);
+                  await initForm();
+                } catch (e) {
+                  print("Error activating vehicle: $e");
+                }
+              }
+            } else if (action == "Hide") {
+              if (e.stateMachine == "hidden") {
+                _scaffoldMessengerState.showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Odabrano isto stanje.',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              } else {
+                try {
+                  await _vozilaProvider.hide(e.voziloId!);
+                  await initForm();
+                } catch (e) {
+                  print("Error hiding vehicle: $e");
+                }
+              }
+            }
+          },
+          itemBuilder: (BuildContext context) {
+            return ["Activate", "Hide"].map((String choice) {
+              return PopupMenuItem<String>(
+                value: choice,
+                child: Text(choice),
+              );
+            }).toList();
+          },
+        ),
+        const SizedBox(width: 10),
+        Text(
+          'State: ${e.stateMachine}',
+          style: const TextStyle(
+            color: Colors.white,
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+      ],
+    ),
+  ),
+),
+
                             ]),
                       ),
                     ),

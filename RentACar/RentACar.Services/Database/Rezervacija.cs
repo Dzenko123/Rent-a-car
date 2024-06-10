@@ -29,10 +29,12 @@ namespace RentACar.Services.Database
 
         public ICollection<RezervacijaDodatnaUsluga> DodatnaUsluga { get; set; } = null!;
 
-
         public DateTime PocetniDatum { get; set; }
 
         public DateTime ZavrsniDatum { get; set; }
 
+        public decimal TotalPrice { get; set; }
+
+        public bool Zahtjev { get; set; }
     }
 }

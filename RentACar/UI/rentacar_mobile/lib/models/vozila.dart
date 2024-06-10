@@ -14,12 +14,12 @@ class Vozilo {
   int? tipVozilaId;
   int? gorivoId;
   int? godinaProizvodnje;
-  double? cijena;
   double? kilometraza;
   String? slika;
   String? stateMachine;
   String? model;
   String? marka;
+  String? motor;
   TipVozila? tipVozila;
   Gorivo? gorivo;
   List<Komentari>? komentari;
@@ -27,7 +27,6 @@ class Vozilo {
   Vozilo(
     this.voziloId,
     this.godinaProizvodnje,
-    this.cijena,
     this.tipVozilaId,
     this.gorivoId,
     this.slika,
@@ -35,6 +34,7 @@ class Vozilo {
     this.stateMachine,
     this.gorivo,
     this.marka,
+    this.motor,
     this.model,
     this.tipVozila,
     this.komentari,

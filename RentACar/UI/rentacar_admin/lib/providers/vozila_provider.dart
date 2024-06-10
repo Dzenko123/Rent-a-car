@@ -67,7 +67,6 @@ class VozilaProvider extends BaseProvider<Vozilo> {
     String username = Authorization.username ?? "";
     String password = Authorization.password ?? "";
 
-    print("poslali ste: $username, $password");
     String basicAuth =
         "Basic ${base64Encode(utf8.encode('$username:$password'))}";
     var headers = {

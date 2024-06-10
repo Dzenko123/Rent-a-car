@@ -9,7 +9,7 @@ part of 'vozila.dart';
 Vozilo _$VoziloFromJson(Map<String, dynamic> json) => Vozilo(
       json['voziloId'] as int?,
       json['godinaProizvodnje'] as int?,
-      (json['cijena'] as num?)?.toDouble(),
+      json['motor'] as String?,
       json['tipVozilaId'] as int?,
       json['gorivoId'] as int?,
       json['slika'] as String?,
@@ -30,7 +30,7 @@ Map<String, dynamic> _$VoziloToJson(Vozilo instance) => <String, dynamic>{
       'tipVozilaId': instance.tipVozilaId,
       'gorivoId': instance.gorivoId,
       'godinaProizvodnje': instance.godinaProizvodnje,
-      'cijena': instance.cijena,
+      'motor': instance.motor,
       'kilometraza': instance.kilometraza,
       'slika': instance.slika,
       'stateMachine': instance.stateMachine,

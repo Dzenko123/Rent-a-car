@@ -4,6 +4,8 @@ import 'package:http/http.dart';
 import 'package:rentacar_admin/models/vozila.dart';
 import 'package:rentacar_admin/providers/base_provider.dart';
 
+import '../models/search_result.dart';
+
 class VozilaProvider extends BaseProvider<Vozilo> {
   static const String _baseUrl =
       String.fromEnvironment("baseUrl", defaultValue: "https://10.0.2.2:7284/");
@@ -16,6 +18,52 @@ class VozilaProvider extends BaseProvider<Vozilo> {
   Vozilo fromJson(data) {
     return Vozilo.fromJson(data);
   }
+
+  Future<Vozilo?> getByVoziloId(int id) async {
+    try {
+      String url = '$_baseUrl$_endpoint/$id';
+      var response = await http.get(Uri.parse(url), headers: createHeaders());
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        return fromJson(jsonData);
+      } else {
+        throw Exception('Failed to load vozilo');
+      }
+    } catch (e) {
+      print('Error fetching vozilo by ID: $e');
+      return null;
+    }
+  }
+
+
+  Future<SearchResult<Vozilo>> getActiveVehicles({dynamic filter}) async {
+    var url = '$_baseUrl$_endpoint/active';
+
+    if (filter != null) {
+      var queryString = getQueryString(filter);
+      url = "$url?$queryString";
+    }
+    final headers = createHeaders();
+    final uri = Uri.parse(url);
+    final response = await http.get(uri, headers: headers);
+
+    if (isValidResponse(response)) {
+      final data = jsonDecode(response.body);
+
+      var result = SearchResult<Vozilo>();
+
+      result.count = data['count'];
+
+      for (var item in data['result']) {
+        result.result.add(fromJson(item));
+      }
+
+      return result;
+    } else {
+      throw Exception("Failed to fetch active vehicles.");
+    }
+  }
+
 
   Future<Vozilo> activate(int id) async {
     final url = '$_baseUrl$_endpoint/$id/activate';
@@ -95,7 +143,7 @@ class VozilaProvider extends BaseProvider<Vozilo> {
     });
     return query;
   } Future<Vozilo> getById(int id) async {
-    var url = "$_baseUrl$_endpoint/$id";
+    var url = "$_baseUrl$_endpoint/$id/active";
     var uri = Uri.parse(url);
     var headers = createHeaders();
 

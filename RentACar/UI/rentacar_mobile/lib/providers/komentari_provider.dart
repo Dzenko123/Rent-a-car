@@ -12,7 +12,7 @@ class KomentariProvider extends BaseProvider<Komentari> {
   KomentariProvider() : super(_endpoint);
   @override
   Komentari fromJson(data) {
-    //     // TODO: implement fromJson
+    // TODO: implement fromJson
     return Komentari.fromJson(data);
   }
 
@@ -20,7 +20,6 @@ class KomentariProvider extends BaseProvider<Komentari> {
   try {
     String url = "$_baseUrl$_endpoint/VoziloId/$voziloId";
     var response = await http.get(Uri.parse(url), headers: createHeaders());
-    print("Odgovor iz API-ja: ${response.body}");
     if (isValidResponse(response)) {
       var data = jsonDecode(response.body) as List<dynamic>;
       var komentari = data.map((item) => fromJson(item)).toList();

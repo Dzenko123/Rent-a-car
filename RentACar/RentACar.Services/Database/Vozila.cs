@@ -17,7 +17,7 @@
 
         public byte[]? Slika { get; set; }
 
-        public decimal Cijena { get; set; }
+        public string? Motor { get; set; }
 
         public int GodinaProizvodnje { get; set; }
 

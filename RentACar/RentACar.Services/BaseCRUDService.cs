@@ -51,7 +51,6 @@ namespace RentACar.Services
                 {
                     return null;
                 }
-                //_mapper.Map(delete, entity);
                 set.Remove(entity);
 
                 await _context.SaveChangesAsync();

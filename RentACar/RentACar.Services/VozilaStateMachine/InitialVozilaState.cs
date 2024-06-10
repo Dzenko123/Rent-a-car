@@ -12,7 +12,6 @@ namespace RentACar.Services.VozilaStateMachine
 
         public override async Task<Vozila> Insert(VozilaInsertRequest request)
         {
-            //TODO: EF CALL
             var set = _context.Set<Database.Vozila>();
             var entity = _mapper.Map<Database.Vozila>(request);
 

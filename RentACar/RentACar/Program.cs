@@ -9,7 +9,7 @@ using RentACar.Services;
 using RentACar.Services.IServices;
 using RentACar.Services.Services;
 using RentACar.Services.VozilaStateMachine;
-//using RentACar.Services.Database;
+using Stripe;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -25,10 +25,17 @@ builder.Services.AddTransient<ICPVPService, CPVPService>();
 builder.Services.AddTransient<IPeriodService, PeriodService>();
 builder.Services.AddTransient<IRecenzijeService, RecenzijeService>();
 builder.Services.AddTransient<IKomentariService, KomentariService>();
+
+var stripePublishableKey = builder.Configuration.GetValue<string>("Stripe:PublishableKey");
+var stripeSecretKey = builder.Configuration.GetValue<string>("Stripe:SecretKey");
+StripeConfiguration.ApiKey = stripeSecretKey;
+
 builder.Services.AddTransient<IRezervacijaService, RezervacijaService>();
 builder.Services.AddTransient<IRezervacijaDodatnaUslugaService, RezervacijaDodatnaUslugaService>();
 builder.Services.AddTransient<IService<DodatnaUsluga, BaseSearchObject>,
     BaseService<DodatnaUsluga, RentACar.Services.Database.DodatnaUsluga, BaseSearchObject>>();
+
+
 
 builder.Services.AddTransient<BaseState>();
 builder.Services.AddTransient<InitialVozilaState>();

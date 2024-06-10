@@ -21,7 +21,6 @@ class RezervacijaProvider extends BaseProvider<Rezervacija> {
     try {
       String url = "$_baseUrl$_endpoint/KorisnikId/$korisnikId";
       var response = await http.get(Uri.parse(url), headers: createHeaders());
-      print("Odgovor iz API-ja: ${response.body}");
       if (isValidResponse(response)) {
         var data = jsonDecode(response.body) as List<dynamic>;
         var rezervacije = data.map((item) => fromJson(item)).toList();
@@ -53,4 +52,39 @@ class RezervacijaProvider extends BaseProvider<Rezervacija> {
       throw Exception("Greška prilikom kreiranja rezervacije: $e");
     }
   }
+  Future<List<Rezervacija>> recommend(int voziloId) async {
+    try {
+      String url = "$_baseUrl$_endpoint/recommend/$voziloId";
+      var response = await http.get(Uri.parse(url), headers: createHeaders());
+      print("Odgovor iz API-ja: ${response.body}");
+      if (isValidResponse(response)) {
+        var data = jsonDecode(response.body) as List<dynamic>;
+        var rezervacije = data.map((item) => fromJson(item)).toList();
+        return rezervacije;
+      } else {
+        throw Exception("Nepoznato!");
+      }
+    } catch (e) {
+      throw Exception("Greška prilikom dohvaćanja preporučenih rezervacija: $e");
+    }
+  }
+  Future<bool> cancelReservation(int reservationId) async {
+    try {
+      String url = "$_baseUrl$_endpoint/Otkazivanje/$reservationId";
+      var response = await http.post(
+        Uri.parse(url),
+        headers: createHeaders(),
+      );
+
+      if (isValidResponse(response)) {
+        var data = jsonDecode(response.body);
+        return data as bool;
+      } else {
+        throw Exception("Nepoznato!");
+      }
+    } catch (e) {
+      throw Exception("Greška prilikom otkazivanja rezervacije: $e");
+    }
+  }
+
 }
