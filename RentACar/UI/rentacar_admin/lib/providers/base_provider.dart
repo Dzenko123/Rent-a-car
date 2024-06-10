@@ -13,7 +13,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
   BaseProvider(String endpoint) {
     _endpoint = endpoint;
     _baseUrl = const String.fromEnvironment("baseUrl",
-        defaultValue: "https://localhost:7284/");
+        defaultValue: "http://localhost:7284/");
   }
   Future<SearchResult<T>> get({dynamic filter}) async {
     var url = "$_baseUrl$_endpoint";
@@ -90,7 +90,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
       var data = jsonDecode(response.body);
       return fromJson(data);
     } else {
-      throw Exception("Unexpected error occurred while deleting");
+      throw Exception("Greška prilikom brisanja!");
     }
   }
 
@@ -102,7 +102,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
     if (response.statusCode < 299) {
       return true;
     } else if (response.statusCode == 401) {
-      throw Exception("Unauthorized");
+      throw Exception("Korisnički račun ne postoji!");
     } else {
       throw Exception("Unexpected status code: ${response.statusCode}");
     }

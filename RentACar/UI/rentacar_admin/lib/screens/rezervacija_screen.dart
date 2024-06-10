@@ -141,69 +141,77 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
                   border: Border.all(color: Colors.white, width: 2),
                 ),
                 columns: const [
-                  DataColumn(
-                      label: Expanded(
-                          child: Text(
-                    'Rezervacija ID',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.white),
-                  ))),
+                
                   DataColumn(
                     label: Expanded(
-                      child: Text(
-                        'Korisničko ime',
-                        style: TextStyle(
-                            fontStyle: FontStyle.italic, color: Colors.red),
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                      label: Expanded(
-                          child: Text(
-                    'Vozilo model',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.red),
-                  ))),
-                  DataColumn(
-                    label: Expanded(
-                      child: Text(
-                        'Slika',
-                        style: TextStyle(
-                          fontStyle: FontStyle.italic,
-                          color: Colors.white,
+                      child: Center(
+                        child: Text(
+                          'Korisnik',
+                          style: TextStyle(
+                              fontStyle: FontStyle.italic, color: Colors.red),
                         ),
                       ),
                     ),
                   ),
                   DataColumn(
                       label: Expanded(
-                          child: Text(
-                    'Pocetni datum',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.white),
-                  ))),
-                  DataColumn(
-                      label: Expanded(
-                          child: Text(
-                    'Zavrsni datum',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.white),
-                  ))),
+                          child: Center(
+                            child: Text(
+                                                'Vozilo (model)',
+                                                style: TextStyle(
+                                                    fontStyle: FontStyle.italic, color: Colors.red),
+                                              ),
+                          ))),
                   DataColumn(
                     label: Expanded(
-                      child: Text(
-                        'Total Price',
-                        style: TextStyle(
-                            fontStyle: FontStyle.italic, color: Colors.white),
+                      child: Center(
+                        child: Text(
+                          'Slika',
+                          style: TextStyle(
+                            fontStyle: FontStyle.italic,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  DataColumn(
+                      label: Expanded(
+                          child: Center(
+                            child: Text(
+                                                'Početni datum',
+                                                style: TextStyle(
+                                                    fontStyle: FontStyle.italic, color: Colors.white),
+                                              ),
+                          ))),
+                  DataColumn(
+                      label: Expanded(
+                          child: Center(
+                            child: Text(
+                                                'Završni datum',
+                                                style: TextStyle(
+                                                    fontStyle: FontStyle.italic, color: Colors.white),
+                                              ),
+                          ))),
+                  DataColumn(
+                    label: Expanded(
+                      child: Center(
+                        child: Text(
+                          'Ukupna cijena (u KM)',
+                          style: TextStyle(
+                              fontStyle: FontStyle.italic, color: Colors.white),
+                        ),
                       ),
                     ),
                   ),
                   DataColumn(
                     label: Expanded(
-                      child: Text(
-                        'Zahtjev',
-                        style: TextStyle(
-                            fontStyle: FontStyle.italic, color: Colors.white),
+                      child: Center(
+                        child: Text(
+                          'Zahtjev za otkazivanje',
+                          style: TextStyle(
+                              fontStyle: FontStyle.italic, color: Colors.white),
+                        ),
                       ),
                     ),
                   ),
@@ -213,107 +221,123 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
                           (Rezervacija r) => DataRow(
                          
                             cells: [
-                              DataCell(Text(r.rezervacijaId?.toString() ?? "",
-                                  style: const TextStyle(color: Colors.white))),
+                            
                               DataCell(
-                                FutureBuilder(
-                                  future: _getKorisnickoIme(r.korisnikId),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
-                                    }
-                                    if (snapshot.hasError) {
-                                      return Text('Error: ${snapshot.error}');
-                                    }
-                                    return Text(snapshot.data.toString() ?? '',
-                                        style: const TextStyle(
-                                            color: Colors.white));
-                                  },
+                                Center(
+                                  child: FutureBuilder(
+                                    future: _getKorisnickoIme(r.korisnikId),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const CircularProgressIndicator();
+                                      }
+                                      if (snapshot.hasError) {
+                                        return Text('Error: ${snapshot.error}');
+                                      }
+                                      return Text(snapshot.data.toString() ?? '',
+                                          style: const TextStyle(
+                                              color: Colors.white));
+                                    },
+                                  ),
                                 ),
                               ),
                               DataCell(
-                                FutureBuilder(
-                                  future: _getVozilo(r.voziloId),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
-                                    }
-                                    if (snapshot.hasError) {
-                                      return Text('Error: ${snapshot.error}');
-                                    }
-                                    return Text(snapshot.data.toString() ?? '',
-                                        style: const TextStyle(
-                                            color: Colors.white));
-                                  },
+                                Center(
+                                  child: FutureBuilder(
+                                    future: _getVozilo(r.voziloId),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const CircularProgressIndicator();
+                                      }
+                                      if (snapshot.hasError) {
+                                        return Text('Error: ${snapshot.error}');
+                                      }
+                                      return Text(snapshot.data.toString() ?? '',
+                                          style: const TextStyle(
+                                              color: Colors.white));
+                                    },
+                                  ),
                                 ),
                               ),
                               DataCell(
-                                SizedBox(
-                                  width: 80,
-                                  child: vozilaResult?.result
-                                              .firstWhere(
-                                                  (vozilo) =>
-                                                      vozilo.voziloId ==
-                                                      r.voziloId,
-                                                  orElse: () =>
-                                                      Vozilo.fromJson({}))
-                                              .slika !=
-                                          null
-                                      ? Image.memory(
-                                          base64Decode(vozilaResult!.result
-                                              .firstWhere((vozilo) =>
-                                                  vozilo.voziloId == r.voziloId)
-                                              .slika!),
-                                          height: 180,
-                                          fit: BoxFit.contain,
-                                        )
-                                      : SizedBox.shrink(),
+                                Center(
+                                  child: SizedBox(
+                                    width: 80,
+                                    child: vozilaResult?.result
+                                                .firstWhere(
+                                                    (vozilo) =>
+                                                        vozilo.voziloId ==
+                                                        r.voziloId,
+                                                    orElse: () =>
+                                                        Vozilo.fromJson({}))
+                                                .slika !=
+                                            null
+                                        ? Image.memory(
+                                            base64Decode(vozilaResult!.result
+                                                .firstWhere((vozilo) =>
+                                                    vozilo.voziloId == r.voziloId)
+                                                .slika!),
+                                            height: 180,
+                                            fit: BoxFit.contain,
+                                          )
+                                        : SizedBox.shrink(),
+                                  ),
                                 ),
                               ),
-                              DataCell(Text(formatDateTime(r.pocetniDatum),
-                                  style: const TextStyle(color: Colors.white))),
-                              DataCell(Text(formatDateTime(r.zavrsniDatum),
-                                  style: const TextStyle(color: Colors.white))),
-                              DataCell(Text(r.totalPrice?.toString() ?? "",
-                                  style: const TextStyle(color: Colors.white))),
-                              DataCell(
-  Row(
-    children: [
-      Text(
-        r.zahtjev != null && r.zahtjev! ? 'Na čekanju' : '/',
-        style: const TextStyle(color: Colors.white),
-      ),
-      SizedBox(width: 5),
-      if (r.zahtjev == true)
-        ElevatedButton(
-          onPressed: () async {
-            try {
-              bool success = await _rezervacijaProvider.potvrdiOtkazivanje(r.rezervacijaId!);
-              if (success) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Rezervacija uklonjena!'),backgroundColor: Colors.green),
-                  
-                );
-                await initForm();
-              } else {
+                              DataCell(Center(
+                                child: Text(formatDateTime(r.pocetniDatum),
+                                    style: const TextStyle(color: Colors.white)),
+                              )),
+                              DataCell(Center(
+                                child: Text(formatDateTime(r.zavrsniDatum),
+                                    style: const TextStyle(color: Colors.white)),
+                              )),
+                              DataCell(Center(
+                                child: Text(r.totalPrice?.toString() ?? "",
+                                    style: const TextStyle(color: Colors.white)),
+                              )),
+                             DataCell(
+  Align(
+    alignment: Alignment.center,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          r.zahtjev != null && r.zahtjev! ? 'Na čekanju' : '/',
+          style: const TextStyle(color: Colors.white),
+        ),
+        SizedBox(width: 5),
+        if (r.zahtjev == true)
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                bool success = await _rezervacijaProvider.potvrdiOtkazivanje(r.rezervacijaId!);
+                if (success) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Rezervacija uklonjena!'),backgroundColor: Colors.green),
+                    
+                  );
+                  await initForm();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Greška')),
+                  );
+                }
+              } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Greška')),
                 );
+                print("Error confirming cancellation: $e");
               }
-            } catch (e) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Greška')),
-              );
-              print("Error confirming cancellation: $e");
-            }
-          },
-          child: Text("Potvrdi"),
-        ),
-    ],
+            },
+            child: Text("Potvrdi"),
+          ),
+      ],
+    ),
   ),
-)
+),
+
 
                             ],
                           ),

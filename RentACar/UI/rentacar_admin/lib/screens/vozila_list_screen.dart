@@ -179,7 +179,7 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 100.0),
                                 child: Tooltip(
-                                  message: 'Pregled vozila',
+                                  message: 'Pregled vozila i rezervacije',
                                   child: IconButton(
                                     onPressed: () {
                                       Navigator.of(context).push(
@@ -342,7 +342,7 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
                                         context: context,
                                         builder: (BuildContext context) {
                                           return AlertDialog(
-                                            title: const Text("Confirmation"),
+                                            title: const Text("Potvrda"),
                                             content: const Text(
                                                 "Da li sigurno želite obrisati ovo vozilo?"),
                                             actions: [

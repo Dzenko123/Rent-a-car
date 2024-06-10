@@ -192,7 +192,7 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Rezervacija za voziloId: ${widget.vozilo?.voziloId}"),
+        title: Text("Rezervišite vozilo"),
       ),
       body: Container(
         child: SingleChildScrollView(

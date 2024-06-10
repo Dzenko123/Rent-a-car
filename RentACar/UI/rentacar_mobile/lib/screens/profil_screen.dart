@@ -312,18 +312,17 @@ class _ProfilScreenState extends State<ProfilScreen> {
         ),
       ] else if (widget.korisnik != null) ...[
         Padding(
-          padding: const EdgeInsets.only(bottom: 20),
+          padding: const EdgeInsets.only(bottom: 15),
           child: _buildCombinedInfo('Ime i prezime:',
               '${widget.korisnik!.ime} ${widget.korisnik!.prezime}'),
         ),
-        const SizedBox(height: 10),
         Padding(
           padding: const EdgeInsets.only(left: 20),
           child: _buildInfoRow(Icons.email, 'Email:', widget.korisnik!.email),
         ),
         const SizedBox(height: 10),
         Padding(
-          padding: const EdgeInsets.only(left: 20),
+          padding: const EdgeInsets.only(left: 20, bottom: 25),
           child:
               _buildInfoRow(Icons.phone, 'Telefon:', widget.korisnik!.telefon),
         ),
@@ -632,6 +631,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -641,6 +641,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
               },
               icon: const Icon(Icons.settings),
               tooltip: 'Postavke',
+                iconSize: 25
             ),
           ],
         ),
@@ -778,6 +779,10 @@ class _ProfilScreenState extends State<ProfilScreen> {
         throw Exception('Trenutni password nije ispravan');
       }
 
+      if (_passwordController.text == _oldPasswordController.text) {
+        throw Exception('Nova lozinka mora biti različita od trenutne!');
+      }
+
       if (_passwordController.text != _confirmPasswordController.text) {
         throw Exception('Lozinke se ne podudaraju');
       }
@@ -814,7 +819,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   Navigator.of(context).pop();
                   Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => const LoginPage()),
-                    (Route<dynamic> route) => false,
+                        (Route<dynamic> route) => false,
                   );
                 },
                 child: const Text('Uredu'),
@@ -829,6 +834,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
       );
     }
   }
+
 
   void _showLogoutConfirmationDialog(BuildContext context) {
     showDialog(

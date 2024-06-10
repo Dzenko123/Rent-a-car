@@ -31,7 +31,7 @@ class _KorisniciListScreenState extends State<KorisniciListScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      title_widget: const Text("Korisnici list"),
+      title_widget: const Text("Korisnici"),
       child: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -162,13 +162,7 @@ class _KorisniciListScreenState extends State<KorisniciListScreen> {
                     style: TextStyle(
                         fontStyle: FontStyle.italic, color: Colors.white),
                   ))),
-                  DataColumn(
-                      label: Expanded(
-                          child: Text(
-                    'Korisnicko ime',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.red),
-                  ))),
+                
                   DataColumn(
                       label: Expanded(
                           child: Text(
@@ -213,8 +207,7 @@ class _KorisniciListScreenState extends State<KorisniciListScreen> {
                             cells: [
                               DataCell(Text(k.korisnikId?.toString() ?? "",
                                   style: const TextStyle(color: Colors.white))),
-                              DataCell(Text(k.korisnickoIme ?? "",
-                                  style: const TextStyle(color: Colors.white))),
+                             
                               DataCell(Text(k.ime ?? "",
                                   style: const TextStyle(color: Colors.white))),
                               DataCell(Text(k.prezime ?? "",

@@ -115,22 +115,8 @@ class _CijenePoVremenskomPerioduScreenState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(
-                height: 10,
-              ),
-              isLoading
-                  ? Padding(
-                padding: const EdgeInsets.only(top: 50.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: _buildDataListView(),
-                ),
-              )
-                  : Container(),
-              const SizedBox(height: 10),
-              if (canMovePrevious || canMoveNext)
+                height: 80,
+              ),if (canMovePrevious || canMoveNext)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -169,7 +155,7 @@ class _CijenePoVremenskomPerioduScreenState
                         ),
                       ),
                     const SizedBox(
-                      width: 30,
+                      width: 20,
                     ),
                     if (canMoveNext)
                       Container(
@@ -207,6 +193,20 @@ class _CijenePoVremenskomPerioduScreenState
                       ),
                   ],
                 ),
+              isLoading
+                  ? Padding(
+                padding: const EdgeInsets.only(left: 10.0, top:20, right: 10),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: _buildDataListView(),
+                ),
+              )
+                  : Container(),
+              const SizedBox(height: 10),
+
             ],
           ),
         ),

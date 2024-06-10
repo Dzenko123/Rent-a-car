@@ -510,7 +510,10 @@ class _ProfilScreenState extends State<ProfilScreen> {
       if (_oldPasswordController.text != Authorization.password) {
         throw Exception('Trenutni password nije ispravan');
       }
-
+      
+      if (_passwordController.text == _oldPasswordController.text) {
+        throw Exception('Nova lozinka mora biti različita od trenutne!');
+      }
       if (_passwordController.text != _confirmPasswordController.text) {
         throw Exception('Lozinke se ne podudaraju');
       }

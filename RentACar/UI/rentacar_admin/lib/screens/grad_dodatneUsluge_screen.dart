@@ -60,7 +60,7 @@ class _GradDodatneUslugeScreenState extends State<GradDodatneUslugeScreen> {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('Dodaj Grad'),
+        title: Text('Dodaj grad'),
         content: FormBuilder(
           key: gradFormKey,
           child: FormBuilderTextField(
@@ -125,7 +125,7 @@ validator: (value) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('Dodaj Dodatnu Uslugu'),
+        title: Text('Dodaj dodatnu uslugu'),
         content: FormBuilder(
           key: dodatnaUslugaFormKey,
           child: Column(
@@ -206,7 +206,7 @@ validator: (value) {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Gradovi i Dodatne Usluge'),
+        title: Text('Gradovi i dodatne usluge'),
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
@@ -218,12 +218,12 @@ validator: (value) {
                     children: [
                       ElevatedButton(
                         onPressed: _showGradDialog,
-                        child: Text('Dodaj Grad'),
+                        child: Text('Dodaj grad'),
                       ),
                       SizedBox(width: 10),
                       ElevatedButton(
                         onPressed: _showDodatnaUslugaDialog,
-                        child: Text('Dodaj Dodatnu Uslugu'),
+                        child: Text('Dodaj dodatnu uslugu'),
                       ),
                     ],
                   ),
@@ -242,7 +242,7 @@ validator: (value) {
                           child: DataTable(
                             columns: [
                               DataColumn(label: Text('Gradovi', style: TextStyle(fontWeight: FontWeight.bold))),
-                              DataColumn(label: Text('Akcije', style: TextStyle(fontWeight: FontWeight.bold))),
+                              DataColumn(label: Text('Brisanje', style: TextStyle(fontWeight: FontWeight.bold))),
 
                             ],
                             rows: gradResult?.result.map((grad) {
@@ -277,7 +277,7 @@ validator: (value) {
                             columns: [
                               DataColumn(label: Text('Dodatne usluge', style: TextStyle(fontWeight: FontWeight.bold))),
                               DataColumn(label: Text('Cijena', style: TextStyle(fontWeight: FontWeight.bold))),
-                                                            DataColumn(label: Text('Akcije', style: TextStyle(fontWeight: FontWeight.bold))),
+                                                            DataColumn(label: Text('Brisanje', style: TextStyle(fontWeight: FontWeight.bold))),
 
                             ],
                             rows: dodatnaUslugaResult?.result.map((usluga) {

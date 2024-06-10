@@ -128,7 +128,7 @@ namespace RentACar.Services
                 {
                     KontaktId = 1,
                     KorisnikId = 2,
-                    ImePrezime = "TestTest1",
+                    ImePrezime = "Test Test1",
                     Poruka = "test1",
                     Telefon = "060000000",
                     Email = "test1@mail.com"
@@ -137,7 +137,7 @@ namespace RentACar.Services
                  {
                      KontaktId = 2,
                      KorisnikId = 2,
-                     ImePrezime = "TestTest2",
+                     ImePrezime = "Test Test2",
                      Poruka = "test2",
                      Telefon = "060000001",
                      Email = "test2@mail.com"
@@ -146,7 +146,7 @@ namespace RentACar.Services
                   {
                       KontaktId = 3,
                       KorisnikId = 3,
-                      ImePrezime = "TestTest3",
+                      ImePrezime = "Test Test3",
                       Poruka = "test3",
                       Telefon = "060000002",
                       Email = "test3@mail.com"
@@ -155,7 +155,7 @@ namespace RentACar.Services
                    {
                        KontaktId = 4,
                        KorisnikId = 3,
-                       ImePrezime = "TestTest4",
+                       ImePrezime = "Test Test4",
                        Poruka = "test4",
                        Telefon = "060000003",
                        Email = "test4@mail.com"
@@ -220,7 +220,11 @@ namespace RentACar.Services
                 new VoziloPregled { VoziloPregledId = 1, VoziloId = 1, Datum = DateTime.Now.AddDays(+1) },
                 new VoziloPregled { VoziloPregledId = 2, VoziloId = 1, Datum = DateTime.Now.AddDays(+2) },
                 new VoziloPregled { VoziloPregledId = 3, VoziloId = 2, Datum = DateTime.Now.AddDays(+2) },
-                new VoziloPregled { VoziloPregledId = 4, VoziloId = 2, Datum = DateTime.Now.AddDays(+3) }
+                new VoziloPregled { VoziloPregledId = 4, VoziloId = 2, Datum = DateTime.Now.AddDays(+3) },
+                new VoziloPregled { VoziloPregledId = 5, VoziloId = 3, Datum = DateTime.Now.AddDays(+1) },
+                new VoziloPregled { VoziloPregledId = 6, VoziloId = 3, Datum = DateTime.Now.AddDays(+2) },
+                new VoziloPregled { VoziloPregledId = 7, VoziloId = 4, Datum = DateTime.Now.AddDays(+2) },
+                new VoziloPregled { VoziloPregledId = 8, VoziloId = 4, Datum = DateTime.Now.AddDays(+3) }
             );
         }
 
@@ -273,7 +277,7 @@ namespace RentACar.Services
                 Motor="2.0",
                 GodinaProizvodnje = 2002,
                 Kilometraza = 102,
-                StateMachine = "draft",
+                StateMachine = "active",
 
             },
             new Vozila
@@ -287,7 +291,7 @@ namespace RentACar.Services
                 Motor = "2.2",
                 GodinaProizvodnje = 2003,
                 Kilometraza = 103,
-                StateMachine = "draft",
+                StateMachine = "active",
 
             },
             new Vozila
@@ -301,7 +305,7 @@ namespace RentACar.Services
                 Motor ="2.7",
                 GodinaProizvodnje = 2004,
                 Kilometraza = 104,
-                StateMachine = "draft",
+                StateMachine = "active",
 
             },
             new Vozila
@@ -673,26 +677,6 @@ namespace RentACar.Services
                     VoziloId = 8,
                     PeriodId = 2,
                     Cijena = 260
-                }, new CijenePoVremenskomPeriodu
-                {
-                    CijenePoVremenskomPerioduId = 38,
-                    VoziloId = 8,
-                    PeriodId = 3,
-                    Cijena = 320
-                },
-                new CijenePoVremenskomPeriodu
-                {
-                    CijenePoVremenskomPerioduId = 39,
-                    VoziloId = 8,
-                    PeriodId = 4,
-                    Cijena = 360
-                },
-                new CijenePoVremenskomPeriodu
-                {
-                    CijenePoVremenskomPerioduId = 40,
-                    VoziloId = 8,
-                    PeriodId = 5,
-                    Cijena = 420
                 }
                 );
         }
@@ -800,8 +784,8 @@ namespace RentACar.Services
                     KorisnikId = 2,
                     VoziloId = 2,
                     GradId = 3,
-                    PocetniDatum = DateTime.Now.AddDays(+7),
-                    ZavrsniDatum = DateTime.Now.AddDays(+9),
+                    PocetniDatum = DateTime.Now.AddDays(+1).AddMonths(+1),
+                    ZavrsniDatum = DateTime.Now.AddDays(+2).AddMonths(+1),
                     TotalPrice = 150.0m,
                     Zahtjev = false
                 },
@@ -811,8 +795,8 @@ namespace RentACar.Services
                     KorisnikId = 3,
                     VoziloId = 1,
                     GradId = 4,
-                    PocetniDatum = DateTime.Now.AddDays(+7),
-                    ZavrsniDatum = DateTime.Now.AddDays(+9),
+                    PocetniDatum = DateTime.Now.AddDays(+3).AddMonths(+1),
+                    ZavrsniDatum = DateTime.Now.AddDays(+4).AddMonths(+1),
                     TotalPrice = 150.0m,
                     Zahtjev = false
                 },
@@ -832,9 +816,9 @@ namespace RentACar.Services
                     RezervacijaId = 6,
                     KorisnikId = 3,
                     VoziloId = 3,
-                    GradId = 2,
-                    PocetniDatum = DateTime.Now.AddDays(+7),
-                    ZavrsniDatum = DateTime.Now.AddDays(+9),
+                    GradId = 3,
+                    PocetniDatum = DateTime.Now.AddDays(+1).AddMonths(+1),
+                    ZavrsniDatum = DateTime.Now.AddDays(+2).AddMonths(+1),
                     TotalPrice = 150.0m,
                     Zahtjev = false
                 },
@@ -854,9 +838,9 @@ namespace RentACar.Services
                     RezervacijaId = 8,
                     KorisnikId = 3,
                     VoziloId = 4,
-                    GradId = 4,
-                    PocetniDatum = DateTime.Now.AddDays(+7),
-                    ZavrsniDatum = DateTime.Now.AddDays(+9),
+                    GradId = 1,
+                    PocetniDatum = DateTime.Now.AddDays(+3).AddMonths(+1),
+                    ZavrsniDatum = DateTime.Now.AddDays(+4).AddMonths(+1),
                     TotalPrice = 150.0m,
                     Zahtjev = true
                 },
@@ -888,8 +872,8 @@ namespace RentACar.Services
                     KorisnikId = 2,
                     VoziloId = 2,
                     GradId = 3,
-                    PocetniDatum = DateTime.Now.AddDays(+10),
-                    ZavrsniDatum = DateTime.Now.AddDays(+11),
+                    PocetniDatum = DateTime.Now.AddDays(+4).AddMonths(+1),
+                    ZavrsniDatum = DateTime.Now.AddDays(+5).AddMonths(+1),
                     TotalPrice = 150.0m,
                     Zahtjev = true
                 },
@@ -899,8 +883,8 @@ namespace RentACar.Services
                     KorisnikId = 3,
                     VoziloId = 4,
                     GradId = 4,
-                    PocetniDatum = DateTime.Now.AddDays(+12),
-                    ZavrsniDatum = DateTime.Now.AddDays(+13),
+                    PocetniDatum = DateTime.Now.AddDays(+7).AddMonths(+1),
+                    ZavrsniDatum = DateTime.Now.AddDays(+8).AddMonths(+1),
                     TotalPrice = 150.0m,
                     Zahtjev = false
                 });

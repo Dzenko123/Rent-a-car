@@ -286,7 +286,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                         showDialog(
                                           context: context,
                                           builder: (BuildContext context) => AlertDialog(
-                                            title: Text("Unauthorized"),
+                                            title: Text("Greška"),
                                             content: Text("Nemate dozvolu za pristup."),
                                             actions: [
                                               TextButton(
@@ -301,7 +301,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                       showDialog(
                                         context: context,
                                         builder: (BuildContext context) => AlertDialog(
-                                          title: Text("Error"),
+                                          title: Text("Greška"),
                                           content: Text(e.toString()),
                                           actions: [
                                             TextButton(

@@ -7,7 +7,7 @@ import 'package:rentacar_admin/providers/base_provider.dart';
 
 class VozilaProvider extends BaseProvider<Vozilo> {
   static const String _baseUrl = String.fromEnvironment("baseUrl",
-      defaultValue: "https://localhost:7284/");
+      defaultValue: "http://localhost:7284/");
   static const String _endpoint = "Vozila";
 
   VozilaProvider() : super(_endpoint);
@@ -43,7 +43,7 @@ class VozilaProvider extends BaseProvider<Vozilo> {
           "Došlo je do greške u spremanju podataka! (status:${response.statusCode})");
     } else {
       throw Exception(
-          "Active state machine ili docker nije pokrenut! (status:${response.statusCode})");
+          "Vozilo je rezervisano!");
     }
   }
 

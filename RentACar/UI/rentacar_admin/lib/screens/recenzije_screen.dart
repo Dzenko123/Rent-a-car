@@ -112,7 +112,7 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      title_widget: const Text("Pogledajte recenzije"),
+      title_widget: const Text("Recenzije za vozila"),
       child: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(

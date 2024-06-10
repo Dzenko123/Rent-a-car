@@ -35,7 +35,7 @@ class _KontaktScreenState extends State<KontaktScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      title_widget: const Text("Kontakt list"),
+      title_widget: const Text("Kontakti"),
       child: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -82,7 +82,7 @@ class _KontaktScreenState extends State<KontaktScreen> {
           Flexible(
             child: TextField(
               decoration: const InputDecoration(
-                labelText: "Korisnicko ime pretraga:",
+                labelText: "Pretraga po korisničkom imenu:",
                 labelStyle: TextStyle(color: Colors.white),
               ),
               controller: _ftsController,
@@ -115,7 +115,7 @@ class _KontaktScreenState extends State<KontaktScreen> {
                     .firstWhere(
                         (korisnik) => korisnik.korisnikId == k.korisnikId,
                         orElse: () => Korisnici.fromJson({}))
-                    .korisnickoIme!
+                    .ime!
                     .toLowerCase()
                     .contains(_ftsController.text.toLowerCase()))
             .toList() ??
@@ -141,17 +141,11 @@ class _KontaktScreenState extends State<KontaktScreen> {
                   DataColumn(
                       label: Expanded(
                           child: Text(
-                    'Kontakt ID',
+                    'Kontakt (redni broj)',
                     style: TextStyle(
                         fontStyle: FontStyle.italic, color: Colors.white),
                   ))),
-                  DataColumn(
-                      label: Expanded(
-                          child: Text(
-                    'Korisnik ID',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.white),
-                  ))),
+                  
                   DataColumn(
                     label: Expanded(
                       child: Text(
@@ -164,7 +158,7 @@ class _KontaktScreenState extends State<KontaktScreen> {
                   DataColumn(
                       label: Expanded(
                           child: Text(
-                    'Ime i prezime',
+                    'Ime i prezime (iz kontakta)',
                     style: TextStyle(
                         fontStyle: FontStyle.italic, color: Colors.white),
                   ))),
@@ -192,7 +186,7 @@ class _KontaktScreenState extends State<KontaktScreen> {
                   DataColumn(
                     label: Expanded(
                       child: Text(
-                        'Akcija: obriši',
+                        'Ukloni kontakt',
                         style: TextStyle(
                             fontStyle: FontStyle.italic, color: Colors.white),
                       ),
@@ -206,8 +200,7 @@ class _KontaktScreenState extends State<KontaktScreen> {
                             cells: [
                               DataCell(Text(k.kontaktId?.toString() ?? "",
                                   style: const TextStyle(color: Colors.white))),
-                              DataCell(Text(k.korisnikId?.toString() ?? "",
-                                  style: const TextStyle(color: Colors.white))),
+                             
                               DataCell(
                                 FutureBuilder(
                                   future: _getKorisnickoIme(k.korisnikId),
@@ -303,6 +296,6 @@ class _KontaktScreenState extends State<KontaktScreen> {
       orElse: () => Korisnici.fromJson({}),
     );
 
-    return korisnik.korisnickoIme;
+    return korisnik.ime;
   }
 }

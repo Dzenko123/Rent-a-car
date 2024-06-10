@@ -292,7 +292,7 @@ class _CijenePoVremenskomPerioduScreenState
                           TextFormField(
                             initialValue: minPeriodId.toString(),
                             decoration:
-                                const InputDecoration(labelText: 'Period ID'),
+                                const InputDecoration(labelText: 'Period(redni broj)'),
                             readOnly: true,
                             onChanged: (value) {
                               _initialValue['periodId'] =
@@ -321,7 +321,7 @@ class _CijenePoVremenskomPerioduScreenState
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          child: const Text('Cancel'),
+                          child: const Text('Odustani'),
                         ),
                         ElevatedButton(
                           onPressed: () async {
@@ -338,7 +338,7 @@ class _CijenePoVremenskomPerioduScreenState
                               );
                             }
                           },
-                          child: const Text('Save'),
+                          child: const Text('Spremi'),
                         ),
                       ],
                     );

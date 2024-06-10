@@ -24,6 +24,8 @@ class _KontaktScreenState extends State<KontaktScreen> {
   SearchResult<Korisnici>? korisniciResult;
   Map<String, dynamic> _initialValue = {};
   final _formKey = GlobalKey<FormBuilderState>();
+  final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+  final phoneRegex = RegExp(r'^[0-9]+$');
 
   late KontaktProvider _kontaktProvider;
   late KorisniciProvider _korisniciProvider;
@@ -180,9 +182,15 @@ class _KontaktScreenState extends State<KontaktScreen> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Polje je obavezno';
+                  } else if (!phoneRegex.hasMatch(value)) {
+                    return 'Broj telefona mora sadržavati samo brojeve';
+                  } else if (value.length < 9) {
+                    return 'Broj telefona mora imati minimalno 9 cifara';
                   }
                   return null;
                 },
+
+
               ),
               const SizedBox(height: 20),
               FormBuilderTextField(
@@ -213,9 +221,12 @@ class _KontaktScreenState extends State<KontaktScreen> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Polje je obavezno';
+                  } else if (!emailRegex.hasMatch(value)) {
+                    return 'Email mora biti u formatu test@gmail.com ili test@email.com';
                   }
                   return null;
                 },
+
               ),
               const SizedBox(height: 20),
               FormBuilderTextField(

@@ -823,7 +823,7 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Obrisati vozilo sa pregleda?'),
+          title: Text('Sigurno želite poništiti pregled ovog vozila?'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -984,7 +984,7 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
           
           const SizedBox(height: 20),
           Text(
-            'Ukupan broj pregleda: ${_getVoziloPregledIdText()}',
+            'Ukupan broj pregleda svih vozila: ${_getVoziloPregledIdText()}',
             style: TextStyle(
                 fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
           ),

@@ -87,7 +87,7 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
           'Pregledate model i marku: ${widget.vozilo?.model}, ${widget.vozilo?.marka}',
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Vozilo Detail'),
+          title: const Text('Detalji za vozilo i preporuke'),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
@@ -107,7 +107,7 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                     children: [
                       const SizedBox(height: 10),
                       _buildImagePreview(),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 30),
                       isLoading ? Container() : _buildForm(),
                       const SizedBox(height: 20),
                       !_loadingRecommendedReservations ? RecommendedReservationsWidget(recommendedReservations: recommendedReservations) : Container(),
@@ -224,11 +224,11 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
           const Text(
             'Pogledajte kada je ovo vozilo slobodno za rezervaciju!',
             style: TextStyle(
-              fontSize: 15,
+              fontSize: 16,
               color: Colors.black,
             ),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 60),
           const Text(
             'Detalji vozila',
             style: TextStyle(

@@ -5,7 +5,7 @@ import 'dart:convert';
 
 class PeriodProvider extends BaseProvider<Period> {
   static const String _baseUrl =
-      String.fromEnvironment("baseUrl", defaultValue: "https://10.0.2.2:7284/");
+      String.fromEnvironment("baseUrl", defaultValue: "http://10.0.2.2:7284/");
   static const String _endpoint = "Period";
   PeriodProvider() : super("Period");
 

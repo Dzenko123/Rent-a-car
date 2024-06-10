@@ -8,7 +8,7 @@ import '../models/search_result.dart';
 
 class VozilaProvider extends BaseProvider<Vozilo> {
   static const String _baseUrl =
-      String.fromEnvironment("baseUrl", defaultValue: "https://10.0.2.2:7284/");
+      String.fromEnvironment("baseUrl", defaultValue: "http://10.0.2.2:7284/");
 
   static const String _endpoint = "Vozila";
 
@@ -91,7 +91,7 @@ class VozilaProvider extends BaseProvider<Vozilo> {
           "Došlo je do greške u spremanju podataka! (status:${response.statusCode})");
     } else {
       throw Exception(
-          "Active state machine ili docker nije pokrenut! (status:${response.statusCode})");
+          "Vozilo nije aktivno! (status:${response.statusCode})");
     }
   }
 

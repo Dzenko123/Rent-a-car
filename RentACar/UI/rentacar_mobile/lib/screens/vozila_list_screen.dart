@@ -285,7 +285,7 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
                                 flex: 1,
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 40.0),
+                                      horizontal: 20.0),
                                   child: ElevatedButton(
                                     onPressed: () {
                                       Navigator.of(context).push(
@@ -296,7 +296,7 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
                                       );
                                     },
                                     child: const Text(
-                                      'Detalji',
+                                      'Detalji i preporuke',
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontStyle: FontStyle.italic,
@@ -326,14 +326,19 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
                                     child: const Text(
                                       'Rezerviši vozilo',
                                       style: TextStyle(
-                                        color: Colors.black,
+                                        color: Colors.white,
                                         fontStyle: FontStyle.italic,
                                         fontSize: 13,
                                       ),
                                     ),
+                                    style: ElevatedButton.styleFrom(
+
+                                      backgroundColor: Colors.blueAccent,
+                                    ),
                                   ),
                                 ),
                               ),
+                              SizedBox(height: 2,)
                             ]),
                       ),
                     ),

@@ -45,7 +45,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
             ),
 
             ListTile(
-              title: const Text("Cijene po periodu"),
+              title: const Text("Cijene vozila po periodima"),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -65,7 +65,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               },
             ),
            ListTile(
-              title: const Text("Grad/dodatne usluge"),
+              title: const Text("Gradovi/dodatne usluge"),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -83,7 +83,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 );
               },
             ), ListTile(
-              title: const Text("Kalendar rezervacija"),
+              title: const Text("Pregledi vozila"),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
