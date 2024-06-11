@@ -75,7 +75,7 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      title_widget: const Text("Vozila list"),
+      title_widget: const Text("Prikaz svih vozila"),
       child: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -416,87 +416,105 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
                                 ),
                               ),
                               Flexible(
-  flex: 1,
-  child: Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-    child: Row(
-      children: [
-        PopupMenuButton<String>(
-          child: const Text(
-            'Opcije: Activate/Hide',
-            style: TextStyle(color: Color.fromARGB(206, 255, 255, 2)),
-          ),
-          onSelected: (String action) async {
-            if (action == "Activate") {
-              if (e.stateMachine == "active") {
-                _scaffoldMessengerState.showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                      'Odabrano isto stanje.',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-              } else {
-                try {
-                  await _vozilaProvider.activate(e.voziloId!);
-                  await initForm();
-                } catch (e) {
-                  print("Error activating vehicle: $e");
-                }
-              }
-            } else if (action == "Hide") {
-              if (e.stateMachine == "hidden") {
-                _scaffoldMessengerState.showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                      'Odabrano isto stanje.',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-              } else {
-                try {
-                  await _vozilaProvider.hide(e.voziloId!);
-                  await initForm();
-                } catch (e) {
-                  print("Error hiding vehicle: $e");
-                }
-              }
-            }
-          },
-          itemBuilder: (BuildContext context) {
-            return ["Activate", "Hide"].map((String choice) {
-              return PopupMenuItem<String>(
-                value: choice,
-                child: Text(choice),
-              );
-            }).toList();
-          },
-        ),
-        const SizedBox(width: 10),
-        Text(
-          'State: ${e.stateMachine}',
-          style: const TextStyle(
-            color: Colors.white,
-            fontStyle: FontStyle.italic,
-          ),
-        ),
-      ],
-    ),
-  ),
-),
-
-                            ]),
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: Row(
+                            children: [
+                              PopupMenuButton<String>(
+                                child: const Text(
+                                  'Opcije: Activate/Hide',
+                                  style: TextStyle(color: Color.fromARGB(206, 255, 255, 2)),
+                                ),
+                                onSelected: (String action) async {
+                                  if (action == "Activate") {
+                                    if (e.stateMachine == "active") {
+                                      _scaffoldMessengerState.showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'Odabrano isto stanje.',
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    } else {
+                                      try {
+                                        await _vozilaProvider.activate(e.voziloId!);
+                                        await initForm();
+                                        _scaffoldMessengerState.showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              'Vozilo uspješno aktivirano i spremno za rezervaciju!',
+                                              style: TextStyle(color: Colors.white),
+                                            ),
+                                            backgroundColor: Colors.green,
+                                          ),
+                                        );
+                                      } catch (e) {
+                                        print("Error activating vehicle: $e");
+                                      }
+                                    }
+                                  } else if (action == "Hide") {
+                                    if (e.stateMachine == "draft") {
+                                      _scaffoldMessengerState.showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'Odabrano isto stanje.',
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    } else {
+                                      try {
+                                        await _vozilaProvider.hide(e.voziloId!);
+                                        await initForm();
+                                        _scaffoldMessengerState.showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              'Vozilo je skriveno korisnicima mobilne aplikacije.',
+                                              style: TextStyle(color: Colors.white),
+                                            ),
+                                            backgroundColor: Colors.green,
+                                          ),
+                                        );
+                                      } catch (e) {
+                                        print("Error hiding vehicle: $e");
+                                      }
+                                    }
+                                  }
+                                },
+                                itemBuilder: (BuildContext context) {
+                                  return ["Activate", "Hide"].map((String choice) {
+                                    return PopupMenuItem<String>(
+                                      value: choice,
+                                      child: Text(choice),
+                                    );
+                                  }).toList();
+                                },
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                'State: ${e.stateMachine}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                )
-                .toList() ??
-            [],
-      ),
-    );
-  }
+                ),
+              ),
+            ),
+          )
+          .toList() ??
+          [],
+    ),
+  );
+}
 }

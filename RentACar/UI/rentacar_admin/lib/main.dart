@@ -80,6 +80,7 @@ class _LoginPageState extends State<LoginPage> {
 late KorisniciProvider _korisniciProvider;
   late VozilaProvider _vozilaProvider;
   bool _isPasswordObscured = true;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -128,116 +129,127 @@ late KorisniciProvider _korisniciProvider;
                       child: Padding(
                         padding: const EdgeInsets.all(25.0),
                         child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              TextField(
-                                cursorColor: Colors.white,
-                                decoration: const InputDecoration(
-                                  labelText: "Username",
-                                  prefixIcon: Icon(
-                                    Icons.email,
-                                    color: Colors.white,
-                                  ),
-                                  labelStyle: TextStyle(color: Colors.white),
-                                  contentPadding:
-                                      EdgeInsets.symmetric(vertical: 5),
-                                ),
-                                controller: _usernameController,
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                              const SizedBox(
-                                height: 8,
-                              ),
-                              TextField(
-                                cursorColor: Colors.white,
-                                decoration: InputDecoration(
-                                  labelText: "Password",
-                                  prefixIcon: const Icon(
-                                    Icons.password,
-                                    color: Colors.white,
-                                  ),
-                                  labelStyle:
-                                      const TextStyle(color: Colors.white),
-                                  contentPadding:
-                                      const EdgeInsets.symmetric(vertical: 5),
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      _isPasswordObscured
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
-                                      color: Colors.white,
+                          child: Form(  key: _formKey,
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              child: Column(
+                                children: [
+                                  TextFormField(
+                                    cursorColor: Colors.white,
+                                    decoration: const InputDecoration(
+                                      labelText: "Username",
+                                      prefixIcon: Icon(
+                                        Icons.email,
+                                        color: Colors.white,
+                                      ),
+                                      labelStyle: TextStyle(color: Colors.white),
+                                      contentPadding: EdgeInsets.symmetric(vertical: 5),
                                     ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _isPasswordObscured =
-                                            !_isPasswordObscured;
-                                      });
+                                    controller: _usernameController,
+                                    style: const TextStyle(color: Colors.white),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Molimo unesite korisničko ime';
+                                      }
+                                      return null;
                                     },
                                   ),
-                                ),
-                                controller: _passwordController,
-                                style: const TextStyle(color: Colors.white),
-                                obscureText: _isPasswordObscured,
+                                  const SizedBox(
+                                    height: 8,
+                                  ),
+                                  TextFormField(
+                                    cursorColor: Colors.white,
+                                    decoration: InputDecoration(
+                                      labelText: "Password",
+                                      prefixIcon: const Icon(
+                                        Icons.password,
+                                        color: Colors.white,
+                                      ),
+                                      labelStyle: const TextStyle(color: Colors.white),
+                                      contentPadding: const EdgeInsets.symmetric(vertical: 5),
+                                      suffixIcon: IconButton(
+                                        icon: Icon(
+                                          _isPasswordObscured
+                                              ? Icons.visibility
+                                              : Icons.visibility_off,
+                                          color: Colors.white,
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            _isPasswordObscured =
+                                            !_isPasswordObscured;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    controller: _passwordController,
+                                    style: const TextStyle(color: Colors.white),
+                                    obscureText: _isPasswordObscured,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Molimo unesite lozinku';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  const SizedBox(height: 40),
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      if (_formKey.currentState!.validate()) {
+                                        var username = _usernameController.text;
+                                        var password = _passwordController.text;
+                                        Authorization.username = username;
+                                        Authorization.password = password;
+
+                                        try {
+                                          var loginData = await _korisniciProvider.getLogedWithRole(username, password);
+
+                                          if (loginData != null && loginData['uloga'] == 'admin') {
+                                            await _vozilaProvider.get();
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (context) => VozilaListScreen(),
+                                              ),
+                                            );
+                                          } else {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) => AlertDialog(
+                                                title: Text("Greška"),
+                                                content: Text("Nemate dozvolu za pristup."),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () => Navigator.pop(context),
+                                                    child: Text("OK"),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          }
+                                        } on Exception catch (e) {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) => AlertDialog(
+                                              title: Text("Greška"),
+                                              content: Text(e.toString()),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () => Navigator.pop(context),
+                                                  child: Text("OK"),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }
+                                      }
+                                    },
+                                    child: Text(
+                                      "Login",
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                  )
+                                ],
                               ),
-                              const SizedBox(
-                                height: 40,
-                              ),
-                              ElevatedButton(
-  onPressed: () async {
-    var username = _usernameController.text;
-    var password = _passwordController.text;
-    Authorization.username = username;
-    Authorization.password = password;
-
-    try {
-      var loginData = await _korisniciProvider.getLogedWithRole(username, password);
-
-      if (loginData != null && loginData['uloga'] == 'admin') {
-        await _vozilaProvider.get();
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => VozilaListScreen(),
-          ),
-        );
-      } else {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-            title: Text("Greška!"),
-            content: Text("Nemate dozvolu za pristup."),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text("OK"),
-              ),
-            ],
-          ),
-        );
-      }
-    } on Exception catch (e) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: Text("Greška!"),
-          content: Text(e.toString()),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text("OK"),
-            ),
-          ],
-        ),
-      );
-    }
-  },
-  child: Text(
-    "Login",
-    style: TextStyle(color: Colors.black),
-  ),
-)
-
-                            ],
-                          ),
+                            )
                         ),
                       ),
                     ),

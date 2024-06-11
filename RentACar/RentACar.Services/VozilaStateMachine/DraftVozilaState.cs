@@ -68,7 +68,7 @@ namespace RentACar.Services.VozilaStateMachine
 
             var mappedEntity = _mapper.Map<Vozila>(entity);
 
-            using var bus = RabbitHutch.CreateBus("host=localhost");
+            using var bus = RabbitHutch.CreateBus("host=rabbitmq");
             VozilaActivated message=new VozilaActivated { Vozilo = mappedEntity };
             bus.PubSub.Publish(message);
 

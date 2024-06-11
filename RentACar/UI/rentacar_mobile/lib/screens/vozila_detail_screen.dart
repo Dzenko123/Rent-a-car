@@ -110,7 +110,21 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                       const SizedBox(height: 30),
                       isLoading ? Container() : _buildForm(),
                       const SizedBox(height: 20),
-                      !_loadingRecommendedReservations ? RecommendedReservationsWidget(recommendedReservations: recommendedReservations) : Container(),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: !_loadingRecommendedReservations && recommendedReservations.isEmpty
+                                ? Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 20.0),
+                              child: Text(
+                                'Ovo vozilo do sada nije bilo rezervisano. Pogledajte preporuke za druga vozila. Hvala Vam na razumijevanju!',
+                                style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold),
+                              ),
+                            )
+                                : RecommendedReservationsWidget(recommendedReservations: recommendedReservations),
+                          ),
+                        ],
+                      ),
 
                     ],
                   ),
@@ -208,10 +222,10 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
               ),
               child: Container(
                 constraints:
-                    const BoxConstraints(maxWidth: 100.0, minHeight: 36.0),
+                    const BoxConstraints(maxWidth: 220.0, minHeight: 36.0),
                 alignment: Alignment.center,
                 child: const Text(
-                  "Pregledaj",
+                  "Pregledaj kalendar rezervacija",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,

@@ -505,7 +505,7 @@ class _CijenePoVremenskomPerioduScreenState
                                         onPressed: () {
                                           Navigator.of(context).pop(null);
                                         },
-                                        child: const Text('Cancel'),
+                                        child: const Text('Odustani'),
                                       ),
                                       ElevatedButton(
                                         onPressed: () {
@@ -537,7 +537,7 @@ class _CijenePoVremenskomPerioduScreenState
                                             );
                                           }
                                         },
-                                        child: const Text('Save'),
+                                        child: const Text('Spasi'),
                                       ),
                                     ],
                                   );
@@ -750,14 +750,14 @@ class _CijenePoVremenskomPerioduScreenState
                                                   Navigator.of(context)
                                                       .pop(null);
                                                 },
-                                                child: const Text('Cancel'),
+                                                child: const Text('Odustani'),
                                               ),
                                               TextButton(
                                                 onPressed: () {
                                                   Navigator.of(context)
                                                       .pop(currentPrice);
                                                 },
-                                                child: const Text('Save'),
+                                                child: const Text('Spasi'),
                                               ),
                                             ],
                                           );
@@ -800,9 +800,9 @@ class _CijenePoVremenskomPerioduScreenState
                                             content: Column(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                Text('Vozilo ID: $voziloId'),
+                                                Text('Vozilo broj: $voziloId'),
                                                 Text(
-                                                    'Period ID: ${period.periodId}'),
+                                                    'Period broj: ${period.periodId}'),
                                                 TextFormField(
                                                   decoration:
                                                       const InputDecoration(
@@ -876,7 +876,7 @@ class _CijenePoVremenskomPerioduScreenState
                                                     );
                                                   }
                                                 },
-                                                child: const Text('Save'),
+                                                child: const Text('Spasi'),
                                               ),
                                             ],
                                           );

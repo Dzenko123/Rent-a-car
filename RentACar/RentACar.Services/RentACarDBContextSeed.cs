@@ -669,14 +669,32 @@ namespace RentACar.Services
                     CijenePoVremenskomPerioduId = 36,
                     VoziloId = 8,
                     PeriodId = 1,
-                    Cijena = 160
+                    Cijena = 170
                 },
                 new CijenePoVremenskomPeriodu
                 {
                     CijenePoVremenskomPerioduId = 37,
                     VoziloId = 8,
                     PeriodId = 2,
-                    Cijena = 260
+                    Cijena = 270
+                }, new CijenePoVremenskomPeriodu
+                {
+                    CijenePoVremenskomPerioduId = 38,
+                    VoziloId = 8,
+                    PeriodId = 3,
+                    Cijena = 320
+                }, new CijenePoVremenskomPeriodu
+                {
+                    CijenePoVremenskomPerioduId = 39,
+                    VoziloId = 8,
+                    PeriodId = 4,
+                    Cijena = 370
+                }, new CijenePoVremenskomPeriodu
+                {
+                    CijenePoVremenskomPerioduId = 40,
+                    VoziloId = 8,
+                    PeriodId = 5,
+                    Cijena = 420
                 }
                 );
         }
