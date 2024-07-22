@@ -17,7 +17,7 @@ import 'package:rentacar_admin/providers/grad_provider.dart';
 import 'package:rentacar_admin/models/vozila.dart';
 
 class IzvjestajiPage extends StatefulWidget {
-    DodatnaUsluga? dodatnaUsluga;
+  DodatnaUsluga? dodatnaUsluga;
 
   @override
   _IzvjestajiPageState createState() => _IzvjestajiPageState();
@@ -27,26 +27,27 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
   late RezervacijaProvider _rezervacijaProvider;
   late VozilaProvider _vozilaProvider;
   late GradProvider _gradProvider;
-late KorisniciProvider _korisniciProvider;
- late DodatnaUslugaProvider _dodatnaUslugaProvider;
+  late KorisniciProvider _korisniciProvider;
+  late DodatnaUslugaProvider _dodatnaUslugaProvider;
   late RezervacijaDodatnaUslugaProvider _rezervacijaDodatnaUslugaProvider;
-   SearchResult<DodatnaUsluga>? dodatnaUslugaResult;
+  SearchResult<DodatnaUsluga>? dodatnaUslugaResult;
   SearchResult<RezervacijaDodatnaUsluga>? rezervacijaDodatnaUslugaResult;
   List<Rezervacija> _rezervacije = [];
   List<Vozilo> _vozila = [];
   List<Grad> _gradovi = [];
-List<Korisnici> _korisnici = []; 
+  List<Korisnici> _korisnici = [];
   String _selectedOption = 'Mjesečne rezervacije tokom godine';
-late List<DataRow> _dataRows = [];
+  late List<DataRow> _dataRows = [];
   @override
   void initState() {
     super.initState();
     _rezervacijaProvider = RezervacijaProvider();
     _vozilaProvider = VozilaProvider();
     _gradProvider = GradProvider();
-     _korisniciProvider = KorisniciProvider();
-     _dodatnaUslugaProvider=context.read<DodatnaUslugaProvider>();
-    _rezervacijaDodatnaUslugaProvider=context.read<RezervacijaDodatnaUslugaProvider>();
+    _korisniciProvider = KorisniciProvider();
+    _dodatnaUslugaProvider = context.read<DodatnaUslugaProvider>();
+    _rezervacijaDodatnaUslugaProvider =
+        context.read<RezervacijaDodatnaUslugaProvider>();
     initForm();
   }
 
@@ -55,41 +56,44 @@ late List<DataRow> _dataRows = [];
       _rezervacije = (await _rezervacijaProvider.get()).result;
       _vozila = (await _vozilaProvider.get()).result;
       _gradovi = (await _gradProvider.get()).result;
-        _korisnici = (await _korisniciProvider.get()).result;
-         dodatnaUslugaResult=await _dodatnaUslugaProvider.get();
-    rezervacijaDodatnaUslugaResult=await _rezervacijaDodatnaUslugaProvider.get();
-_dataRows = await _buildDataRows(
+      _korisnici = (await _korisniciProvider.get()).result;
+      dodatnaUslugaResult = await _dodatnaUslugaProvider.get();
+      rezervacijaDodatnaUslugaResult =
+          await _rezervacijaDodatnaUslugaProvider.get();
+      _dataRows = await _buildDataRows(
           _rezervacije, rezervacijaDodatnaUslugaResult?.result ?? []);
       setState(() {});
     } catch (e) {
-      print('Greška: $e');}
+      print('Greška: $e');
+    }
   }
-  @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: Text('Izvještaji'),
-    ),
-    body: SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-  _buildDropDown(),
-  if (_selectedOption == 'Mjesečne rezervacije tokom godine')
-    _buildMonthlyChartsRow(_rezervacije),
-  if (_selectedOption == 'Rezervacije po vozilima i gradovima')
-    _buildReservationChartsRow(_rezervacije, _vozila),
-  if (_selectedOption == 'Ukupna zarada')
-    _buildRevenueChartsRow(_rezervacije),
-  _buildReservationTable(_rezervacije, rezervacijaDodatnaUslugaResult?.result ?? []),
-],
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Izvještaji'),
       ),
-    ),
-  );
-}
-Widget _buildReservationTable(
-      List<Rezervacija> rezervacije,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildDropDown(),
+            if (_selectedOption == 'Mjesečne rezervacije tokom godine')
+              _buildMonthlyChartsRow(_rezervacije),
+            if (_selectedOption == 'Rezervacije po vozilima i gradovima')
+              _buildReservationChartsRow(_rezervacije, _vozila),
+            if (_selectedOption == 'Ukupna zarada')
+              _buildRevenueChartsRow(_rezervacije),
+            _buildReservationTable(
+                _rezervacije, rezervacijaDodatnaUslugaResult?.result ?? []),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReservationTable(List<Rezervacija> rezervacije,
       List<RezervacijaDodatnaUsluga> rezervacijaDodatnaUsluga) {
     return Padding(
       padding: const EdgeInsets.only(left: 80.0, right: 80, bottom: 30),
@@ -116,13 +120,12 @@ Widget _buildReservationTable(
     );
   }
 
-Future<List<DataRow>> _buildDataRows(
-      List<Rezervacija> rezervacije,
+  Future<List<DataRow>> _buildDataRows(List<Rezervacija> rezervacije,
       List<RezervacijaDodatnaUsluga> rezervacijaDodatnaUsluga) async {
     List<DataRow> dataRows = [];
     for (var rezervacija in rezervacije) {
-      var korisnik = _korisnici
-          .firstWhere((korisnik) => korisnik.korisnikId == rezervacija.korisnikId);
+      var korisnik = _korisnici.firstWhere(
+          (korisnik) => korisnik.korisnikId == rezervacija.korisnikId);
       var rezervacijaUsluge = rezervacijaDodatnaUsluga
           .where((ru) => ru.rezervacijaId == rezervacija.rezervacijaId)
           .toList();
@@ -149,27 +152,26 @@ Future<List<DataRow>> _buildDataRows(
     return dataRows;
   }
 
-Widget _buildDataTableCell(String text) {
-  return Container(
-    padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
-    child: Text(
-      text,
-      style: TextStyle(
-        fontSize: 14.0,
-        fontFamily: 'Roboto',
+  Widget _buildDataTableCell(String text) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Roboto',
+        ),
       ),
-    ),
-  );
-}
-
-Future<String?> getDodatnaUslugaNaziv(int? dodatnaUslugaId) async {
-  if (dodatnaUslugaId != null) {
-    var dodatnaUsluga = await _dodatnaUslugaProvider.getById(dodatnaUslugaId);
-    return dodatnaUsluga?.naziv;
+    );
   }
-  return null;
-}
 
+  Future<String?> getDodatnaUslugaNaziv(int? dodatnaUslugaId) async {
+    if (dodatnaUslugaId != null) {
+      var dodatnaUsluga = await _dodatnaUslugaProvider.getById(dodatnaUslugaId);
+      return dodatnaUsluga?.naziv;
+    }
+    return null;
+  }
 
   Widget _buildDropDown() {
     return Padding(
@@ -197,19 +199,19 @@ Future<String?> getDodatnaUslugaNaziv(int? dodatnaUslugaId) async {
     );
   }
 
-Widget _buildMonthlyChartsRow(List<Rezervacija> rezervacije) {
-  return Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Expanded(
-        child: _buildMonthlyReservationChart(rezervacije),
-      ),
-      Expanded(
-        child: _buildMonthlyReservationLineChart(rezervacije),
-      ),
-    ],
-  );
-}
+  Widget _buildMonthlyChartsRow(List<Rezervacija> rezervacije) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: _buildMonthlyReservationChart(rezervacije),
+        ),
+        Expanded(
+          child: _buildMonthlyReservationLineChart(rezervacije),
+        ),
+      ],
+    );
+  }
 
   String _getMonthName(int month) {
     switch (month) {
@@ -263,7 +265,6 @@ Widget _buildMonthlyChartsRow(List<Rezervacija> rezervacije) {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-   
           SizedBox(
             height: 300,
             child: SfCartesianChart(
@@ -343,6 +344,7 @@ Widget _buildMonthlyChartsRow(List<Rezervacija> rezervacije) {
         }
       }
     }
+
     for (var rezervacija in rezervacije) {
       int cityId = rezervacija.gradId!;
       cityCount.update(cityId, (value) => value + 1, ifAbsent: () => 1);
@@ -406,7 +408,8 @@ Widget _buildMonthlyChartsRow(List<Rezervacija> rezervacije) {
     for (var rezervacija in rezervacije) {
       int month = rezervacija.pocetniDatum!.month;
       double totalRevenue = rezervacija.totalPrice ?? 0;
-      monthlyRevenue.update(month, (value) => (value ?? 0) + totalRevenue, ifAbsent: () => totalRevenue);
+      monthlyRevenue.update(month, (value) => (value ?? 0) + totalRevenue,
+          ifAbsent: () => totalRevenue);
     }
 
     List<BarSeries<MapEntry<int, double>, String>> seriesList = [
@@ -444,7 +447,8 @@ Widget _buildMonthlyChartsRow(List<Rezervacija> rezervacije) {
     for (var rezervacija in rezervacije) {
       int month = rezervacija.pocetniDatum!.month;
       double totalRevenue = rezervacija.totalPrice ?? 0;
-      monthlyRevenue.update(month, (value) => (value ?? 0) + totalRevenue, ifAbsent: () => totalRevenue);
+      monthlyRevenue.update(month, (value) => (value ?? 0) + totalRevenue,
+          ifAbsent: () => totalRevenue);
     }
 
     List<DoughnutSeries<MapEntry<int, double>, String>> seriesList = [
@@ -495,7 +499,6 @@ Widget _buildMonthlyChartsRow(List<Rezervacija> rezervacije) {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
- 
           SizedBox(
             height: 300,
             child: SfCartesianChart(

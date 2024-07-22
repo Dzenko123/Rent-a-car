@@ -25,6 +25,11 @@ namespace RentACar.Services.Configurations
                    .WithMany()
                    .HasForeignKey(v => v.GorivoId)
                    .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasMany(v => v.VoziloPregled)
+                   .WithOne(vp => vp.Vozilo)
+                   .HasForeignKey(vp => vp.VoziloId)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

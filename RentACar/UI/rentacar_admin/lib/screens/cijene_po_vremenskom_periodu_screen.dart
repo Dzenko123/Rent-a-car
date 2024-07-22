@@ -23,7 +23,6 @@ class CijenePoVremenskomPerioduScreen extends StatefulWidget {
 
 class _CijenePoVremenskomPerioduScreenState
     extends State<CijenePoVremenskomPerioduScreen> {
-      
   SearchResult<CijenePoVremenskomPeriodu>? cijenePoVremenskomPerioduResult;
   SearchResult<Period>? periodResult;
   SearchResult<Vozilo>? vozilaResult;
@@ -78,13 +77,18 @@ class _CijenePoVremenskomPerioduScreenState
       await initForm();
       setState(() {});
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Period uspješno obrisan.')),
+        const SnackBar(
+          content: Text('Period uspješno obrisan.'),
+          backgroundColor: Colors.green,
+        ),
       );
     } catch (e) {
       print('Greška prilikom brisanja perioda: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Došlo je do pogreške prilikom brisanja perioda.')),
+          content: Text('Došlo je do pogreške prilikom brisanja perioda.'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
@@ -258,9 +262,27 @@ class _CijenePoVremenskomPerioduScreenState
             ),
           ),
           const SizedBox(width: 10),
-          Flexible(
-            child: ElevatedButton(
-              onPressed: () async {
+         Flexible(
+  child: ElevatedButton(
+    onPressed: () async {
+      if (availableVehicles.isEmpty) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Sva vozila su već unijeta u tabelu'),
+              actions: <Widget>[
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
                 var enteredValues = await showDialog<Map<String, dynamic>>(
                   context: context,
                   builder: (BuildContext context) {
@@ -290,9 +312,10 @@ class _CijenePoVremenskomPerioduScreenState
                                 const InputDecoration(labelText: 'Vozilo'),
                           ),
                           TextFormField(
-                            initialValue: minPeriodId.toString(),
+                            initialValue:
+                                periodResult?.result.first.trajanje ?? '',
                             decoration:
-                                const InputDecoration(labelText: 'Period(redni broj)'),
+                                const InputDecoration(labelText: 'Trajanje'),
                             readOnly: true,
                             onChanged: (value) {
                               _initialValue['periodId'] =
@@ -365,7 +388,9 @@ class _CijenePoVremenskomPerioduScreenState
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                          content: Text('Podaci uspješno spremljeni!')),
+                        content: Text('Podaci uspješno spremljeni!'),
+                        backgroundColor: Colors.green,
+                      ),
                     );
                     await initForm();
                     setState(() {});
@@ -377,7 +402,7 @@ class _CijenePoVremenskomPerioduScreenState
                               'Došlo je do pogreške pri spremanju podataka.')),
                     );
                   }
-                }
+                }}
               },
               child: const Text('Unesi novo vozilo u tabelu'),
             ),

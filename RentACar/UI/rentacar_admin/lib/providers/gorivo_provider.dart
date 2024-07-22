@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 class GorivoProvider extends BaseProvider<Gorivo> {
   static const String _baseUrl = String.fromEnvironment("baseUrl",
-      defaultValue: "http://localhost:7284/");
+      defaultValue: "https://localhost:7284/");
   static const String _endpoint = "Gorivo";
   GorivoProvider() : super("Gorivo");
 

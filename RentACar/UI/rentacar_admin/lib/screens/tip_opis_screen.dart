@@ -35,16 +35,18 @@ class _TipOpisScreenState extends State<TipOpisScreen> {
 
   Future<void> initForm() async {
     tipVozilaResult = await _tipVozilaProvider.get();
-    setState(() {
-      isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Unos Tipa i Opisa'),
+        title: const Text('Unos tipa i opisa za vozilo'),
       ),
       body: isLoading
           ? const Center(
@@ -107,39 +109,41 @@ class _TipOpisScreenState extends State<TipOpisScreen> {
     );
   }
 
-  void _saveForm() async {
-    if (_formKey.currentState!.saveAndValidate()) {
-      var request = Map<String, dynamic>.from(_formKey.currentState!.value);
+ void _saveForm() async {
+  if (_formKey.currentState!.saveAndValidate()) {
+    var request = Map<String, dynamic>.from(_formKey.currentState!.value);
+    TipVozila? savedTipVozila;
 
-      try {
-        if (widget.tipVozila == null) {
-          await _tipVozilaProvider.insert(request);
-        } else {
-          await _tipVozilaProvider.update(
-              widget.tipVozila!.tipVozilaId!, request);
+    try {
+      if (widget.tipVozila == null) {
+        savedTipVozila = await _tipVozilaProvider.insert(request);
+      } else {
+        savedTipVozila = await _tipVozilaProvider.update(widget.tipVozila!.tipVozilaId!, request);
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(backgroundColor: Colors.green,
+          content: Text('Podaci su uspješno sačuvani!'),
+        ),
+      );
+
+      if (mounted) {Navigator.of(context).pop(savedTipVozila);}
+    }on Exception catch (e) {
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text("Error"),
+              content: Text(e.toString()),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("OK"),
+                ),
+              ],
+            ),
+          );
         }
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Podaci su uspješno sačuvani!'),
-          ),
-        );
-
-        Navigator.of(context).pop(true);
-      } on Exception catch (e) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-            title: const Text("Error"),
-            content: Text(e.toString()),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("OK"),
-              ),
-            ],
-          ),
-        );
       }
     }
   }

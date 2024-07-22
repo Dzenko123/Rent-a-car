@@ -18,7 +18,7 @@ namespace RentACar.Services.Configurations
             builder.HasOne(vp => vp.Vozilo)
                    .WithMany(vp => vp.VoziloPregled)
                    .HasForeignKey(vp => vp.VoziloId)
-                   .OnDelete(DeleteBehavior.Restrict);
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

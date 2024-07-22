@@ -7,7 +7,7 @@ import 'package:rentacar_admin/providers/base_provider.dart';
 
 class VozilaProvider extends BaseProvider<Vozilo> {
   static const String _baseUrl = String.fromEnvironment("baseUrl",
-      defaultValue: "http://localhost:7284/");
+      defaultValue: "https://localhost:7284/");
   static const String _endpoint = "Vozila";
 
   VozilaProvider() : super(_endpoint);
@@ -33,19 +33,20 @@ class VozilaProvider extends BaseProvider<Vozilo> {
   }
 
   @override
-  bool isValidResponse(Response response) {
-    if (response.statusCode < 299) {
-      return true;
-    } else if (response.statusCode == 401) {
-      throw Exception("Unauthorized");
-    } else if (response.statusCode == 500) {
-      throw Exception(
-          "Došlo je do greške u spremanju podataka! (status:${response.statusCode})");
-    } else {
-      throw Exception(
-          "Vozilo je rezervisano!");
-    }
+bool isValidResponse(Response response) {
+  if (response.statusCode < 299) {
+    return true;
+  } else if (response.statusCode == 401) {
+    throw Exception("Unauthorized");
+  } else if (response.statusCode == 500) {
+    throw Exception("Došlo je do greške u spremanju podataka! (status:${response.statusCode})");
+  } else if (response.statusCode == 400) {
+    throw Exception("Podaci nisu spašeni, vozilo mora biti u draft stanju!");
+  } else {
+    throw Exception("Nepoznata greška: status ${response.statusCode}");
   }
+}
+
 
   Future<Vozilo> hide(int id) async {
     final url = '$_baseUrl$_endpoint/$id/hide';
