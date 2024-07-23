@@ -29,6 +29,7 @@ class _CijenePoVremenskomPerioduScreenState
   late CijenePoVremenskomPerioduProvider _cijenePoVremenskomPerioduProvider;
   late PeriodProvider _periodProvider;
   late VozilaProvider _vozilaProvider;
+final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _ftsController = TextEditingController();
   bool isLoading = true;
@@ -64,10 +65,13 @@ class _CijenePoVremenskomPerioduScreenState
     vozilaResult = await _vozilaProvider.get();
 
     if (periodResult?.result.isNotEmpty ?? false) {
-      minPeriodId = periodResult!.result
-          .map((period) => period.periodId!)
-          .reduce((a, b) => a < b ? a : b);
-    }
+    // Pronađi period s najmanjim trajanjem
+    minPeriodId = periodResult!.result.reduce((a, b) {
+      int daysA = calculateDayDifference(a.trajanje!);
+      int daysB = calculateDayDifference(b.trajanje!);
+      return daysA < daysB ? a : b;
+    }).periodId;
+print('Minimalni period ID: $minPeriodId');  }
     setState(() {});
   }
 
@@ -258,154 +262,169 @@ class _CijenePoVremenskomPerioduScreenState
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
               ),
-              child: const Text("Otvori PeriodScreen"),
+              child: const Text("Dodaj novi period u tabelu"),
             ),
           ),
           const SizedBox(width: 10),
          Flexible(
   child: ElevatedButton(
-    onPressed: () async {
-      if (availableVehicles.isEmpty) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Sva vozila su već unijeta u tabelu'),
-              actions: <Widget>[
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-      } else {
-                var enteredValues = await showDialog<Map<String, dynamic>>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    _initialValue['cijena'] = null;
+  onPressed: () async {
+    if (availableVehicles.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Sva vozila su već unijeta u tabelu'),
+            actions: <Widget>[
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      var enteredValues = await showDialog<Map<String, dynamic>>(
+        context: context,
+        builder: (BuildContext context) {
+          _initialValue['cijena'] = null;
+          _initialValue['voziloId'] = null; _initialValue['periodId'] = minPeriodId.toString();
+          final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-                    return AlertDialog(
-                      title: const Text('Unesi novo vozilo'),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          DropdownButtonFormField<String>(
-                            value: _initialValue['voziloId'] = availableVehicles
+          return AlertDialog(
+            title: const Text('Unesite novo vozilo'),
+            content: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  DropdownButtonFormField<String>(
+value: _initialValue['voziloId'] = availableVehicles
                                     .isNotEmpty
                                 ? availableVehicles.first.voziloId.toString()
                                 : null,
-                            items: availableVehicles.map((vozilo) {
-                              return DropdownMenuItem<String>(
-                                value: vozilo.voziloId.toString(),
-                                child: Text(
-                                    'Marka:${vozilo.marka}; model: ${vozilo.model}'),
-                              );
-                            }).toList(),
-                            onChanged: (String? selectedValue) {
-                              _initialValue['voziloId'] = selectedValue;
-                            },
-                            decoration:
-                                const InputDecoration(labelText: 'Vozilo'),
-                          ),
-                          TextFormField(
-                            initialValue:
-                                periodResult?.result.first.trajanje ?? '',
-                            decoration:
-                                const InputDecoration(labelText: 'Trajanje'),
-                            readOnly: true,
-                            onChanged: (value) {
-                              _initialValue['periodId'] =
-                                  minPeriodId.toString();
-                            },
-                          ),
-                          TextFormField(
-                            decoration: const InputDecoration(
-                              labelText: 'Cijena',
-                              hintText: 'Format cijene: npr. 67.5',
-                            ),
-                            keyboardType: const TextInputType.numberWithOptions(
-                                decimal: true),
-                            onChanged: (value) {
-                              _initialValue['cijena'] = value;
-                            },
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d*\.?\d{0,1}$')),
-                            ],
-                          ),
-                        ],
-                      ),
-                      actions: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text('Odustani'),
-                        ),
-                        ElevatedButton(
-                          onPressed: () async {
-                            if (_initialValue['voziloId'] != null &&
-                                _initialValue['periodId'] != null &&
-                                _initialValue['cijena'] != null) {
-                              Navigator.of(context).pop(_initialValue);
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content:
-                                      Text('Molimo unesite sve vrijednosti.'),
-                                ),
-                              );
-                            }
-                          },
-                          child: const Text('Spremi'),
-                        ),
-                      ],
-                    );
-                  },
-                );
+                                                    items: availableVehicles.map((vozilo) {
+                      return DropdownMenuItem<String>(
+                        value: vozilo.voziloId.toString(),
+                        child: Text('Marka: ${vozilo.marka}; model: ${vozilo.model}'),
+                      );
+                    }).toList(),
+                    onChanged: (String? selectedValue) {
+                      _initialValue['voziloId'] = selectedValue;
+                      _formKey.currentState?.validate();
+                    },
+                    decoration: const InputDecoration(
+                      labelText: 'Vozilo',
+                      errorMaxLines: 2,
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Molimo odaberite vozilo.';
+                      }
+                      return null;
+                    },
+                  ),
+                 TextFormField(
+  initialValue: periodResult?.result.firstWhere(
+    (period) => period.periodId == minPeriodId,
+    orElse: () => periodResult!.result.first,
+  ).trajanje ?? '',
+  decoration: const InputDecoration(labelText: 'Trajanje (početni period)'),
+  readOnly: true,
+  onChanged: (value) {
+    _initialValue['periodId'] = minPeriodId.toString();
+    _formKey.currentState?.validate();
+  },
+  validator: (value) {
+    if (minPeriodId == null) {
+      return 'Molimo odaberite period.';
+    }
+    return null;
+  },
+),
 
-                if (enteredValues != null) {
-                  int voziloId =
-                      int.tryParse(enteredValues['voziloId'] ?? '') ?? 0;
-                  int periodId =
-                      int.tryParse(enteredValues['periodId'] ?? '') ?? 0;
-                  double cijena =
-                      double.tryParse(enteredValues['cijena'] ?? '') ?? 0.0;
-
-                  var newCijena = CijenePoVremenskomPeriodu(
-                    voziloId: voziloId,
-                    periodId: periodId,
-                    cijena: cijena,
-                  );
-
-                  try {
-                    var result = await _cijenePoVremenskomPerioduProvider
-                        .insert(newCijena);
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Podaci uspješno spremljeni!'),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
-                    await initForm();
-                    setState(() {});
-                  } catch (e) {
-                    print("Greška prilikom spremanja: $e");
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text(
-                              'Došlo je do pogreške pri spremanju podataka.')),
-                    );
-                  }
-                }}
-              },
-              child: const Text('Unesi novo vozilo u tabelu'),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Cijena',
+                      hintText: 'Format cijene: npr. 67.5',
+                    ),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    onChanged: (value) {
+                      _initialValue['cijena'] = value;
+                      _formKey.currentState?.validate();
+                    },
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Molimo unesite cijenu.';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              ),
             ),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Odustani'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState?.validate() ?? false) {
+                    Navigator.of(context).pop(_initialValue);
+                  }
+                },
+                child: const Text('Spremi'),
+              ),
+            ],
+          );
+        },
+      );
+
+      if (enteredValues != null) {
+        int voziloId = int.tryParse(enteredValues['voziloId'] ?? '') ?? 0;
+        int periodId = int.tryParse(enteredValues['periodId'] ?? '') ?? 0;
+        double cijena = double.tryParse(enteredValues['cijena'] ?? '') ?? 0.0;
+
+        var newCijena = CijenePoVremenskomPeriodu(
+          voziloId: voziloId,
+          periodId: periodId,
+          cijena: cijena,
+        );
+
+        try {
+          var result = await _cijenePoVremenskomPerioduProvider.insert(newCijena);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Podaci uspješno spremljeni!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          await initForm();
+          setState(() {});
+        } catch (e) {
+          print("Greška prilikom spremanja: $e");
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Došlo je do pogreške pri spremanju podataka.'),
+            ),
+          );
+        }
+      }
+    }
+  },
+  child: const Text('Unesite novo vozilo u tabelu'),
+),
+
           ),
         ],
       ),
@@ -504,147 +523,216 @@ class _CijenePoVremenskomPerioduScreenState
                 ),
               ),
               ...(displayedPeriods.map<DataColumn>((period) {
-                    return DataColumn(
-                      label: Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () async {
-                              String? newDuration = await showDialog<String>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  String currentDuration =
-                                      period.trajanje ?? '';
-                                  TextEditingController durationController =
-                                      TextEditingController(
-                                          text: currentDuration);
-                                  return AlertDialog(
-                                    title: const Text('Uredi trajanje perioda'),
-                                    content: TextFormField(
-                                      controller: durationController,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Trajanje perioda'),
-                                      validator: _validatePeriod,
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop(null);
-                                        },
-                                        child: const Text('Odustani'),
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          if (_validatePeriod(
-                                                  durationController.text) ==
-                                              null) {
-                                            Navigator.of(context)
-                                                .pop(durationController.text);
-                                          } else {
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return AlertDialog(
-                                                  title: const Text('Greška'),
-                                                  content: Text(_validatePeriod(
-                                                      durationController
-                                                          .text)!),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                      child: const Text('OK'),
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          }
-                                        },
-                                        child: const Text('Spasi'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                              if (newDuration != null) {
-                                setState(() {
-                                  period.trajanje = newDuration;
-                                });
-                                await _periodProvider.update(period.periodId!,
-                                    {'trajanje': newDuration});
-                              }
-                            },
-                            child: MouseRegion(
-                              cursor: SystemMouseCursors.click,
-                              child: Tooltip(
-                                message: "Uredi period",
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 6),
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Text(
-                                      period.trajanje ?? "",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          GestureDetector(
-                            onTap: () async {
-                              bool? confirmDelete = await showDialog<bool>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text('Potvrda brisanja'),
-                                    content: const Text(
-                                        'Da li ste sigurni da želite obrisati ovaj period?'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop(false);
-                                        },
-                                        child: const Text('Odustani'),
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop(true);
-                                        },
-                                        child: const Text('Obriši'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
+  return DataColumn(
+    label: Row(
+      children: [
+        GestureDetector(
+          onTap: () async {
+            String? newDuration = await showDialog<String>(
+              context: context,
+              builder: (BuildContext context) {
+                String currentDuration = period.trajanje ?? '';
+                TextEditingController durationController =
+                    TextEditingController(text: currentDuration);
+                final _formKey = GlobalKey<FormState>();
+                String? errorMessage;
 
-                              if (confirmDelete == true) {
-                                await _deletePeriod(period.periodId!);
-                              }
-                            },
-                            child: MouseRegion(
-                              cursor: SystemMouseCursors.click,
-                              child: Tooltip(
-                                message: "Obriši period",
-                                child: Icon(
-                                  Icons.delete,
-                                  color: Colors.red,
-                                ),
-                              ),
+                return AlertDialog(
+                  title: const Text('Uredi trajanje perioda'),
+                  content: Form(
+                    key: _formKey,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextFormField(
+                          controller: durationController,
+                          decoration: InputDecoration(
+                            labelText: 'Trajanje perioda',
+                            errorText: errorMessage,
+                          ),
+                          validator: (value) {
+                            if (value == null || !RegExp(r'^\d+-\d+ dana$').hasMatch(value)) {
+                              return 'Format treba biti "n-n dana"';
+                            }
+
+                            var parts = value.split('-');
+                            var firstDay = int.tryParse(parts[0]);
+                            var secondDay = int.tryParse(parts[1].split(' ')[0]);
+
+                            if (firstDay == null || secondDay == null || firstDay >= secondDay) {
+                              return 'Prvi dan treba biti manji od drugog';
+                            }
+
+                            if (value == currentDuration) {
+                              return 'Novi period isti kao prethodni';
+                            }
+
+                            // Provjera da li period već postoji
+                            bool periodExists = displayedPeriods.any((p) => p.trajanje == value);
+                            if (periodExists) {
+                              return 'Uneseni period već postoji!';
+                            }
+
+                            return null;
+                          },
+                          onChanged: (value) {
+                            final form = _formKey.currentState;
+                            if (form != null) {
+                              form.validate();
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 8),
+                        if (errorMessage != null) 
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(
+                              errorMessage!,
+                              style: TextStyle(color: Colors.red),
                             ),
                           ),
-                        ],
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(null);
+                      },
+                      child: const Text('Odustani'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        final form = _formKey.currentState!;
+                        if (form.validate()) {
+                          Navigator.of(context)
+                              .pop(durationController.text);
+                        }
+                      },
+                      child: const Text('Spasi'),
+                    ),
+                  ],
+                );
+              },
+            );
+
+            if (newDuration != null) {
+              setState(() {
+                period.trajanje = newDuration;
+              });
+              try {
+                await _periodProvider.update(period.periodId!, {'trajanje': newDuration});
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Trajanje perioda uspješno ažurirano!'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Greška prilikom ažuriranja perioda'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            }
+          },
+          child: MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: Tooltip(
+              message: "Uredi period",
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Text(
+                    period.trajanje ?? "",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        GestureDetector(
+  onTap: () async {
+    bool? confirmDelete = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Potvrda brisanja'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 8),
+              RichText(
+                text: TextSpan(
+                  text: 'OPREZ - ',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red,
+                    fontSize: 16
+                  ),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: ' Brisanjem perioda brišu se i sve cijene za taj period ukoliko postoje!',
+                      style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 13,
+                        color: Colors.black,
                       ),
-                    );
-                  }).toList() ??
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: const Text('Odustani'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: const Text('Obriši'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmDelete == true) {
+      await _deletePeriod(period.periodId!);
+    }
+  },
+  child: MouseRegion(
+    cursor: SystemMouseCursors.click,
+    child: Tooltip(
+      message: "Obriši period",
+      child: Icon(
+        Icons.delete,
+        color: Colors.red,
+      ),
+    ),
+  ),
+),
+
+      ],
+    ),
+  );
+}).toList() ??
                   []),
             ],
             rows: groupedResults.entries.map<DataRow>((entry) {
@@ -739,176 +827,204 @@ class _CijenePoVremenskomPerioduScreenState
                               children: [
                                 if (cijenaZaPeriod.cijena != null)
                                   GestureDetector(
-                                    onTap: () async {
-                                      double? newPrice = await showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          double currentPrice =
-                                              cijenaZaPeriod.cijena ?? 0.0;
-                                          return AlertDialog(
-                                            title: const Text('Uredi cijenu'),
-                                            content: TextFormField(
-                                              decoration: const InputDecoration(
-                                                labelText: 'Cijena',
-                                                hintText:
-                                                    'Format cijene: npr. 67.5',
-                                              ),
-                                              initialValue:
-                                                  currentPrice.toString(),
-                                              keyboardType: const TextInputType
-                                                  .numberWithOptions(
-                                                  decimal: true),
-                                              onChanged: (value) {
-                                                currentPrice =
-                                                    double.tryParse(value) ??
-                                                        currentPrice;
-                                              },
-                                              inputFormatters: [
-                                                FilteringTextInputFormatter
-                                                    .allow(RegExp(
-                                                        r'^\d*\.?\d{0,1}$')),
-                                              ],
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.of(context)
-                                                      .pop(null);
-                                                },
-                                                child: const Text('Odustani'),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.of(context)
-                                                      .pop(currentPrice);
-                                                },
-                                                child: const Text('Spasi'),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                      if (newPrice != null) {
-                                        setState(() {
-                                          cijenaZaPeriod.cijena = newPrice;
-                                        });
-                                        await _cijenePoVremenskomPerioduProvider
-                                            .update(
-                                                cijenaZaPeriod
-                                                    .cijenePoVremenskomPerioduId!,
-                                                cijenaZaPeriod);
-                                      }
-                                    },
-                                    child: MouseRegion(
-                                      cursor: SystemMouseCursors.click,
-                                      child: Tooltip(
-                                        message: "Uredi cijenu",
-                                        child: SingleChildScrollView(
-                                          scrollDirection: Axis.horizontal,
-                                          child: Text(
-                                            cijenaZaPeriod.cijena?.toString() ??
-                                                "",
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  )
+  onTap: () async {
+    double? newPrice = await showDialog<double>(
+      context: context,
+      builder: (BuildContext context) {
+        double currentPrice = cijenaZaPeriod.cijena ?? 0.0;
+        final priceController = TextEditingController(text: currentPrice.toString());
+        final formKey = GlobalKey<FormState>();
+
+        return AlertDialog(
+          title: const Text('Uredi cijenu'),
+          content: Form(
+            key: formKey,
+            child: TextFormField(
+              controller: priceController,
+              decoration: const InputDecoration(
+                labelText: 'Cijena',
+                hintText: 'Format cijene: npr. 67.5',
+              ),
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Cijena je obavezna.';
+                }
+                if (double.tryParse(value) == null) {
+                  return 'Unesite valjani broj.';
+                }
+                return null;
+              },
+              onChanged: (value) {
+                // Automatski validiraj prilikom promjene
+                formKey.currentState?.validate();
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(null);
+              },
+              child: const Text('Odustani'),
+            ),
+            TextButton(
+              onPressed: () {
+                if (formKey.currentState?.validate() ?? false) {
+                  Navigator.of(context).pop(double.tryParse(priceController.text));
+                }
+              },
+              child: const Text('Spasi'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (newPrice != null) {
+      setState(() {
+        cijenaZaPeriod.cijena = newPrice;
+      });
+      await _cijenePoVremenskomPerioduProvider.update(
+        cijenaZaPeriod.cijenePoVremenskomPerioduId!,
+        cijenaZaPeriod,
+      );
+    }
+  },
+  child: MouseRegion(
+    cursor: SystemMouseCursors.click,
+    child: Tooltip(
+      message: "Uredi cijenu",
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Text(
+          cijenaZaPeriod.cijena?.toString() ?? "",
+        ),
+      ),
+    ),
+  ),
+)
+
                                 else
                                   ElevatedButton(
                                     onPressed: () async {
                                       var enteredPrice =
                                           await showDialog<double>(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: const Text('Unesi cijenu'),
-                                            content: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Text('Vozilo broj: $voziloId'),
-                                                Text(
-                                                    'Period broj: ${period.periodId}'),
-                                                TextFormField(
-                                                  decoration:
-                                                      const InputDecoration(
-                                                    labelText: 'Cijena',
-                                                    hintText:
-                                                        'Format cijene: npr. 67.5',
-                                                  ),
-                                                  keyboardType:
-                                                      const TextInputType
-                                                          .numberWithOptions(
-                                                          decimal: true),
-                                                  onChanged: (value) {
-                                                    _initialValue['cijena'] =
-                                                        value;
-                                                  },
-                                                  inputFormatters: [
-                                                    FilteringTextInputFormatter
-                                                        .allow(RegExp(
-                                                            r'^\d*\.?\d{0,1}$')),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.of(context)
-                                                      .pop(null);
-                                                },
-                                                child: const Text('Cancel'),
-                                              ),
-                                              ElevatedButton(
-                                                onPressed: () async {
-                                                  double cijena = double.tryParse(
-                                                          _initialValue[
-                                                                  'cijena'] ??
-                                                              '') ??
-                                                      0.0;
+  context: context,
+  builder: (BuildContext context) {
+    return AlertDialog(
+      title: const Text('Unesite cijenu'),
+      content: Form(
+        key: _formKey,
+        child: Column(
+  mainAxisSize: MainAxisSize.min,
+  children: [
+    RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+            text: 'Marka: ',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+          ),
+          TextSpan(
+            text: '${vozilo!.marka}; ',
+            style: TextStyle(color: Colors.black),
+          ),
+          TextSpan(
+            text: 'model: ',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+          ),
+          TextSpan(
+            text: '${vozilo.model}',
+            style: TextStyle(color: Colors.black),
+          ),
+        ],
+      ),
+    ),
+    RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+            text: 'Period trajanja: ',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+          ),
+          TextSpan(
+            text: '${period.trajanje ?? ''}',
+            style: TextStyle(color: Colors.black),
+          ),
+        ],
+      ),
+    ),
+    TextFormField(
+      decoration: const InputDecoration(
+        labelText: 'Cijena',
+        hintText: 'Format cijene: npr. 67.5',
+      ),
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      initialValue: '',
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Cijena je obavezna';
+        }
+        if (double.tryParse(value) == null) {
+          return 'Unesite validnu cijenu';
+        }
+        return null;
+      },
+      onChanged: (value) {
+        _initialValue['cijena'] = value;
+      },
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,1}$')),
+      ],
+    ),
+  ],
+),
 
-                                                  var newCijena =
-                                                      CijenePoVremenskomPeriodu(
-                                                    voziloId: voziloId,
-                                                    periodId: period.periodId,
-                                                    cijena: cijena,
-                                                  );
 
-                                                  try {
-                                                    var result =
-                                                        await _cijenePoVremenskomPerioduProvider
-                                                            .insert(newCijena);
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
-                                                      const SnackBar(
-                                                          content: Text(
-                                                              'Podaci uspješno spremljeni!')),
-                                                    );
-                                                    Navigator.of(context)
-                                                        .pop(cijena);
-                                                    await initForm();
-                                                    setState(() {});
-                                                  } catch (e) {
-                                                    print(
-                                                        'Error while creating new CijenePoVremenskomPeriodu: $e');
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
-                                                      const SnackBar(
-                                                          content: Text(
-                                                              'Došlo je do pogreške pri spremanju podataka.')),
-                                                    );
-                                                  }
-                                                },
-                                                child: const Text('Spasi'),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(null);
+          },
+          child: const Text('Odustani'),
+        ),
+        ElevatedButton(
+          onPressed: () async {
+            if (_formKey.currentState?.validate() ?? false) {
+              double cijena = double.tryParse(_initialValue['cijena'] ?? '') ?? 0.0;
+              var newCijena = CijenePoVremenskomPeriodu(
+                voziloId: voziloId,
+                periodId: period.periodId,
+                cijena: cijena,
+              );
+
+              try {
+                await _cijenePoVremenskomPerioduProvider.insert(newCijena);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Podaci uspješno spremljeni!'), backgroundColor: Colors.green,),
+                );
+                Navigator.of(context).pop();
+                await initForm();
+                setState(() {});
+              } catch (e) {
+                print('Error while creating new CijenePoVremenskomPeriodu: $e');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Došlo je do pogreške pri spremanju podataka.'),backgroundColor: Colors.red,),
+                );
+              }
+            }
+          },
+          child: const Text('Spasi'),
+        ),
+      ],
+    );
+  },
+);
+
                                     },
-                                    child: const Text('Unesi cijenu'),
+                                    child: const Text('Unesite cijenu'),
                                   ),
                                 if (cijenaZaPeriod.cijena != null)
                                   IconButton(
