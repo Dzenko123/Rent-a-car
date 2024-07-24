@@ -30,11 +30,6 @@ class _PeriodScreenState extends State<PeriodScreen> {
     initForm();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
   String? _validatePeriod(String? value) {
     if (value == null || !RegExp(r'^\d+-\d+ dana$').hasMatch(value)) {
       return 'Format treba biti "n-n dana"';
@@ -46,6 +41,11 @@ class _PeriodScreenState extends State<PeriodScreen> {
 
     if (firstDay == null || secondDay == null || firstDay >= secondDay) {
       return 'Prvi dan treba biti manji od drugog';
+    }
+
+    var lowerCaseValue = value.toLowerCase();
+    if (periodList.any((period) => period.trajanje!.toLowerCase() == lowerCaseValue)) {
+      return 'Period već postoji!';
     }
 
     return null;
@@ -77,16 +77,14 @@ class _PeriodScreenState extends State<PeriodScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Add the informational text here
                     const Text(
-                      'Na ovoj stranici imate mogućnost da dodate neki novi period za rentanje vozila koji ne postoji na prethodnoj tabeli. Nakon toga imate mogućnost postavljati željene cijene za novi period. Molimo da unesete neku nepostojeću i valjanu vrijednost za trajanje novog perioda.',
+                      'Dodajte neki novi period za rezervaciju vozila koji ne postoji na prethodnoj tabeli. Nakon toga imate mogućnost da postavljate željene cijene za novi period. Molimo da unesete neku nepostojeću i valjanu vrijednost za trajanje novog perioda.',
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 16.0), // Add some space between the text and the input field
+                    const SizedBox(height: 16.0),
                     FormBuilderTextField(
                       name: 'trajanje',
-                      decoration:
-                          const InputDecoration(labelText: 'Trajanje perioda'),
+                      decoration: const InputDecoration(labelText: 'Trajanje perioda'),
                       onChanged: (value) {
                         setState(() {
                           _autoValidate = true;
@@ -114,25 +112,6 @@ class _PeriodScreenState extends State<PeriodScreen> {
   void _saveForm() async {
     if (_formKey.currentState!.saveAndValidate()) {
       var request = Map.from(_formKey.currentState!.value);
-      var novoTrajanje = (request['trajanje'] as String?)?.toLowerCase();
-
-      if (periodList.any((period) => period.trajanje!.toLowerCase() == novoTrajanje)) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-            title: const Text("Greška"),
-            content: Text("Period '$novoTrajanje' već postoji!"),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("OK"),
-              ),
-            ],
-          ),
-        );
-        return;
-      }
-
       try {
         if (widget.period == null) {
           await _periodProvider.insert(request);

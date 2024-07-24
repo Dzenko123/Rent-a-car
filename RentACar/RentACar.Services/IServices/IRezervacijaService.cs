@@ -18,5 +18,6 @@ namespace RentACar.Services.IServices
 
         Task<bool> GradIsInUse(int gradId);
         Task<bool> DodatnaUslugaIsInUse(int dodatnaUslugaId);
+
     }
 }

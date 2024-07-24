@@ -8,8 +8,6 @@ namespace RentACar.Model.Requests
 {
     public class GradUpdateRequest
     {
-        public int GradId { get; set; }
-
         public string Naziv { get; set; }
     }
 }

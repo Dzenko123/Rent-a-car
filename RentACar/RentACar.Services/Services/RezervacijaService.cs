@@ -37,7 +37,14 @@ namespace RentACar.Services.Services
 
             return rezervacije;
         }
-
+        public override IQueryable<Database.Rezervacija> AddInclude(IQueryable<Database.Rezervacija> query, RezervacijaSearchObject? search = null)
+        {
+            if (search?.IsDodatneUslugeIncluded == true)
+            {
+                query = query.Include("DodatnaUsluga");
+            }
+            return base.AddInclude(query, search);
+        }
         public async Task<Rezervacija> InsertRezervacijaWithDodatneUsluge(RezervacijaInsertRequest request)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();

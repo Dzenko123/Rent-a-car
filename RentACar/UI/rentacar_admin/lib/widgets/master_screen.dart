@@ -65,15 +65,6 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               },
             ),
            ListTile(
-              title: const Text("Gradovi/dodatne usluge"),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => GradDodatneUslugeScreen(),
-                  ),
-                );
-              },
-            ),ListTile(
               title: const Text("Recenzije"),
               onTap: () {
                 Navigator.of(context).push(

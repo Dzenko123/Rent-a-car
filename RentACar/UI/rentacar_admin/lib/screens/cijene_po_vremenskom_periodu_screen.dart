@@ -65,7 +65,6 @@ final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     vozilaResult = await _vozilaProvider.get();
 
     if (periodResult?.result.isNotEmpty ?? false) {
-    // Pronađi period s najmanjim trajanjem
     minPeriodId = periodResult!.result.reduce((a, b) {
       int daysA = calculateDayDifference(a.trajanje!);
       int daysB = calculateDayDifference(b.trajanje!);
@@ -568,7 +567,6 @@ value: _initialValue['voziloId'] = availableVehicles
                               return 'Novi period isti kao prethodni';
                             }
 
-                            // Provjera da li period već postoji
                             bool periodExists = displayedPeriods.any((p) => p.trajanje == value);
                             if (periodExists) {
                               return 'Uneseni period već postoji!';
@@ -856,7 +854,6 @@ value: _initialValue['voziloId'] = availableVehicles
                 return null;
               },
               onChanged: (value) {
-                // Automatski validiraj prilikom promjene
                 formKey.currentState?.validate();
               },
             ),
