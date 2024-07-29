@@ -24,6 +24,35 @@ class MasterScreenWidget extends StatefulWidget {
 }
 
 class _MasterScreenWidgetState extends State<MasterScreenWidget> {
+  void _showLogoutConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Želite se odjaviti?'),
+          content: const Text('Jeste li sigurni da želite napustiti aplikaciju?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Ne'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                  (Route<dynamic> route) => false,
+                );
+              },
+              child: const Text('Da'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +72,6 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 );
               },
             ),
-
             ListTile(
               title: const Text("Cijene vozila po periodima"),
               onTap: () {
@@ -53,7 +81,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                   ),
                 );
               },
-            ), 
+            ),
             ListTile(
               title: const Text("Rezervacije"),
               onTap: () {
@@ -64,7 +92,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 );
               },
             ),
-           ListTile(
+            ListTile(
               title: const Text("Recenzije"),
               onTap: () {
                 Navigator.of(context).push(
@@ -73,7 +101,8 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                   ),
                 );
               },
-            ), ListTile(
+            ),
+            ListTile(
               title: const Text("Pregledi vozila"),
               onTap: () {
                 Navigator.of(context).push(
@@ -82,7 +111,8 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                   ),
                 );
               },
-            ),  ListTile(
+            ),
+            ListTile(
               title: const Text("Kontakt"),
               onTap: () {
                 Navigator.of(context).push(
@@ -102,24 +132,30 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 );
               },
             ),
-          
             ListTile(
               title: const Text("Izvjestaj"),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) =>  IzvjestajiPage(),
+                    builder: (context) => IzvjestajiPage(),
                   ),
                 );
               },
-            ),ListTile(
+            ),
+            ListTile(
               title: const Text("Profil"),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) =>  ProfilScreen(),
+                    builder: (context) => ProfilScreen(),
                   ),
                 );
+              },
+            ),
+            ListTile(
+              title: const Text("Odjava"),
+              onTap: () {
+                _showLogoutConfirmationDialog(context);
               },
             ),
           ],

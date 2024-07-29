@@ -15,6 +15,24 @@ namespace RentACar.Services.Services
             : base(context, mapper)
         {
         }
+        public override IQueryable<Database.Korisnici> AddFilter(IQueryable<Database.Korisnici> query, KorisniciSearchObject? search = null)
+        {
+            var filteredQuery = base.AddFilter(query, search);
+
+            if (!string.IsNullOrWhiteSpace(search?.FirstName) || !string.IsNullOrWhiteSpace(search?.LastName))
+            {
+                var firstNamePattern = search?.FirstName ?? "";
+                var lastNamePattern = search?.LastName ?? "";
+
+                filteredQuery = filteredQuery.Where(x =>
+                    (string.IsNullOrWhiteSpace(firstNamePattern) || EF.Functions.Like(x.Ime, $"%{firstNamePattern}%")) &&
+                    (string.IsNullOrWhiteSpace(lastNamePattern) || EF.Functions.Like(x.Prezime, $"%{lastNamePattern}%"))
+                );
+            }
+
+            return filteredQuery;
+        }
+
 
         public override async Task BeforeInsert(Database.Korisnici entity, KorisniciInsertRequest insert)
         {

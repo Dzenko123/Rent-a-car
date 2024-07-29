@@ -45,6 +45,8 @@ dependencies:
   fl_chart: ^0.68.0
   syncfusion_flutter_charts: ^25.2.7
   form_builder_validators: ^10.0.1
+  pdf: ^3.11.0
+  month_picker_dialog: ^4.0.1
   
 dev_dependencies:
   json_serializable: ^6.7.1
