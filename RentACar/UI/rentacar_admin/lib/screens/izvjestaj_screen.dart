@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:rentacar_admin/models/dodatna_usluga.dart';
 import 'package:rentacar_admin/models/grad.dart';
@@ -20,6 +22,7 @@ import 'package:rentacar_admin/providers/rezervacija_dodatna_usluga_provider.dar
 import 'package:rentacar_admin/providers/rezervacija_provider.dart';
 import 'package:rentacar_admin/providers/vozila_provider.dart';
 import 'package:rentacar_admin/utils/util.dart';
+import 'package:path/path.dart' as path;
 
 import '../../models/search_result.dart';
 import '../../widgets/master_screen.dart';
@@ -45,7 +48,8 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
   List<Korisnici> _korisnici = [];
   List<DodatnaUsluga> _dodatneUsluge = [];
   List<RezervacijaDodatnaUsluga> _rezervacijeDodatneUsluge = [];
-
+  Map<String, Korisnici> korisniciMap = {};
+  Map<String, Grad> gradoviMap = {};
   String? _selectedKorisnik = 'Svi korisnici';
   String? _selectedMonth = 'Svi mjeseci';
   String? _selectedYear = 'Sve godine';
@@ -73,6 +77,14 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
       _dodatneUsluge = (await _dodatnaUslugaProvider.get()).result;
       _rezervacijeDodatneUsluge =
           (await _rezervacijaDodatnaUslugaProvider.get()).result;
+      Map<String, Korisnici> korisniciMap = {
+        for (var korisnik in _korisnici)
+          korisnik.korisnikId.toString(): korisnik
+      };
+
+      Map<String, Grad> gradoviMap = {
+        for (var grad in _gradovi) grad.gradId.toString(): grad
+      };
 
       if (mounted) {
         setState(() {});
@@ -120,6 +132,9 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
           .toList();
     } else {
       int? selectedYear = int.tryParse(_selectedYear!);
+      if (selectedYear == null) {
+        return [];
+      }
       return _rezervacije
           .where(
               (rezervacija) => rezervacija.pocetniDatum?.year == selectedYear)
@@ -142,7 +157,12 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
     }
 
     if (_selectedMonth != 'Svi mjeseci') {
-      var month = int.tryParse(_selectedMonth!);
+      int? month = _selectedMonth != 'Svi mjeseci'
+          ? int.tryParse(_selectedMonth!)
+          : null;
+      if (month == null) {
+        return [];
+      }
       filteredGradovi = filteredGradovi.where((grad) {
         return _rezervacije.any((rezervacija) =>
             rezervacija.gradId.toString() == grad.gradId.toString() &&
@@ -151,7 +171,11 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
     }
 
     if (_selectedYear != 'Sve godine') {
-      var year = int.tryParse(_selectedYear!);
+      int? year =
+          _selectedYear != 'Sve godine' ? int.tryParse(_selectedYear!) : null;
+      if (year == null) {
+        return [];
+      }
       filteredGradovi = filteredGradovi.where((grad) {
         return _rezervacije.any((rezervacija) =>
             rezervacija.gradId.toString() == grad.gradId.toString() &&
@@ -349,6 +373,17 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
                       ),
                     ),
                   ),
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          await _generateAndDownloadPdf();
+                        },
+                        child: Text('Download PDF'),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -370,6 +405,375 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
         ),
       ),
     );
+  }
+
+  String replaceSpecialChars(String input) {
+    return input
+        .replaceAll('š', 's')
+        .replaceAll('č', 'c')
+        .replaceAll('ć', 'c')
+        .replaceAll('đ', 'd')
+        .replaceAll('ž', 'z');
+  }
+
+  Future<void> _generateAndDownloadPdf() async {
+    final pdf = pw.Document();
+    final dateFormat = DateFormat('dd.MM.yyyy');
+    final now = DateTime.now();
+    final timestamp = DateFormat('yyyyMMdd_HHmmss').format(now);
+
+    final selectedYear =
+        _selectedYear != 'Sve godine' ? _selectedYear : 'Sve godine';
+    final selectedMonth =
+        _selectedMonth != 'Svi mjeseci' ? _selectedMonth : 'Svi mjeseci';
+    final selectedGrad =
+        _selectedGrad != 'Svi gradovi' ? _selectedGrad : 'Svi gradovi';
+    final selectedKorisnik = _selectedKorisnik != 'Svi korisnici'
+        ? _selectedKorisnik
+        : 'Svi korisnici';
+
+    final image = pw.MemoryImage(
+      (await rootBundle.load('assets/images/rent.jpg')).buffer.asUint8List(),
+    );
+
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) => pw.Center(
+          child: pw.Column(
+            mainAxisSize: pw.MainAxisSize.min,
+            crossAxisAlignment: pw.CrossAxisAlignment.center,
+            children: [
+              pw.Image(image, width: 400, height: 400),
+              pw.SizedBox(height: 20),
+              pw.Text(
+                'Rent a Car Izvjestaj',
+                style: pw.TextStyle(
+                  fontSize: 24,
+                  fontWeight: pw.FontWeight.bold,
+                  color: PdfColors.blue800,
+                ),
+              ),
+              pw.SizedBox(height: 10),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.center,
+                children: [
+                  pw.Text(
+                    'Korisnik/ci: ',
+                    style: pw.TextStyle(
+                      fontSize: 16,
+                      color: PdfColors.black,
+                    ),
+                  ),
+                  pw.Text(
+                    '${replaceSpecialChars(_korisnici.firstWhere((k) => k.korisnikId.toString() == selectedKorisnik, orElse: () => Korisnici(null, null, null, null, null, null, null, null, null)).ime ?? 'Svi korisnici')} ${replaceSpecialChars(_korisnici.firstWhere((k) => k.korisnikId.toString() == selectedKorisnik, orElse: () => Korisnici(null, null, null, null, null, null, null, null, null)).prezime ?? '')}',
+                    style: pw.TextStyle(
+                      fontSize: 16,
+                      fontWeight: pw.FontWeight.bold,
+                      color: PdfColors.blue900,
+                    ),
+                  ),
+                ],
+              ),
+              pw.SizedBox(height: 5),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.center,
+                children: [
+                  pw.Text(
+                    'Mjesec/i: ',
+                    style: pw.TextStyle(
+                      fontSize: 16,
+                      color: PdfColors.black,
+                    ),
+                  ),
+                  pw.Text(
+                    '$selectedMonth',
+                    style: pw.TextStyle(
+                      fontSize: 16,
+                      fontWeight: pw.FontWeight.bold,
+                      color: PdfColors.blue900,
+                    ),
+                  ),
+                ],
+              ),
+              pw.SizedBox(height: 5),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.center,
+                children: [
+                  pw.Text(
+                    'Godina/e: ',
+                    style: pw.TextStyle(
+                      fontSize: 16,
+                      color: PdfColors.black,
+                    ),
+                  ),
+                  pw.Text(
+                    '$selectedYear',
+                    style: pw.TextStyle(
+                      fontSize: 16,
+                      fontWeight: pw.FontWeight.bold,
+                      color: PdfColors.blue900,
+                    ),
+                  ),
+                ],
+              ),
+              pw.SizedBox(height: 5),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.center,
+                children: [
+                  pw.Text(
+                    'Grad/ovi: ',
+                    style: pw.TextStyle(
+                      fontSize: 16,
+                      color: PdfColors.black,
+                    ),
+                  ),
+                  pw.Text(
+                    '${replaceSpecialChars(_gradovi.firstWhere((g) => g.gradId.toString() == selectedGrad, orElse: () => Grad(null, null)).naziv ?? 'Svi gradovi')}',
+                    style: pw.TextStyle(
+                      fontSize: 16,
+                      fontWeight: pw.FontWeight.bold,
+                      color: PdfColors.blue900,
+                    ),
+                  ),
+                ],
+              ),
+              pw.SizedBox(height: 10),
+              pw.Text(
+                'Izvjestaj generisan na datum: ${dateFormat.format(now)}',
+                style: pw.TextStyle(
+                  fontSize: 16,
+                  fontWeight: pw.FontWeight.bold,
+                  color: PdfColors.grey900,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          final filteredReservations = getFilteredReservations();
+          final months = getMonthsWithReservations();
+          final groupedByUser = groupByUser(filteredReservations);
+
+          final columnHeaders = <String>['Korisnik'];
+          if (selectedMonth != 'Svi mjeseci') {
+            final year = selectedYear != null
+                ? int.tryParse(selectedYear!)
+                : DateTime.now().year;
+
+            if (year != null) {
+              columnHeaders.addAll(List.generate(
+                  DateTime(year, int.parse(selectedMonth!), 0).day,
+                  (index) => (index + 1).toString()));
+            } else {
+              columnHeaders
+                  .addAll(List.generate(31, (index) => (index + 1).toString()));
+            }
+          } else {
+            columnHeaders.addAll([
+              'Jan',
+              'Feb',
+              'Mar',
+              'Apr',
+              'May',
+              'Jun',
+              'Jul',
+              'Aug',
+              'Sep',
+              'Oct',
+              'Nov',
+              'Dec'
+            ]);
+          }
+          columnHeaders.add('Ukupno');
+
+          final rows = groupedByUser.entries.map((entry) {
+            final korisnik = entry.key;
+            final rezervacije = entry.value;
+
+            List<String> row = [
+              '${replaceSpecialChars(korisnik.ime ?? '')}\n${replaceSpecialChars(korisnik.prezime ?? '')}'
+            ];
+
+            if (selectedMonth != 'Svi mjeseci') {
+              final year = selectedYear != 'Sve godine'
+                  ? int.tryParse(selectedYear!)
+                  : DateTime.now().year;
+
+              if (year != null) {
+                final daysInMonth = List.generate(
+                  DateTime(year, int.parse(selectedMonth!), 0).day,
+                  (index) => index + 1,
+                );
+                final dailyPrices = daysInMonth.map((day) {
+                  final dailyTotal = rezervacije
+                      .where(
+                          (rezervacija) => rezervacija.pocetniDatum?.day == day)
+                      .map((rezervacija) => rezervacija.totalPrice ?? 0)
+                      .fold(0.0, (prev, curr) => prev + curr);
+                  return dailyTotal.toStringAsFixed(
+                      dailyTotal.truncateToDouble() == dailyTotal ? 0 : 1);
+                }).toList();
+                final total = dailyPrices
+                    .map(double.parse)
+                    .fold(0.0, (prev, curr) => prev + curr);
+                row.addAll(dailyPrices);
+                row.add(total.toStringAsFixed(
+                    total.truncateToDouble() == total ? 0 : 1));
+              } else {
+                row.addAll(List.generate(31, (_) => '0'));
+                row.add('0');
+              }
+            } else {
+              final monthlyPrices = List.generate(12, (month) {
+                final monthlyTotal = rezervacije
+                    .where((rezervacija) =>
+                        rezervacija.pocetniDatum?.month == (month + 1))
+                    .map((rezervacija) => rezervacija.totalPrice ?? 0)
+                    .fold(0.0, (prev, curr) => prev + curr);
+                return monthlyTotal.toStringAsFixed(
+                    monthlyTotal.truncateToDouble() == monthlyTotal ? 0 : 1);
+              });
+              final total = monthlyPrices
+                  .map(double.parse)
+                  .fold(0.0, (prev, curr) => prev + curr);
+              row.addAll(monthlyPrices);
+              row.add(total
+                  .toStringAsFixed(total.truncateToDouble() == total ? 0 : 1));
+            }
+
+            final fontSize = selectedMonth == 'Svi mjeseci' ? 10.0 : 7.5;
+
+            return pw.TableRow(
+              children: row.asMap().entries.map((entry) {
+                final index = entry.key;
+                final cell = entry.value;
+
+                return pw.Container(
+                  color: index == 0
+                      ? PdfColors.grey300
+                      : index == row.length - 1
+                          ? PdfColors.grey200
+                          : PdfColors.cyan100,
+                  child: pw.Padding(
+                    padding: const pw.EdgeInsets.all(2),
+                    child: pw.Text(
+                      cell,
+                      style: pw.TextStyle(fontSize: fontSize),
+                      textAlign: pw.TextAlign.center,
+                    ),
+                  ),
+                );
+              }).toList(),
+            );
+          }).toList();
+
+          final fontSizeHeader = selectedMonth == 'Svi mjeseci' ? 10.0 : 8.0;
+          final columnWidth = selectedMonth != 'Svi mjeseci' ? 25.0 : 35.0;
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              if (selectedMonth != 'Svi mjeseci')
+                pw.Table(
+                  border: pw.TableBorder.all(),
+                  columnWidths: {
+                    0: pw.FixedColumnWidth(43),
+                    for (int i = 1; i <= 31; i++)
+                      i: pw.FixedColumnWidth(columnWidth),
+                  },
+                  children: [
+                    pw.TableRow(
+                      children: [
+                        pw.Container(
+                          alignment: pw.Alignment.center,
+                          color: PdfColors.grey300,
+                          child: pw.Padding(
+                            padding: const pw.EdgeInsets.all(4),
+                            child: pw.Text(
+                              'Dani u mjesecu po brojevima',
+                              style: pw.TextStyle(
+                                  fontWeight: pw.FontWeight.bold,
+                                  fontSize: fontSizeHeader),
+                              textAlign: pw.TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              pw.Table(
+                border: pw.TableBorder.all(),
+                columnWidths: {
+                  0: pw.FixedColumnWidth(35),
+                  columnHeaders.length - 1: pw.FixedColumnWidth(35),
+                },
+                children: [
+                  pw.TableRow(
+                    children: columnHeaders.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final header = entry.value;
+
+                      return pw.Container(
+                        color: index == 0
+                            ? PdfColors.grey300
+                            : index == columnHeaders.length - 1
+                                ? PdfColors.grey200
+                                : PdfColors.grey300,
+                        child: pw.Padding(
+                          padding: const pw.EdgeInsets.all(1.5),
+                          child: pw.Text(
+                            header,
+                            style: pw.TextStyle(
+                                fontWeight: pw.FontWeight.bold,
+                                fontSize: fontSizeHeader),
+                            textAlign: pw.TextAlign.center,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  ...rows,
+                ],
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+    final result = await FilePicker.platform.saveFile(
+      dialogTitle: 'Odaberite mjesto za spremanje PDF-a',
+      fileName: 'izvještaj_$timestamp.pdf',
+    );
+
+    if (result != null) {
+      final outputFile = File(result);
+      await outputFile.writeAsBytes(await pdf.save());
+      print('PDF preuzet: ${outputFile.path}');
+    } else {
+      print('Nema odabranog mjesta za spremanje.');
+    }
+  }
+
+  Map<Korisnici, List<Rezervacija>> groupByUser(
+      List<Rezervacija> reservations) {
+    final Map<Korisnici, List<Rezervacija>> grouped = {};
+    for (var reservation in reservations) {
+      final korisnik = _korisnici.firstWhere(
+          (k) => k.korisnikId == reservation.korisnikId,
+          orElse: () =>
+              Korisnici(null, null, null, null, null, null, null, null, null));
+      if (!grouped.containsKey(korisnik)) {
+        grouped[korisnik] = [];
+      }
+      grouped[korisnik]?.add(reservation);
+    }
+    return grouped;
   }
 
   Widget _buildReservationTable(
