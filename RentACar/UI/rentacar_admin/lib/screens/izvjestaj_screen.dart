@@ -216,9 +216,9 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
     List<Grad> gradovi = _gradovi;
     List<Grad> filteredGradovi = getFilteredGradovi();
 
-    return  MasterScreenWidget(
+    return MasterScreenWidget(
       title: 'Izvještaji',
-    child: SingleChildScrollView(
+      child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -488,7 +488,17 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
     final selectedKorisnik = _selectedKorisnik != 'Svi korisnici'
         ? _selectedKorisnik
         : 'Svi korisnici';
-
+    final filteredReservations = getFilteredReservations();
+    if (filteredReservations.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              'Nema podataka na osnovu kojih bi se generisao Vaš izvještaj.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
     final image = pw.MemoryImage(
       (await rootBundle.load('assets/images/rent.jpg')).buffer.asUint8List(),
     );
@@ -675,10 +685,17 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
                   return dailyTotal.toStringAsFixed(
                       dailyTotal.truncateToDouble() == dailyTotal ? 0 : 1);
                 }).toList();
+
                 final total = dailyPrices
                     .map(double.parse)
                     .fold(0.0, (prev, curr) => prev + curr);
                 row.addAll(dailyPrices);
+
+                if (dailyPrices.length < 31) {
+                  row.addAll(
+                      List.generate(31 - dailyPrices.length, (_) => '0'));
+                }
+
                 row.add(total.toStringAsFixed(
                     total.truncateToDouble() == total ? 0 : 1));
               } else {
