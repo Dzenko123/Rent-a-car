@@ -125,8 +125,24 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
   }
 
   List<int?> getMonthsWithReservations() {
+    List<Rezervacija> filteredRezervacije = _rezervacije;
+
+    if (_selectedKorisnik != 'Svi korisnici') {
+      filteredRezervacije = filteredRezervacije
+          .where((rezervacija) =>
+              rezervacija.korisnikId.toString() == _selectedKorisnik)
+          .toList();
+    }
+
+    if (_selectedGrad != 'Svi gradovi') {
+      filteredRezervacije = filteredRezervacije
+          .where(
+              (rezervacija) => rezervacija.gradId.toString() == _selectedGrad)
+          .toList();
+    }
+
     if (_selectedYear == 'Sve godine') {
-      return _rezervacije
+      return filteredRezervacije
           .map((rezervacija) => rezervacija.pocetniDatum?.month)
           .toSet()
           .toList();
@@ -135,7 +151,7 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
       if (selectedYear == null) {
         return [];
       }
-      return _rezervacije
+      return filteredRezervacije
           .where(
               (rezervacija) => rezervacija.pocetniDatum?.year == selectedYear)
           .map((rezervacija) => rezervacija.pocetniDatum?.month)
@@ -212,9 +228,10 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: [
+                  SizedBox(width: 10),
                   Expanded(
                     child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                      margin: const EdgeInsets.symmetric(horizontal: 2.0),
                       child: DropdownButton<String>(
                         hint: Text(
                           'Odaberi korisnika',
@@ -245,10 +262,10 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 16),
+                  SizedBox(width: 10),
                   Expanded(
                     child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                      margin: const EdgeInsets.symmetric(horizontal: 2.0),
                       child: DropdownButton<String>(
                         hint: Text(
                           'Odaberi mjesec',
@@ -291,10 +308,10 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 16),
+                  SizedBox(width: 10),
                   Expanded(
                     child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                      margin: const EdgeInsets.symmetric(horizontal: 2.0),
                       child: DropdownButton<String>(
                         hint: Text(
                           'Odaberi godinu',
@@ -315,51 +332,32 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
                             ),
                           ),
                           ..._rezervacije
+                              .where((rezervacija) =>
+                                  _selectedKorisnik == 'Svi korisnici' ||
+                                  rezervacija.korisnikId.toString() ==
+                                      _selectedKorisnik)
                               .map((rezervacija) =>
                                   rezervacija.pocetniDatum?.year)
                               .toSet()
                               .toList()
                               .map((year) {
+                            bool hasReservations =
+                                _rezervacije.any(
+                                    (rezervacija) =>
+                                        rezervacija.pocetniDatum?.year ==
+                                            year &&
+                                        (_selectedMonth == 'Svi mjeseci' ||
+                                            rezervacija.pocetniDatum?.month
+                                                    .toString() ==
+                                                _selectedMonth) &&
+                                        (_selectedGrad == 'Svi gradovi' ||
+                                            rezervacija.gradId.toString() ==
+                                                _selectedGrad));
                             return DropdownMenuItem<String>(
                               value: year.toString(),
-                              child: Text(year.toString()),
-                            );
-                          }).toList(),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: DropdownButton<String>(
-                        hint: Text(
-                          'Odaberi grad',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        value: _selectedGrad,
-                        onChanged: (newValue) {
-                          setState(() {
-                            _selectedGrad = newValue;
-                          });
-                        },
-                        items: [
-                          DropdownMenuItem<String>(
-                            value: 'Svi gradovi',
-                            child: Text(
-                              'Svi gradovi',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          ..._gradovi.map((grad) {
-                            bool hasReservations = filteredGradovi.any(
-                                (filteredGrad) =>
-                                    filteredGrad.gradId == grad.gradId);
-                            return DropdownMenuItem<String>(
-                              value: grad.gradId.toString(),
                               child: Row(
                                 children: [
-                                  Text(grad.naziv ?? ''),
+                                  Text(year.toString()),
                                   if (!hasReservations)
                                     Text(
                                       ' (nema rezervacija)',
@@ -373,14 +371,75 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
                       ),
                     ),
                   ),
+                  SizedBox(width: 25),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: FractionallySizedBox(
+                        widthFactor: 1.2,
+                        child: DropdownButton<String>(
+                          isExpanded: true,
+                          hint: Text(
+                            'Odaberi grad',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          value: _selectedGrad,
+                          onChanged: (newValue) {
+                            setState(() {
+                              _selectedGrad = newValue;
+                            });
+                          },
+                          items: [
+                            DropdownMenuItem<String>(
+                              value: 'Svi gradovi',
+                              child: Text(
+                                'Svi gradovi',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            ..._gradovi.map((grad) {
+                              bool hasReservations = _rezervacije.any(
+                                  (rezervacija) =>
+                                      rezervacija.gradId.toString() ==
+                                          grad.gradId.toString() &&
+                                      (_selectedKorisnik == 'Svi korisnici' ||
+                                          rezervacija.korisnikId.toString() ==
+                                              _selectedKorisnik) &&
+                                      (_selectedMonth == 'Svi mjeseci' ||
+                                          rezervacija.pocetniDatum?.month
+                                                  .toString() ==
+                                              _selectedMonth) &&
+                                      (_selectedYear == 'Sve godine' ||
+                                          rezervacija.pocetniDatum?.year
+                                                  .toString() ==
+                                              _selectedYear));
+                              return DropdownMenuItem<String>(
+                                value: grad.gradId.toString(),
+                                child: Row(
+                                  children: [
+                                    Text(grad.naziv ?? ''),
+                                    if (!hasReservations)
+                                      Text(
+                                        ' (nema rezervacija)',
+                                        style: TextStyle(color: Colors.red),
+                                      ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                   Expanded(
                     child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                      margin: const EdgeInsets.symmetric(horizontal: 40.0),
                       child: ElevatedButton(
                         onPressed: () async {
                           await _generateAndDownloadPdf();
                         },
-                        child: Text('Download PDF'),
+                        child: Text('Preuzmi PDF'),
                       ),
                     ),
                   ),
