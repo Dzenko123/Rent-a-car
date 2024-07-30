@@ -216,11 +216,9 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
     List<Grad> gradovi = _gradovi;
     List<Grad> filteredGradovi = getFilteredGradovi();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Izvještaji'),
-      ),
-      body: SingleChildScrollView(
+    return  MasterScreenWidget(
+      title: 'Izvještaji',
+    child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

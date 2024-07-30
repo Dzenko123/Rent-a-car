@@ -178,7 +178,10 @@ namespace RentACar.Services.Services
                 throw new Exception("Korisnik nije pronađen");
             }
 
-            entity.KorisnickoIme = request.KorisnickoIme;
+            if (!string.IsNullOrWhiteSpace(request.KorisnickoIme))
+            {
+                entity.KorisnickoIme = request.KorisnickoIme;
+            }
 
             if (!string.IsNullOrWhiteSpace(request.Password))
             {
@@ -189,5 +192,6 @@ namespace RentACar.Services.Services
             _context.Update(entity);
             await _context.SaveChangesAsync();
         }
+
     }
 }

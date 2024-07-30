@@ -41,7 +41,11 @@ class _ProfilScreenState extends State<ProfilScreen> {
       TextEditingController();
   final TextEditingController _oldPasswordController = TextEditingController();
   final _changePasswordFormKey = GlobalKey<FormState>();
- bool _isChangePasswordButtonPressed = false;
+  bool _isChangePasswordButtonPressed = false;
+  bool _isOldPasswordVisible = false;
+  bool _isNewPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
+
   @override
   void initState() {
     super.initState();
@@ -206,7 +210,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   }
 
                   String emailFormatExample =
-                      'Primjer ispravnog formata: korisnik@gmail.com';
+                      'Primjer ispravnog formata: korisnik@gmail.com ili korisnik.korisnik@gmail.com';
                   String allowedDomains =
                       'Dozvoljene domene: gmail.com, hotmail.com, yahoo.com, outlook.com, aol.com, icloud.com';
 
@@ -416,162 +420,212 @@ class _ProfilScreenState extends State<ProfilScreen> {
     );
   }
 
-Widget _buildUserIcon() {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: [
-      Padding(
-        padding: const EdgeInsets.only(right: 15),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Column(
-              children: [
-                IconButton(
-                  onPressed: () {
-                    _showSettingsMenu(context);
-                  },
-                  icon: const Icon(Icons.settings, size: 35),
-                ),
-                const Text(
-                  'Postavke',
-                  style: TextStyle(fontSize: 14),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-      CircleAvatar(
-        backgroundColor: Colors.blue,
-        radius: 60,
-        child: Container(
-          padding: const EdgeInsets.all(4),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
+  Widget _buildUserIcon() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 15),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Column(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      _showSettingsMenu(context);
+                    },
+                    icon: const Icon(Icons.settings, size: 35),
+                  ),
+                  const Text(
+                    'Postavke',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ],
+              ),
+            ],
           ),
-          child: const CircleAvatar(
-            radius: 58,
-            backgroundColor: Colors.blue,
-            child: Icon(
-              Icons.person,
-              size: 60,
+        ),
+        CircleAvatar(
+          backgroundColor: Colors.blue,
+          radius: 60,
+          child: Container(
+            padding: const EdgeInsets.all(4),
+            decoration: const BoxDecoration(
               color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: const CircleAvatar(
+              radius: 58,
+              backgroundColor: Colors.blue,
+              child: Icon(
+                Icons.person,
+                size: 60,
+                color: Colors.white,
+              ),
             ),
           ),
         ),
-      ),
-    ],
-  );
-}
-
-
+      ],
+    );
+  }
 
   void _showChangePasswordDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Promijenite lozinku'),
-        content: Form(
-          key: _changePasswordFormKey,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  controller: _oldPasswordController,
-                  decoration: const InputDecoration(
-                    labelText: 'Trenutna lozinka',
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: const Text('Promijenite vaše pristupne podatke'),
+              content: Form(
+                key: _changePasswordFormKey,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextFormField(
+                        controller: _usernameController,
+                        decoration: InputDecoration(
+                          labelText: 'Korisničko ime (opcionalno)',
+                        ),
+                        onChanged: (value) {
+                          _changePasswordFormKey.currentState?.validate();
+                        },
+                      ),
+                      TextFormField(
+                        controller: _oldPasswordController,
+                        decoration: InputDecoration(
+                          labelText: 'Trenutna lozinka',
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isOldPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isOldPasswordVisible = !_isOldPasswordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                        obscureText: !_isOldPasswordVisible,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Polje ne smije biti prazno';
+                          }
+                          if (_isChangePasswordButtonPressed &&
+                              value != Authorization.password) {
+                            return 'Trenutna lozinka nije ispravna';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            _isChangePasswordButtonPressed = false;
+                          });
+                          _changePasswordFormKey.currentState?.validate();
+                        },
+                      ),
+                      TextFormField(
+                        controller: _passwordController,
+                        decoration: InputDecoration(
+                          labelText: 'Nova lozinka',
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isNewPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isNewPasswordVisible = !_isNewPasswordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                        obscureText: !_isNewPasswordVisible,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Polje ne smije biti prazno';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          _changePasswordFormKey.currentState?.validate();
+                        },
+                      ),
+                      TextFormField(
+                        controller: _confirmPasswordController,
+                        decoration: InputDecoration(
+                          labelText: 'Ponovo unesite novu lozinku',
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isConfirmPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isConfirmPasswordVisible =
+                                    !_isConfirmPasswordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                        obscureText: !_isConfirmPasswordVisible,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Polje ne smije biti prazno';
+                          }
+                          if (value != _passwordController.text) {
+                            return 'Lozinke se ne podudaraju';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          _changePasswordFormKey.currentState?.validate();
+                        },
+                      ),
+                    ],
                   ),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Polje ne smije biti prazno';
-                    }
-                    if (_isChangePasswordButtonPressed && value != Authorization.password) {
-                      return 'Trenutna lozinka nije ispravna';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    _oldPasswordController.clear();
+                    _passwordController.clear();
+                    _confirmPasswordController.clear();
+                    _usernameController.clear();
                     setState(() {
                       _isChangePasswordButtonPressed = false;
                     });
-                    _changePasswordFormKey.currentState?.validate();
+                    Navigator.of(context).pop();
                   },
+                  child: const Text('Odustani'),
                 ),
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nova lozinka',
-                  ),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Polje ne smije biti prazno';
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _isChangePasswordButtonPressed = true;
+                    });
+                    if (_changePasswordFormKey.currentState?.validate() ??
+                        false) {
+                      _changePassword();
                     }
-                    return null;
                   },
-                  onChanged: (value) {
-                    _changePasswordFormKey.currentState?.validate();
-                  },
-                ),
-                TextFormField(
-                  controller: _confirmPasswordController,
-                  decoration: const InputDecoration(
-                    labelText: 'Ponovo unesite novu lozinku',
-                  ),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Polje ne smije biti prazno';
-                    }
-                    if (value != _passwordController.text) {
-                      return 'Lozinke se ne podudaraju';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    _changePasswordFormKey.currentState?.validate();
-                  },
+                  child: const Text('Promijeni lozinku'),
                 ),
               ],
-            ),
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              _oldPasswordController.clear();
-              _passwordController.clear();
-              _confirmPasswordController.clear();
-              setState(() {
-                _isChangePasswordButtonPressed = false;
-              });
-              Navigator.of(context).pop();
-            },
-            child: const Text('Odustani'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                _isChangePasswordButtonPressed = true;
-              });
-              if (_changePasswordFormKey.currentState?.validate() ?? false) {
-                _changePassword();
-              }
-            },
-            child: const Text('Promijeni lozinku'),
-          ),
-        ],
-      );
-    },
-  );
-}
-
+            );
+          },
+        );
+      },
+    );
+  }
 
   Future<void> _changePassword() async {
     try {
@@ -615,67 +669,6 @@ Widget _buildUserIcon() {
     }
   }
 
-  void _verifyCurrentPassword(BuildContext context) async {
-    try {
-      await _showChangePasswordFields(context);
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('$e')),
-      );
-    }
-  }
-
-  Future<void> _showChangePasswordFields(BuildContext context) async {
-    Navigator.of(context).pop();
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Promijenite lozinku'),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  controller: _usernameController,
-                  decoration:
-                      const InputDecoration(labelText: 'Korisničko ime'),
-                ),
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: const InputDecoration(labelText: 'Nova lozinka'),
-                  obscureText: true,
-                ),
-                TextFormField(
-                  controller: _confirmPasswordController,
-                  decoration:
-                      const InputDecoration(labelText: 'Potvrdite lozinku'),
-                  obscureText: true,
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Odustani'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                _changePassword();
-                Navigator.of(context).pop();
-              },
-              child: const Text('Promijeni lozinku'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   void _showSettingsMenu(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -695,7 +688,7 @@ Widget _buildUserIcon() {
               ),
               ListTile(
                 leading: const Icon(Icons.key),
-                title: const Text('Promijenite lozinku'),
+                title: const Text('Promijenite korisničko ime i lozinku'),
                 onTap: () {
                   Navigator.pop(context);
                   setState(() {
