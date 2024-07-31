@@ -138,27 +138,12 @@ class _KontaktScreenState extends State<KontaktScreen> {
                   border: Border.all(color: Colors.white, width: 2),
                 ),
                 columns: const [
+                 
+                 
                   DataColumn(
                       label: Expanded(
                           child: Text(
-                    'Kontakt (redni broj)',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.white),
-                  ))),
-                  
-                  DataColumn(
-                    label: Expanded(
-                      child: Text(
-                        'Korisničko ime',
-                        style: TextStyle(
-                            fontStyle: FontStyle.italic, color: Colors.white),
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                      label: Expanded(
-                          child: Text(
-                    'Ime i prezime (iz kontakta)',
+                    'Ime i prezime korisnika',
                     style: TextStyle(
                         fontStyle: FontStyle.italic, color: Colors.white),
                   ))),
@@ -172,14 +157,14 @@ class _KontaktScreenState extends State<KontaktScreen> {
                   DataColumn(
                       label: Expanded(
                           child: Text(
-                    'Telefon',
+                    'Telefon korisnika',
                     style: TextStyle(
                         fontStyle: FontStyle.italic, color: Colors.white),
                   ))),
                   DataColumn(
                       label: Expanded(
                           child: Text(
-                    'Email',
+                    'Email korisnika',
                     style: TextStyle(
                         fontStyle: FontStyle.italic, color: Colors.white),
                   ))),
@@ -198,26 +183,9 @@ class _KontaktScreenState extends State<KontaktScreen> {
                           (Kontakt k) => DataRow(
 
                             cells: [
-                              DataCell(Text(k.kontaktId?.toString() ?? "",
-                                  style: const TextStyle(color: Colors.white))),
                              
-                              DataCell(
-                                FutureBuilder(
-                                  future: _getKorisnickoIme(k.korisnikId),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
-                                    }
-                                    if (snapshot.hasError) {
-                                      return Text('Error: ${snapshot.error}');
-                                    }
-                                    return Text(snapshot.data.toString() ?? '',
-                                        style: const TextStyle(
-                                            color: Colors.white));
-                                  },
-                                ),
-                              ),
+                             
+                              
                               DataCell(Text(k.imePrezime ?? "",
                                   style: const TextStyle(color: Colors.white))),
                               DataCell(Text(k.poruka ?? "",

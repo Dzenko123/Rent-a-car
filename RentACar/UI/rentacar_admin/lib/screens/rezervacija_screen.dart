@@ -41,6 +41,7 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
   late RezervacijaDodatnaUslugaProvider _rezervacijaDodatnaUslugaProvider;
   bool isLoading = true;
   final TextEditingController _ftsController = TextEditingController();
+  final TextEditingController _vehicleModelController = TextEditingController();
 
   @override
   void initState() {
@@ -114,6 +115,17 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
           ),
           const SizedBox(width: 8),
           Flexible(
+            child: TextField(
+              decoration: const InputDecoration(
+                labelText: "Model vozila pretraga:",
+                labelStyle: TextStyle(color: Colors.white),
+              ),
+              controller: _vehicleModelController,
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Flexible(
             child: ElevatedButton(
               onPressed: () async {
                 await initForm();
@@ -148,320 +160,347 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
     );
   }
 
- Widget _buildDataListView(SearchResult<Vozilo>? vozilaResult) {
-  List<Rezervacija> filteredResults = rezervacijaResult?.result
-          .where((k) =>
-              k.korisnikId != null &&
-              korisniciResult!.result
-                  .firstWhere(
-                      (korisnik) => korisnik.korisnikId == k.korisnikId,
+  Widget _buildDataListView(SearchResult<Vozilo>? vozilaResult) {
+    List<Rezervacija> filteredResults = rezervacijaResult?.result.where((k) {
+          String korisnickoIme = korisniciResult?.result
+                  .firstWhere((korisnik) => korisnik.korisnikId == k.korisnikId,
                       orElse: () => Korisnici.fromJson({}))
-                  .korisnickoIme!
-                  .toLowerCase()
-                  .contains(_ftsController.text.toLowerCase()))
-          .toList() ??
-      [];
-  return Expanded(
-      child: SingleChildScrollView(
-          child: DataTable(
-              columnSpacing:30.0,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFF000000),
-                    Color.fromARGB(255, 54, 54, 54),
-                    Color.fromARGB(255, 82, 81, 81),
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-                borderRadius: BorderRadius.circular(15.0),
-                border: Border.all(color: Colors.white, width: 2),
-              ),
-              columns: const [
-                DataColumn(
-                  label: Expanded(
-                    child: Center(
-                      child: Text(
-                        'Korisnik',
-                        style: TextStyle(
-                            fontStyle: FontStyle.italic, color: Colors.red),
-                      ),
-                    ),
+                  .korisnickoIme
+                  ?.toLowerCase() ??
+              '';
+          String voziloModel = vozilaResult?.result
+                  .firstWhere((vozilo) => vozilo.voziloId == k.voziloId,
+                      orElse: () => Vozilo.fromJson({}))
+                  .model
+                  ?.toLowerCase() ??
+              '';
+          return korisnickoIme.contains(_ftsController.text.toLowerCase()) &&
+              voziloModel.contains(_vehicleModelController.text.toLowerCase());
+        }).toList() ??
+        [];
+    return Expanded(
+        child: SingleChildScrollView(
+            child: DataTable(
+                columnSpacing: 30.0,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xFF000000),
+                      Color.fromARGB(255, 54, 54, 54),
+                      Color.fromARGB(255, 82, 81, 81),
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
                   ),
+                  borderRadius: BorderRadius.circular(15.0),
+                  border: Border.all(color: Colors.white, width: 2),
                 ),
-                DataColumn(
+                columns: const [
+                  DataColumn(
                     label: Expanded(
-                        child: Center(
-                  child: Text(
-                    'Vozilo (model)',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.red),
-                  ),
-                ))),
-                DataColumn(
-                  label: Expanded(
-                    child: Center(
-                      child: Text(
-                        'Slika',
-                        style: TextStyle(
-                          fontStyle: FontStyle.italic,
-                          color: Colors.white,
+                      child: Center(
+                        child: Text(
+                          'Korisnik',
+                          style: TextStyle(
+                              fontStyle: FontStyle.italic, color: Colors.red),
                         ),
                       ),
                     ),
                   ),
-                ),
-                DataColumn(
+                  DataColumn(
+                      label: Expanded(
+                          child: Center(
+                    child: Text(
+                      'Vozilo (model)',
+                      style: TextStyle(
+                          fontStyle: FontStyle.italic, color: Colors.red),
+                    ),
+                  ))),
+                  DataColumn(
                     label: Expanded(
-                        child: Center(
-                  child: Text(
-                    'Početni datum',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.white),
-                  ),
-                ))),
-                DataColumn(
-                    label: Expanded(
-                        child: Center(
-                  child: Text(
-                    'Završni datum',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.white),
-                  ),
-                ))),
-                DataColumn(
-                  label: Expanded(
-                    child: Center(
-                      child: Text(
-                        'Dodatne usluge',
-                        style: TextStyle(
-                            fontStyle: FontStyle.italic, color: Colors.red),
-                      ),
-                    ),
-                  ),
-                ),
-                DataColumn(
-                  label: Expanded(
-                    child: Center(
-                      child: Text(
-                        'Grad',
-                        style: TextStyle(
-                            fontStyle: FontStyle.italic, color: Colors.red),
-                      ),
-                    ),
-                  ),
-                ),
-                DataColumn(
-                  label: Expanded(
-                    child: Center(
-                      child: Text(
-                        'Cijena (u KM)',
-                        style: TextStyle(
-                            fontStyle: FontStyle.italic, color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ),
-                DataColumn(
-                  label: Expanded(
-                    child: Center(
-                      child: Text(
-                        'Zahtjev za otkazivanje',
-                        style: TextStyle(
-                            fontStyle: FontStyle.italic, color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-              rows: filteredResults
-                      .map(
-                        (Rezervacija r) => DataRow(
-                          cells: [
-                            DataCell(
-                              Center(
-                                child: FutureBuilder(
-                                  future: _getKorisnickoIme(r.korisnikId),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
-                                    }
-                                    if (snapshot.hasError) {
-                                      return Text('Error: ${snapshot.error}');
-                                    }
-                                    return Text(
-                                        snapshot.data.toString() ?? '',
-                                        style: const TextStyle(
-                                            color: Colors.white));
-                                  },
-                                ),
-                              ),
-                            ),
-                            DataCell(
-                              Center(
-                                child: FutureBuilder(
-                                  future: _getVozilo(r.voziloId),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
-                                    }
-                                    if (snapshot.hasError) {
-                                      return Text('Error: ${snapshot.error}');
-                                    }
-                                    return Text(
-                                        snapshot.data.toString() ?? '',
-                                        style: const TextStyle(
-                                            color: Colors.white));
-                                  },
-                                ),
-                              ),
-                            ),
-                            DataCell(
-                              Center(
-                                child: SizedBox(
-                                  width: 75,
-                                  child: vozilaResult?.result
-                                              .firstWhere(
-                                                  (vozilo) =>
-                                                      vozilo.voziloId ==
-                                                      r.voziloId,
-                                                  orElse: () =>
-                                                      Vozilo.fromJson({}))
-                                              .slika !=
-                                          null
-                                      ? Image.memory(
-                                          base64Decode(vozilaResult!.result
-                                              .firstWhere((vozilo) =>
-                                                  vozilo.voziloId ==
-                                                  r.voziloId)
-                                              .slika!),
-                                          height: 180,
-                                          fit: BoxFit.contain,
-                                        )
-                                      : SizedBox.shrink(),
-                                ),
-                              ),
-                            ),
-                            DataCell(Center(
-                              child: Text(formatDateTime(r.pocetniDatum),
-                                  style:
-                                      const TextStyle(color: Colors.white)),
-                            )),
-                            DataCell(Center(
-                              child: Text(formatDateTime(r.zavrsniDatum),
-                                  style:
-                                      const TextStyle(color: Colors.white)),
-                            )),
-                            DataCell(
-                              Center(
-                                child: FutureBuilder(
-                                  future: _getDodatneUsluge(r.rezervacijaId!),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
-                                    }
-                                    if (snapshot.hasError) {
-                                      return Text('Error: ${snapshot.error}');
-                                    }
-                                    List<DodatnaUsluga> dodatneUsluge =
-                                snapshot.data ?? [];
-                            if (dodatneUsluge.isEmpty) {
-                              return Text('/', style: const TextStyle(color: Colors.white));
-                            } else if (dodatneUsluge.length == 1) {
-                              return Text(dodatneUsluge.first.naziv ?? '', style: const TextStyle(color: Colors.white));
-                            } else {
-                              return Tooltip(
-                                message: 'Prikaži dodatne usluge',
-                                child: IconButton(
-                                  icon: Icon(Icons.info_outline, color: Colors.blue),
-                                  onPressed: () {
-                                    _showDodatneUslugeDialog(dodatneUsluge);
-                                  },
-                                ),
-                              );
-                            }
-                                  },
-                                ),
-                              ),
-                            ),
-                            DataCell(
-                              Center(
-                                child: FutureBuilder(
-                                  future: _getDodatniGradovi(r.gradId!),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
-                                    }
-                                    if (snapshot.hasError) {
-                                      return Text('Error: ${snapshot.error}');
-                                    }
-                                    Grad dodatniGrad = snapshot.data as Grad;
-                                    return Text(dodatniGrad.naziv ?? '',
-                                        style: const TextStyle(color: Colors.white));
-                                  },
-                                ),
-                              ),
-                            ),
-                            DataCell(Center(
-                              child: Text(r.totalPrice?.toString() ?? "",
-                                  style: const TextStyle(color: Colors.white)),
-                            )),
-                            DataCell(
-  Align(
-    alignment: Alignment.center,
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          r.zahtjev != null && r.zahtjev!
-              ? 'Na čekanju'
-              : '/',
-          style: const TextStyle(color: Colors.white),
-        ),
-        const SizedBox(width: 5),
-        if (r.zahtjev == true)
-          Flexible(
-            child: ElevatedButton(
-              onPressed: () async {
-                try {
-                  bool success = await _rezervacijaProvider.potvrdiOtkazivanje(r.rezervacijaId!);
-                  if (success) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Rezervacija uklonjena!'), backgroundColor: Colors.green),
-                    );
-                    await initForm();
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Greška')),
-                    );
-                  }
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Greška')),
-                  );
-                  print("Error confirming cancellation: $e");
-                }
-              },
-              child: Text("Potvrdi"),
-            ),
-          ),
-      ],
-    ),
-  ),
-),
-
-                          ],
+                      child: Center(
+                        child: Text(
+                          'Slika',
+                          style: TextStyle(
+                            fontStyle: FontStyle.italic,
+                            color: Colors.white,
+                          ),
                         ),
-                      )
-                      .toList() ??
-                  [])));
-}
-
+                      ),
+                    ),
+                  ),
+                  DataColumn(
+                      label: Expanded(
+                          child: Center(
+                    child: Text(
+                      'Početni datum',
+                      style: TextStyle(
+                          fontStyle: FontStyle.italic, color: Colors.white),
+                    ),
+                  ))),
+                  DataColumn(
+                      label: Expanded(
+                          child: Center(
+                    child: Text(
+                      'Završni datum',
+                      style: TextStyle(
+                          fontStyle: FontStyle.italic, color: Colors.white),
+                    ),
+                  ))),
+                  DataColumn(
+                    label: Expanded(
+                      child: Center(
+                        child: Text(
+                          'Dodatne usluge',
+                          style: TextStyle(
+                              fontStyle: FontStyle.italic, color: Colors.red),
+                        ),
+                      ),
+                    ),
+                  ),
+                  DataColumn(
+                    label: Expanded(
+                      child: Center(
+                        child: Text(
+                          'Grad',
+                          style: TextStyle(
+                              fontStyle: FontStyle.italic, color: Colors.red),
+                        ),
+                      ),
+                    ),
+                  ),
+                  DataColumn(
+                    label: Expanded(
+                      child: Center(
+                        child: Text(
+                          'Cijena (u KM)',
+                          style: TextStyle(
+                              fontStyle: FontStyle.italic, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                  DataColumn(
+                    label: Expanded(
+                      child: Center(
+                        child: Text(
+                          'Zahtjev za otkazivanje',
+                          style: TextStyle(
+                              fontStyle: FontStyle.italic, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+                rows: filteredResults
+                        .map(
+                          (Rezervacija r) => DataRow(
+                            cells: [
+                              DataCell(
+                                Center(
+                                  child: FutureBuilder(
+                                    future: _getKorisnickoIme(r.korisnikId),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const CircularProgressIndicator();
+                                      }
+                                      if (snapshot.hasError) {
+                                        return Text('Error: ${snapshot.error}');
+                                      }
+                                      return Text(
+                                          snapshot.data.toString() ?? '',
+                                          style: const TextStyle(
+                                              color: Colors.white));
+                                    },
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                Center(
+                                  child: FutureBuilder(
+                                    future: _getVozilo(r.voziloId),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const CircularProgressIndicator();
+                                      }
+                                      if (snapshot.hasError) {
+                                        return Text('Error: ${snapshot.error}');
+                                      }
+                                      return Text(
+                                          snapshot.data.toString() ?? '',
+                                          style: const TextStyle(
+                                              color: Colors.white));
+                                    },
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                Center(
+                                  child: SizedBox(
+                                    width: 75,
+                                    child: vozilaResult?.result
+                                                .firstWhere(
+                                                    (vozilo) =>
+                                                        vozilo.voziloId ==
+                                                        r.voziloId,
+                                                    orElse: () =>
+                                                        Vozilo.fromJson({}))
+                                                .slika !=
+                                            null
+                                        ? Image.memory(
+                                            base64Decode(vozilaResult!.result
+                                                .firstWhere((vozilo) =>
+                                                    vozilo.voziloId ==
+                                                    r.voziloId)
+                                                .slika!),
+                                            height: 180,
+                                            fit: BoxFit.contain,
+                                          )
+                                        : SizedBox.shrink(),
+                                  ),
+                                ),
+                              ),
+                              DataCell(Center(
+                                child: Text(formatDateTime(r.pocetniDatum),
+                                    style:
+                                        const TextStyle(color: Colors.white)),
+                              )),
+                              DataCell(Center(
+                                child: Text(formatDateTime(r.zavrsniDatum),
+                                    style:
+                                        const TextStyle(color: Colors.white)),
+                              )),
+                              DataCell(
+                                Center(
+                                  child: FutureBuilder(
+                                    future: _getDodatneUsluge(r.rezervacijaId!),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const CircularProgressIndicator();
+                                      }
+                                      if (snapshot.hasError) {
+                                        return Text('Error: ${snapshot.error}');
+                                      }
+                                      List<DodatnaUsluga> dodatneUsluge =
+                                          snapshot.data ?? [];
+                                      if (dodatneUsluge.isEmpty) {
+                                        return Text('/',
+                                            style: const TextStyle(
+                                                color: Colors.white));
+                                      } else if (dodatneUsluge.length == 1) {
+                                        return Text(
+                                            dodatneUsluge.first.naziv ?? '',
+                                            style: const TextStyle(
+                                                color: Colors.white));
+                                      } else {
+                                        return Tooltip(
+                                          message: 'Prikaži dodatne usluge',
+                                          child: IconButton(
+                                            icon: Icon(Icons.info_outline,
+                                                color: Colors.blue),
+                                            onPressed: () {
+                                              _showDodatneUslugeDialog(
+                                                  dodatneUsluge);
+                                            },
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                Center(
+                                  child: FutureBuilder(
+                                    future: _getDodatniGradovi(r.gradId!),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const CircularProgressIndicator();
+                                      }
+                                      if (snapshot.hasError) {
+                                        return Text('Error: ${snapshot.error}');
+                                      }
+                                      Grad dodatniGrad = snapshot.data as Grad;
+                                      return Text(dodatniGrad.naziv ?? '',
+                                          style: const TextStyle(
+                                              color: Colors.white));
+                                    },
+                                  ),
+                                ),
+                              ),
+                              DataCell(Center(
+                                child: Text(r.totalPrice?.toString() ?? "",
+                                    style:
+                                        const TextStyle(color: Colors.white)),
+                              )),
+                              DataCell(
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        r.zahtjev != null && r.zahtjev!
+                                            ? 'Na čekanju'
+                                            : '/',
+                                        style: const TextStyle(
+                                            color: Colors.white),
+                                      ),
+                                      const SizedBox(width: 5),
+                                      if (r.zahtjev == true)
+                                        Flexible(
+                                          child: ElevatedButton(
+                                            onPressed: () async {
+                                              try {
+                                                bool success =
+                                                    await _rezervacijaProvider
+                                                        .potvrdiOtkazivanje(
+                                                            r.rezervacijaId!);
+                                                if (success) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                        content: Text(
+                                                            'Rezervacija uklonjena!'),
+                                                        backgroundColor:
+                                                            Colors.green),
+                                                  );
+                                                  await initForm();
+                                                } else {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                        content:
+                                                            Text('Greška')),
+                                                  );
+                                                }
+                                              } catch (e) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                      content: Text('Greška')),
+                                                );
+                                                print(
+                                                    "Error confirming cancellation: $e");
+                                              }
+                                            },
+                                            child: Text("Potvrdi"),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                        .toList() ??
+                    [])));
+  }
 
   Future<String?> _getKorisnickoIme(int? korisnikId) async {
     if (korisnikId == null || korisniciResult == null) return null;
@@ -514,6 +553,7 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
         orElse: () => Grad(null, ''));
     return grad;
   }
+
   void _showDodatneUslugeDialog(List<DodatnaUsluga> dodatneUsluge) {
     showDialog(
       context: context,
@@ -522,7 +562,9 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
           title: const Text('Dodatne usluge'),
           content: SingleChildScrollView(
             child: ListBody(
-              children: dodatneUsluge.map((usluga) => Text(usluga.naziv ?? '')).toList(),
+              children: dodatneUsluge
+                  .map((usluga) => Text(usluga.naziv ?? ''))
+                  .toList(),
             ),
           ),
           actions: <Widget>[

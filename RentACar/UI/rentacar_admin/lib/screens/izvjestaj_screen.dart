@@ -433,11 +433,20 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
                   Expanded(
                     child: Container(
                       margin: const EdgeInsets.symmetric(horizontal: 40.0),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black, width: 2.0),
+                        borderRadius: BorderRadius.circular(25.0),
+                      ),
                       child: ElevatedButton(
                         onPressed: () async {
                           await _generateAndDownloadPdf();
                         },
                         child: Text('Preuzmi PDF'),
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.black,
+                          backgroundColor: Colors.white,
+                          shadowColor: Colors.transparent,
+                        ),
                       ),
                     ),
                   ),
@@ -829,8 +838,22 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
       final outputFile = File(result);
       await outputFile.writeAsBytes(await pdf.save());
       print('PDF preuzet: ${outputFile.path}');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('PDF uspješno preuzet.'),
+          backgroundColor: Colors.green,
+        ),
+      );
     } else {
       print('Nema odabranog mjesta za spremanje.');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Nema odabranog mjesta za spremanje.'),
+          backgroundColor: Color.fromARGB(255, 167, 148, 5),
+        ),
+      );
     }
   }
 

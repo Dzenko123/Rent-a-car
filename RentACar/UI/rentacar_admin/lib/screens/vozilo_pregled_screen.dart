@@ -645,126 +645,128 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
           );
         },
         markerBuilder: (context, date, events) {
-  if (events.isNotEmpty) {
-    var preglediZaDatum = voziloPregledResult!.result
-        .where((pregled) => isSameDay(pregled.datum!, date));
-    if (preglediZaDatum.isNotEmpty) {
-      if (widget.vozilo != null) {
-        var voziloId = preglediZaDatum
-            .firstWhere((pregled) =>
-                pregled.voziloId == widget.vozilo!.voziloId)
-            .voziloId;
-        var model = vehicleModelMap[voziloId] ?? 'Unknown Model';
-        return Positioned(
-          top: 2,
-          child: Center(
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                color: const Color.fromARGB(111, 0, 0, 0),
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 4.0),
-              child: Text(
-                'Pregled modela: $model\nVrijeme: ${formatTime(preglediZaDatum.first.datum!)}',
-                style: TextStyle(color: Colors.white, fontSize: 13),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-        );
-      } else {
-        if (preglediZaDatum.length > 1) {
-          return Positioned(
-            top: 10,
-            child: Center(
-              child: InkWell(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('Svi pregledi na ovaj dan'),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ...preglediZaDatum.map(
-                              (pregled) {
-                                var voziloId = pregled.voziloId!;
-                                var model = vehicleModelMap[voziloId] ??
-                                    'Unknown Model';
-                                return ListTile(
-                                  title: RichText(
-                                    text: TextSpan(
-                                      text: 'Vozilo model: ',
-                                      style:
-                                          DefaultTextStyle.of(context).style,
-                                      children: <TextSpan>[
-                                        TextSpan(
-                                          text: model,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
+          if (events.isNotEmpty) {
+            var preglediZaDatum = voziloPregledResult!.result
+                .where((pregled) => isSameDay(pregled.datum!, date));
+            if (preglediZaDatum.isNotEmpty) {
+              if (widget.vozilo != null) {
+                var voziloId = preglediZaDatum
+                    .firstWhere((pregled) =>
+                        pregled.voziloId == widget.vozilo!.voziloId)
+                    .voziloId;
+                var model = vehicleModelMap[voziloId] ?? 'Unknown Model';
+                return Positioned(
+                  top: 2,
+                  child: Center(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: const Color.fromARGB(111, 0, 0, 0),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 4.0),
+                      child: Text(
+                        'Pregled modela: $model\nVrijeme: ${formatTime(preglediZaDatum.first.datum!)}',
+                        style: TextStyle(color: Colors.white, fontSize: 13),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                );
+              } else {
+                if (preglediZaDatum.length > 1) {
+                  return Positioned(
+                    top: 10,
+                    child: Center(
+                      child: InkWell(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Svi pregledi na ovaj dan'),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ...preglediZaDatum.map(
+                                      (pregled) {
+                                        var voziloId = pregled.voziloId!;
+                                        var model = vehicleModelMap[voziloId] ??
+                                            'Unknown Model';
+                                        return ListTile(
+                                          title: RichText(
+                                            text: TextSpan(
+                                              text: 'Vozilo model: ',
+                                              style:
+                                                  DefaultTextStyle.of(context)
+                                                      .style,
+                                              children: <TextSpan>[
+                                                TextSpan(
+                                                  text: model,
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          subtitle: Text(
+                                              'Vrijeme pregleda: ${formatTime(pregled.datum!)}'),
+                                        );
+                                      },
+                                    ),
+                                    SizedBox(height: 20),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('Zatvori'),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                  subtitle: Text(
-                                      'Vrijeme pregleda: ${formatTime(pregled.datum!)}'),
-                                );
-                              },
-                            ),
-                            SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text('Zatvori'),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ],
+                              );
+                            },
+                          );
+                        },
+                        child: Icon(
+                          Icons.help_outline,
+                          color: Colors.white,
+                          size: 30,
                         ),
-                      );
-                    },
+                      ),
+                    ),
                   );
-                },
-                child: Icon(
-                  Icons.help_outline,
-                  color: Colors.white,
-                  size: 30,
-                ),
-              ),
-            ),
-          );
-        } else {
-          var voziloId = preglediZaDatum.first.voziloId;
-          var model = vehicleModelMap[voziloId] ?? 'Unknown Model';
-          return Positioned(
-            top: 4,
-            child: Center(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: const Color.fromARGB(111, 0, 0, 0),
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 4.0),
-                child: Text(
-                  'Pregled modela: $model\nVrijeme:${formatTime(preglediZaDatum.first.datum!)}',
-                  style: TextStyle(color: Colors.white, fontSize: 13),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-          );
-        }
-      }
-    }
-  }
-  return null;
-},
-
+                } else {
+                  var voziloId = preglediZaDatum.first.voziloId;
+                  var model = vehicleModelMap[voziloId] ?? 'Unknown Model';
+                  return Positioned(
+                    top: 4,
+                    child: Center(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: const Color.fromARGB(111, 0, 0, 0),
+                        ),
+                        padding: EdgeInsets.symmetric(horizontal: 4.0),
+                        child: Text(
+                          'Pregled modela: $model\nVrijeme:${formatTime(preglediZaDatum.first.datum!)}',
+                          style: TextStyle(color: Colors.white, fontSize: 13),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  );
+                }
+              }
+            }
+          }
+          return null;
+        },
       ),
     );
   }
@@ -925,13 +927,16 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
         await initForm();
         setState(() {});
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Pregled uspješno obrisan.')),
+          const SnackBar(
+            content: Text('Pregled uspješno obrisan.'),
+            backgroundColor: Colors.green,
+          ),
         );
       } else {
         print('Vozilo pregled ID je null.');
       }
     } else {
-      print('Vozilo je null ili vozilo pregled rezultat je null.');
+      print('Greška prilikom brisanja.');
     }
   }
 
@@ -1070,10 +1075,23 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 20),
-          Text(
-            'Ukupan broj pregleda vozila: ${_getVoziloPregledIdText()}',
-            style: TextStyle(
-                fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+          Builder(
+            builder: (context) {
+              String pregledText = _getVoziloPregledIdText();
+              return Text(
+                pregledText == 'Nema aktivnih pregleda vozila' ||
+                        pregledText == 'Nema pregleda u narednim periodima.' ||
+                        pregledText == 'Nema pregleda.'
+                    ? pregledText
+                    : (widget.vozilo != null
+                        ? 'Broj pregleda za ovo vozilo: $pregledText'
+                        : 'Ukupan broj pregleda svih vozila: $pregledText'),
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              );
+            },
           ),
         ],
       ),
@@ -1086,21 +1104,42 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
           voziloPregledResult!.result.isNotEmpty &&
           voziloPregledResult!.result
               .any((pregled) => pregled.voziloId == widget.vozilo!.voziloId)) {
-        var count = voziloPregledResult!.result
-            .where((pregled) => pregled.voziloId == widget.vozilo!.voziloId)
-            .length;
-        return '$count';
+        var futurePregledi = voziloPregledResult!.result
+            .where((pregled) =>
+                pregled.voziloId == widget.vozilo!.voziloId &&
+                pregled.datum!.isAfter(DateTime.now()))
+            .toList();
+        if (futurePregledi.isNotEmpty) {
+          var count = futurePregledi.length;
+          var dates = futurePregledi
+              .map((pregled) =>
+                  pregled.datum!.toLocal().toString().split(' ')[0])
+              .join(', ');
+          return '$count\nDatumi: $dates';
+        } else {
+          return 'Nema aktivnih pregleda vozila';
+        }
       } else {
         return 'Nema aktivnih pregleda vozila';
       }
     } else {
       if (voziloPregledResult != null &&
           voziloPregledResult!.result.isNotEmpty) {
-        var count = voziloPregledResult!.result.length;
-
-        return '$count';
+        var futurePregledi = voziloPregledResult!.result
+            .where((pregled) => pregled.datum!.isAfter(DateTime.now()))
+            .toList();
+        if (futurePregledi.isNotEmpty) {
+          var count = futurePregledi.length;
+          var dates = futurePregledi
+              .map((pregled) =>
+                  pregled.datum!.toLocal().toString().split(' ')[0])
+              .join(', ');
+          return '$count\nDatumi: $dates';
+        } else {
+          return 'Nema pregleda u narednim periodima.';
+        }
       } else {
-        return 'Nema ID';
+        return 'Nema pregleda.';
       }
     }
   }

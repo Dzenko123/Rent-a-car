@@ -617,7 +617,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                       _changePassword();
                     }
                   },
-                  child: const Text('Promijeni lozinku'),
+                  child: const Text('Promijenite podatke'),
                 ),
               ],
             );

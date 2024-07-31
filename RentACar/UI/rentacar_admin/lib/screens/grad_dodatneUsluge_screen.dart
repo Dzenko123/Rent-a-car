@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
 import 'package:rentacar_admin/models/dodatna_usluga.dart';
@@ -43,7 +44,7 @@ class _GradDodatneUslugeScreenState extends State<GradDodatneUslugeScreen> {
     _gradProvider = context.read<GradProvider>();
     _dodatnaUslugaProvider = context.read<DodatnaUslugaProvider>();
     _rezervacijaProvider = RezervacijaProvider();
-
+    _nazivController = TextEditingController();
     initForm();
   }
 
@@ -52,9 +53,11 @@ class _GradDodatneUslugeScreenState extends State<GradDodatneUslugeScreen> {
     dodatnaUslugaResult = await _dodatnaUslugaProvider.get();
     rezervacijaResult = await _rezervacijaProvider.get();
 
-    setState(() {
-      isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -173,10 +176,23 @@ class _GradDodatneUslugeScreenState extends State<GradDodatneUslugeScreen> {
                 ),
                 FormBuilderTextField(
                   name: 'cijena',
-                  decoration: InputDecoration(labelText: 'Cijena'),
+                  decoration: const InputDecoration(
+                    labelText: 'Cijena',
+                    hintText: 'Format cijene: npr. 67.5',
+                  ),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  onChanged: (value) {
+                    _initialValue['cijena'] = value;
+                    _formKey.currentState?.validate();
+                  },
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                        RegExp(r'^\d*\.?\d{0,2}$')),
+                  ],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Polje je obavezno';
+                      return 'Molimo unesite cijenu.';
                     }
                     final double? parsedValue = double.tryParse(value);
                     if (parsedValue == null) {
@@ -187,7 +203,6 @@ class _GradDodatneUslugeScreenState extends State<GradDodatneUslugeScreen> {
                     }
                     return null;
                   },
-                  keyboardType: TextInputType.number,
                 ),
               ],
             ),
@@ -545,7 +560,7 @@ class _GradDodatneUslugeScreenState extends State<GradDodatneUslugeScreen> {
   }
 
   void _showEditGradDialog(Grad grad) {
-    _nazivController = TextEditingController(text: grad.naziv);
+    _nazivController.text = grad.naziv!;
 
     final gradFormKey = GlobalKey<FormBuilderState>();
 

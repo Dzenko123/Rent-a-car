@@ -41,7 +41,7 @@ bool isValidResponse(Response response) {
   } else if (response.statusCode == 500) {
     throw Exception("Došlo je do greške u spremanju podataka! (status:${response.statusCode})");
   } else if (response.statusCode == 400) {
-    throw Exception("Podaci nisu spašeni, vozilo mora biti u draft stanju!");
+    throw Exception("Podaci nisu spašeni, vozilo mora biti u draft stanju da biste mogli urediti podatke!");
   } else {
     throw Exception("Nepoznata greška: status ${response.statusCode}");
   }
