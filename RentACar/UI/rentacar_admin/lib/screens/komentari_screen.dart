@@ -125,7 +125,6 @@ class _KomentariScreenState extends State<KomentariScreen> {
                                   komentar.komentar ?? '',
                                   style: const TextStyle(fontSize: 16),
                                 ),
-                                
                               ],
                             ),
                           ),
@@ -137,10 +136,8 @@ class _KomentariScreenState extends State<KomentariScreen> {
               ),
             ),
           ),
-
         ],
       ),
     );
   }
-
 }

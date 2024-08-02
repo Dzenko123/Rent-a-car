@@ -1117,19 +1117,57 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
           Builder(
             builder: (context) {
               String pregledText = _getVoziloPregledIdText();
-              return Text(
-                pregledText == 'Nema aktivnih pregleda vozila' ||
-                        pregledText == 'Nema pregleda u narednim periodima.' ||
-                        pregledText == 'Nema pregleda.'
-                    ? pregledText
-                    : (widget.vozilo != null
-                        ? 'Broj pregleda za ovo vozilo: $pregledText'
-                        : 'Ukupan broj pregleda svih vozila: $pregledText'),
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              );
+              if (pregledText == 'Nema aktivnih pregleda vozila' ||
+                  pregledText == 'Nema pregleda u narednim periodima.' ||
+                  pregledText == 'Nema pregleda.') {
+                return Text(
+                  pregledText,
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                );
+              } else {
+                return Padding(
+                  padding: const EdgeInsets.only(left: 18.0),
+                  child: RichText(
+                    text: TextSpan(
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: widget.vozilo != null
+                              ? 'Broj pregleda za ovo vozilo: '
+                              : 'Ukupan broj pregleda svih vozila: ',
+                        ),
+                        TextSpan(
+                          text: pregledText.split('\n')[0],
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                        TextSpan(
+                          text: '\nDatumi: ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(
+                          text: pregledText.split('\n')[1],
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
             },
           ),
         ],
@@ -1148,13 +1186,18 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
                 pregled.voziloId == widget.vozilo!.voziloId &&
                 pregled.datum!.isAfter(DateTime.now()))
             .toList();
+
         if (futurePregledi.isNotEmpty) {
-          var count = futurePregledi.length;
-          var dates = futurePregledi
+          var uniqueDates = futurePregledi
               .map((pregled) =>
                   pregled.datum!.toLocal().toString().split(' ')[0])
-              .join(', ');
-          return '$count\nDatumi: $dates';
+              .toSet()
+              .toList()
+            ..sort();
+
+          var count = uniqueDates.length;
+          var dates = uniqueDates.join(', ');
+          return '$count\n$dates';
         } else {
           return 'Nema aktivnih pregleda vozila';
         }
@@ -1167,13 +1210,18 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
         var futurePregledi = voziloPregledResult!.result
             .where((pregled) => pregled.datum!.isAfter(DateTime.now()))
             .toList();
+
         if (futurePregledi.isNotEmpty) {
-          var count = futurePregledi.length;
-          var dates = futurePregledi
+          var uniqueDates = futurePregledi
               .map((pregled) =>
                   pregled.datum!.toLocal().toString().split(' ')[0])
-              .join(', ');
-          return '$count\nDatumi: $dates';
+              .toSet()
+              .toList()
+            ..sort();
+
+          var count = uniqueDates.length;
+          var dates = uniqueDates.join(', ');
+          return '$count\n$dates';
         } else {
           return 'Nema pregleda u narednim periodima.';
         }

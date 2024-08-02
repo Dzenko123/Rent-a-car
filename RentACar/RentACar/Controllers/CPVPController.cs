@@ -33,7 +33,23 @@ namespace RentACar.Controllers
             return Ok(result.Result);
         }
 
+        [HttpDelete("DeleteByVoziloId/{voziloId}")]
+        public async Task<IActionResult> DeleteByVoziloId(int voziloId)
+        {
+            if (voziloId <= 0)
+            {
+                return BadRequest("VoziloId je obavezno polje.");
+            }
 
+            var success = await (_service as ICPVPService).DeleteByVoziloId(voziloId);
+
+            if (!success)
+            {
+                return NotFound("Nema pronađenih cijena za dati VoziloId.");
+            }
+
+            return Ok(new { message = "Sve cijene za navedeni VoziloId su uspješno obrisane." });
+        }
 
     }
 }

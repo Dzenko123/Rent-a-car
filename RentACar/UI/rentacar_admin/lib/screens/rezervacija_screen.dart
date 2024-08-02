@@ -474,15 +474,19 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(
                                                     SnackBar(
-                                                        content:
-                                                            Text('Greška')),
+                                                      content: Text('Greška'),
+                                                      backgroundColor:
+                                                          Colors.red,
+                                                    ),
                                                   );
                                                 }
                                               } catch (e) {
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
                                                   SnackBar(
-                                                      content: Text('Greška')),
+                                                      content: Text('Greška'),
+                                                      backgroundColor:
+                                                          Colors.red),
                                                 );
                                                 print(
                                                     "Error confirming cancellation: $e");

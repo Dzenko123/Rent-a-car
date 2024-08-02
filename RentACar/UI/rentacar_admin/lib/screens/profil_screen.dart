@@ -360,7 +360,9 @@ class _ProfilScreenState extends State<ProfilScreen> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content: Text('Podaci korisnika su uspješno ažurirani')),
+            content: Text('Podaci korisnika su uspješno ažurirani'),
+            backgroundColor: Colors.green,
+          ),
         );
         await getKorisnikData(ulogovaniKorisnikId!);
 
@@ -371,7 +373,9 @@ class _ProfilScreenState extends State<ProfilScreen> {
         print('Greška prilikom ažuriranja podataka korisnika: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content: Text('Došlo je do greške prilikom ažuriranja')),
+            content: Text('Došlo je do greške prilikom ažuriranja'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
@@ -636,10 +640,6 @@ class _ProfilScreenState extends State<ProfilScreen> {
         _passwordController.text,
         _confirmPasswordController.text,
       );
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Lozinka uspješno promijenjena')),
-      );
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -664,7 +664,10 @@ class _ProfilScreenState extends State<ProfilScreen> {
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Greška prilikom promjene lozinke: $e')),
+        SnackBar(
+          content: Text('Greška prilikom promjene podataka: $e'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }

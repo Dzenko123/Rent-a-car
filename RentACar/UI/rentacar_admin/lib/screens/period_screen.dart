@@ -121,7 +121,7 @@ class _PeriodScreenState extends State<PeriodScreen> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Podaci su uspješno sačuvani!'),
+            content: Text('Podaci su uspješno sačuvani!'), backgroundColor: Colors.green,
           ),
         );
 

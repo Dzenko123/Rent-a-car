@@ -135,7 +135,7 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
   Widget _buildDataListView() {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.only(top:30.0, left:30, right: 30),
+        padding: const EdgeInsets.only(top: 30.0, left: 30, right: 30),
         child: GridView.count(
           crossAxisCount: 4,
           children: result?.result
@@ -227,7 +227,6 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                           size: 15,
                                         ),
                                         const SizedBox(width: 5),
-
                                         Expanded(
                                           child: Text(
                                             '${(e.motor)}',
@@ -256,7 +255,12 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                         const SizedBox(width: 5),
                                         Expanded(
                                           child: Text(
-                                            gorivoResult?.result.firstWhere((g) => g.gorivoId == e.gorivoId).tip ?? "",
+                                            gorivoResult?.result
+                                                    .firstWhere((g) =>
+                                                        g.gorivoId ==
+                                                        e.gorivoId)
+                                                    .tip ??
+                                                "",
                                             style: const TextStyle(
                                                 color: Colors.white,
                                                 fontStyle: FontStyle.italic,
@@ -284,95 +288,97 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                               Flexible(
-  flex: 1,
-  child: Padding(
-    padding: const EdgeInsets.only(left: 15.0),
-    child: Row(
-      children: [
-        Container(
-          width: 18,
-          height: 18,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            color: Color.fromARGB(255, 5, 102, 182),
-          ),
-          child: const Icon(
-            Icons.thumb_up_alt_rounded,
-            color: Colors.white,
-            size: 12,
-          ),
-        ),
-        const SizedBox(width: 5),
-        Text(
-          '${recenzijeResult?.result.where((recenzija) => recenzija.voziloId == e.voziloId && recenzija.isLiked == true).length ?? 0}',
-          style: const TextStyle(
-            color: Colors.white,
-            fontStyle: FontStyle.italic,
-            fontSize: 14,
-          ),
-        ),
-        const SizedBox(width: 10),
-        Container(
-          width: 18,
-          height: 18,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            color: Color.fromARGB(255, 182, 5, 5),
-          ),
-          child: const Icon(
-            Icons.thumb_down_alt_rounded,
-            color: Colors.white,
-            size: 12,
-          ),
-        ),
-        const SizedBox(width: 5),
-        Text(
-          '${recenzijeResult?.result.where((recenzija) => recenzija.voziloId == e.voziloId && recenzija.isLiked == false).length ?? 0}',
-          style: const TextStyle(
-            color: Colors.white,
-            fontStyle: FontStyle.italic,
-            fontSize: 14,
-          ),
-        ),
-        const SizedBox(width: 10),
-        Container(
-          width: 18,
-          height: 18,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.grey,
-          ),
-          child: const Icon(
-            Icons.message_rounded,
-            color: Colors.white,
-            size: 12,
-          ),
-        ),
-        const SizedBox(width: 5),
-        InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => KomentariScreen(vozilo: e),
-              ),
-            );
-          },
-          child: Text(
-            '${komentariResult?.result.where((komentar) => komentar.voziloId == e.voziloId).length ?? 0} komentar/a',
-            style: const TextStyle(
-              color: Colors.white,
-              fontStyle: FontStyle.italic,
-              fontSize: 14,
-            ),
-          ),
-        ),
-      ],
-    ),
-  ),
-),
-
+                                Flexible(
+                                  flex: 1,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 15.0),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 18,
+                                          height: 18,
+                                          decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Color.fromARGB(
+                                                255, 5, 102, 182),
+                                          ),
+                                          child: const Icon(
+                                            Icons.thumb_up_alt_rounded,
+                                            color: Colors.white,
+                                            size: 12,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          '${recenzijeResult?.result.where((recenzija) => recenzija.voziloId == e.voziloId && recenzija.isLiked == true).length ?? 0}',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontStyle: FontStyle.italic,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Container(
+                                          width: 18,
+                                          height: 18,
+                                          decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color:
+                                                Color.fromARGB(255, 182, 5, 5),
+                                          ),
+                                          child: const Icon(
+                                            Icons.thumb_down_alt_rounded,
+                                            color: Colors.white,
+                                            size: 12,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          '${recenzijeResult?.result.where((recenzija) => recenzija.voziloId == e.voziloId && recenzija.isLiked == false).length ?? 0}',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontStyle: FontStyle.italic,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Container(
+                                          width: 18,
+                                          height: 18,
+                                          decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.grey,
+                                          ),
+                                          child: const Icon(
+                                            Icons.message_rounded,
+                                            color: Colors.white,
+                                            size: 12,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 5),
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    KomentariScreen(vozilo: e),
+                                              ),
+                                            );
+                                          },
+                                          child: Text(
+                                            '${komentariResult?.result.where((komentar) => komentar.voziloId == e.voziloId).length ?? 0} komentar/a',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontStyle: FontStyle.italic,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ]),
                         ),
                       ),

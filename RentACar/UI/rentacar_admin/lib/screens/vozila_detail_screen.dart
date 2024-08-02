@@ -941,7 +941,9 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                     Navigator.pop(context, tipController.text);
                   } catch (e) {
                     scaffoldMessenger.showSnackBar(
-                      SnackBar(content: Text('Došlo je do pogreške: $e.')),
+                      SnackBar(
+                          content: Text('Došlo je do pogreške: $e.'),
+                          backgroundColor: Colors.red),
                     );
                   }
                 }

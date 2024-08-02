@@ -138,8 +138,6 @@ class _KontaktScreenState extends State<KontaktScreen> {
                   border: Border.all(color: Colors.white, width: 2),
                 ),
                 columns: const [
-                 
-                 
                   DataColumn(
                       label: Expanded(
                           child: Text(
@@ -181,11 +179,7 @@ class _KontaktScreenState extends State<KontaktScreen> {
                 rows: filteredResults
                         .map(
                           (Kontakt k) => DataRow(
-
                             cells: [
-                             
-                             
-                              
                               DataCell(Text(k.imePrezime ?? "",
                                   style: const TextStyle(color: Colors.white))),
                               DataCell(Text(k.poruka ?? "",

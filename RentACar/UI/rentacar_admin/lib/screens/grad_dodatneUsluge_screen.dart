@@ -178,7 +178,7 @@ class _GradDodatneUslugeScreenState extends State<GradDodatneUslugeScreen> {
                   name: 'cijena',
                   decoration: const InputDecoration(
                     labelText: 'Cijena',
-                    hintText: 'Format cijene: npr. 67.5',
+                    hintText: 'Format cijene: npr. 67.55',
                   ),
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
@@ -193,13 +193,6 @@ class _GradDodatneUslugeScreenState extends State<GradDodatneUslugeScreen> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Molimo unesite cijenu.';
-                    }
-                    final double? parsedValue = double.tryParse(value);
-                    if (parsedValue == null) {
-                      return 'Samo brojčane vrijednosti!';
-                    }
-                    if (parsedValue <= 0) {
-                      return 'Cijena mora biti veća od 0';
                     }
                     return null;
                   },
@@ -671,20 +664,22 @@ class _GradDodatneUslugeScreenState extends State<GradDodatneUslugeScreen> {
                     hintText:
                         'Prethodna cijena: ${usluga.cijena?.toString() ?? ''}',
                   ),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  onChanged: (value) {
+                    _initialValue['cijena'] = value;
+                    _formKey.currentState?.validate();
+                  },
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                        RegExp(r'^\d*\.?\d{0,2}$')),
+                  ],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Polje je obavezno';
                     }
-                    final double? parsedValue = double.tryParse(value);
-                    if (parsedValue == null) {
-                      return 'Samo brojčane vrijednosti!';
-                    }
-                    if (parsedValue < 1) {
-                      return 'Cijena mora biti broj veći ili jednak 1';
-                    }
                     return null;
                   },
-                  keyboardType: TextInputType.number,
                 ),
               ],
             ),

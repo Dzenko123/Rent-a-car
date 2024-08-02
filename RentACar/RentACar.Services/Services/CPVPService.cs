@@ -38,6 +38,20 @@ namespace RentACar.Services.Services
             return base.AddInclude(query, search);
         }
 
+        public async Task<bool> DeleteByVoziloId(int voziloId)
+        {
+            var items = await _context.CijenePoVremenskomPeriodu
+                .Where(c => c.VoziloId == voziloId)
+                .ToListAsync();
 
+            if (items == null || items.Count < 0)
+            {
+                return false;
+            }
+
+            _context.CijenePoVremenskomPeriodu.RemoveRange(items);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

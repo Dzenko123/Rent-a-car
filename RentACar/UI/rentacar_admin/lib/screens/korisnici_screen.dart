@@ -78,97 +78,96 @@ class _KorisniciListScreenState extends State<KorisniciListScreen> {
     );
   }
 
- Widget _buildSearch() {
-  return Padding(
-    padding: const EdgeInsets.only(left: 30, top: 10),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Pretražite korisnike po imenu, prezimenu, ili oboje.',
-          style: TextStyle(color: Colors.white, fontStyle: FontStyle.italic),
-        ),
-        const SizedBox(height: 10),
-        Row(
-          children: [
-            SizedBox(
-              width: 140,
-              height: 40,
-              child: TextField(
-                controller: _firstNameController,
-                decoration: const InputDecoration(
-                  hintText: 'Ime',
-                  hintStyle: TextStyle(color: Colors.white54),
-                  fillColor: Colors.white30,
-                  filled: true,
-                ),
-                style: const TextStyle(color: Colors.white),
-              ),
-            ),
-            const SizedBox(width: 10),
-            SizedBox(
-              width: 140,
-              height: 40,
-              child: TextField(
-                controller: _lastNameController,
-                decoration: const InputDecoration(
-                  hintText: 'Prezime',
-                  hintStyle: TextStyle(color: Colors.white54),
-                  fillColor: Colors.white30,
-                  filled: true,
-                ),
-                style: const TextStyle(color: Colors.white),
-              ),
-            ),
-            const SizedBox(width: 10),
-          ],
-        ),
-        const SizedBox(height: 10),
-        Row(
-          children: [
-            const Text(
-              'Prikaz uloga za korisnike:',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(width: 10),
-            DropdownButton<String>(
-              style: const TextStyle(color: Colors.white),
-              value: _selectedDropdownValue,
-              onChanged: (String? newValue) async {
-                setState(() {
-                  _selectedDropdownValue = newValue!;
-                });
-                await _fetchKorisnici();
-              },
-              items: [
-                DropdownMenuItem(
-                  value: "Prikaži uloge",
-                  child: Text(
-                    "Prikaži uloge",
-                    style: TextStyle(color: Colors.white),
+  Widget _buildSearch() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 30, top: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Pretražite korisnike po imenu, prezimenu, ili oboje.',
+            style: TextStyle(color: Colors.white, fontStyle: FontStyle.italic),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              SizedBox(
+                width: 140,
+                height: 40,
+                child: TextField(
+                  controller: _firstNameController,
+                  decoration: const InputDecoration(
+                    hintText: 'Ime',
+                    hintStyle: TextStyle(color: Colors.white54),
+                    fillColor: Colors.white30,
+                    filled: true,
                   ),
+                  style: const TextStyle(color: Colors.white),
                 ),
-                DropdownMenuItem(
-                  value: "Ne prikazuj uloge",
-                  child: Text(
-                    "Ne prikazuj uloge",
-                    style: TextStyle(color: Colors.white),
+              ),
+              const SizedBox(width: 10),
+              SizedBox(
+                width: 140,
+                height: 40,
+                child: TextField(
+                  controller: _lastNameController,
+                  decoration: const InputDecoration(
+                    hintText: 'Prezime',
+                    hintStyle: TextStyle(color: Colors.white54),
+                    fillColor: Colors.white30,
+                    filled: true,
                   ),
+                  style: const TextStyle(color: Colors.white),
                 ),
-              ],
-              dropdownColor: Colors.black,
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
-
+              ),
+              const SizedBox(width: 10),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              const Text(
+                'Prikaz uloga za korisnike:',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(width: 10),
+              DropdownButton<String>(
+                style: const TextStyle(color: Colors.white),
+                value: _selectedDropdownValue,
+                onChanged: (String? newValue) async {
+                  setState(() {
+                    _selectedDropdownValue = newValue!;
+                  });
+                  await _fetchKorisnici();
+                },
+                items: [
+                  DropdownMenuItem(
+                    value: "Prikaži uloge",
+                    child: Text(
+                      "Prikaži uloge",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: "Ne prikazuj uloge",
+                    child: Text(
+                      "Ne prikazuj uloge",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+                dropdownColor: Colors.black,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildDataListView() {
     return Expanded(

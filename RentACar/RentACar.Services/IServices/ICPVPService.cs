@@ -11,5 +11,7 @@ namespace RentACar.Services.IServices
 {
     public interface ICPVPService : ICRUDService<CijenePoVremenskomPeriodu, CPVPSearchObject, CPVPInsertRequest, CPVPUpdateRequest, CPVPDeleteRequest>
     {
+        Task<bool> DeleteByVoziloId(int voziloId);
+
     }
 }

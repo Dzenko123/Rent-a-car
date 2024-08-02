@@ -38,13 +38,14 @@ class _GorivoScreenState extends State<GorivoScreen> {
 
   Future<void> initForm() async {
     gorivoResult = await _gorivoProvider.get();
-if(mounted){
-    setState(() {
-      isLoading = false;
-      gorivaList = gorivoResult!.result;
-    });
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+        gorivaList = gorivoResult!.result;
+      });
+    }
   }
-  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,60 +97,62 @@ if(mounted){
   }
 
   void _saveForm() async {
-  if (_formKey.currentState!.saveAndValidate()) {
-    var request = Map.from(_formKey.currentState!.value);
-    var novoTipGoriva = (request['tip'] as String?)?.toLowerCase();
+    if (_formKey.currentState!.saveAndValidate()) {
+      var request = Map.from(_formKey.currentState!.value);
+      var novoTipGoriva = (request['tip'] as String?)?.toLowerCase();
 
-    if (gorivaList.any((gorivo) => gorivo.tip?.toLowerCase() == novoTipGoriva)) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text("Greška"),
-          content: Text("Tip goriva '$novoTipGoriva' već postoji!"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
-            ),
-          ],
-        ),
-      );
-      return;
-    }
-
-    try {
-      Gorivo? savedGorivo;
-      if (widget.gorivo == null) {
-        savedGorivo = await _gorivoProvider.insert(request);
-      } else {
-        savedGorivo = await _gorivoProvider.update(widget.gorivo!.gorivoId!, request);
+      if (gorivaList
+          .any((gorivo) => gorivo.tip?.toLowerCase() == novoTipGoriva)) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text("Greška"),
+            content: Text("Tip goriva '$novoTipGoriva' već postoji!"),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+        );
+        return;
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(backgroundColor: Colors.green,
-          content: Text('Podaci su uspješno sačuvani!'),
-        ),
-      );
+      try {
+        Gorivo? savedGorivo;
+        if (widget.gorivo == null) {
+          savedGorivo = await _gorivoProvider.insert(request);
+        } else {
+          savedGorivo =
+              await _gorivoProvider.update(widget.gorivo!.gorivoId!, request);
+        }
 
-      if (mounted) {
-        Navigator.of(context).pop(savedGorivo);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.green,
+            content: Text('Podaci su uspješno sačuvani!'),
+          ),
+        );
+
+        if (mounted) {
+          Navigator.of(context).pop(savedGorivo);
+        }
+      } catch (e) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text("Greška"),
+            content: Text(e.toString()),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+        );
       }
-    } catch (e) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text("Greška"),
-          content: Text(e.toString()),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
-            ),
-          ],
-        ),
-      );
     }
   }
-}
-
 }
