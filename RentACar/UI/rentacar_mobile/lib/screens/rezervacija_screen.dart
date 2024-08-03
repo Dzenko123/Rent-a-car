@@ -832,7 +832,7 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
       } else {
         print('Payment failed.');
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Payment failed")),
+          const SnackBar(content: Text("Plaćanje neuspješno!"), backgroundColor: Colors.red,),
         );
       }
     } on StripeException catch (e) {

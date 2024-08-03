@@ -95,7 +95,7 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
     komentariResult = await _komentariProvider.get();
     recenzijeResult = await _recenzijeProvider.get();
 
-    var data = await _vozilaProvider.get(filter: {'fts': _ftsController.text});
+    var data = await _vozilaProvider.getActiveVehicles();
 
     setState(() {
       result = data;

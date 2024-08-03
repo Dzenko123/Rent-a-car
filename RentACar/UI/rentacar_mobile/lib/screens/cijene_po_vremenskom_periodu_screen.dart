@@ -15,6 +15,7 @@ class CijenePoVremenskomPerioduScreen extends StatefulWidget {
   static const String routeName = "/cijene";
 
   CijenePoVremenskomPeriodu? cijenePoVremenskomPeriodu;
+
   CijenePoVremenskomPerioduScreen({super.key});
 
   @override
@@ -62,7 +63,7 @@ class _CijenePoVremenskomPerioduScreenState
     cijenePoVremenskomPerioduResult =
         await _cijenePoVremenskomPerioduProvider.get();
     periodResult = await _periodProvider.get();
-    vozilaResult = await _vozilaProvider.get();
+    vozilaResult = await _vozilaProvider.getActiveVehicles();
 
     if (periodResult?.result.isNotEmpty ?? false) {
       minPeriodId = periodResult!.result
@@ -71,23 +72,6 @@ class _CijenePoVremenskomPerioduScreenState
     }
 
     setState(() {});
-  }
-
-  Future<void> _deletePeriod(int periodId) async {
-    try {
-      await _periodProvider.deletePeriod(periodId);
-      await initForm();
-      setState(() {});
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Period uspješno obrisan.')),
-      );
-    } catch (e) {
-      print('Greška prilikom brisanja perioda: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Došlo je do pogreške prilikom brisanja perioda.')),
-      );
-    }
   }
 
   @override
@@ -116,7 +100,8 @@ class _CijenePoVremenskomPerioduScreenState
             children: [
               const SizedBox(
                 height: 80,
-              ),if (canMovePrevious || canMoveNext)
+              ),
+              if (canMovePrevious || canMoveNext)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -195,26 +180,24 @@ class _CijenePoVremenskomPerioduScreenState
                 ),
               isLoading
                   ? Padding(
-                padding: const EdgeInsets.only(left: 10.0, top:20, right: 10),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: _buildDataListView(),
-                ),
-              )
+                      padding:
+                          const EdgeInsets.only(left: 10.0, top: 20, right: 10),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: _buildDataListView(),
+                      ),
+                    )
                   : Container(),
               const SizedBox(height: 10),
-
             ],
           ),
         ),
       ),
     );
   }
-
-
 
   int calculateDayDifference(String periodString) {
     List<String> parts = periodString.split(' ');
@@ -232,7 +215,9 @@ class _CijenePoVremenskomPerioduScreenState
         groupedResults[cijena.voziloId!] = [];
       }
       groupedResults[cijena.voziloId!]!.add(cijena);
-    });
+    }); final activeVozilaIds = vozilaResult?.result.map((vozilo) => vozilo.voziloId).toSet() ?? {};
+    groupedResults.removeWhere((id, _) => !activeVozilaIds.contains(id));
+
     periodResult?.result.sort((a, b) {
       int daysA = calculateDayDifference(a.trajanje!);
       int daysB = calculateDayDifference(b.trajanje!);
@@ -242,62 +227,60 @@ class _CijenePoVremenskomPerioduScreenState
         periodResult?.result.skip(_startIndex).take(3).toList() ?? [];
 
     return Padding(
-      padding: const EdgeInsets.all(2.0),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.all(2.0),
         child: SingleChildScrollView(
-          child: DataTable(
-            dataRowHeight: 80,
-            columns: [
-              DataColumn(
-                label: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 5),
-                  child: const Text(
-                    'Vozilo',
-                    style: TextStyle(
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: Colors.black,
+            scrollDirection: Axis.horizontal,
+            child: SingleChildScrollView(
+              child: DataTable(
+                dataRowHeight: 70,
+                columnSpacing: 30,
+                columns: [
+                  DataColumn(
+                    label: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 2),
+                      child: const Text(
+                        'Vozilo',
+                        style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: Colors.black,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              DataColumn(
-                label: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 5),
-                  child: const Text(
-                    'Model',
-                    style: TextStyle(
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: Colors.black,
+                  DataColumn(
+                    label: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 2),
+                      child: const Text(
+                        'Model',
+                        style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                          color: Colors.black,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              DataColumn(
-                label: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 5),
-                  child: const Text(
-                    'Marka',
-                    style: TextStyle(
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: Colors.black,
+                  DataColumn(
+                    label: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 2),
+                      child: const Text(
+                        'Marka',
+                        style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                          color: Colors.black,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              ...(displayedPeriods.map<DataColumn>((period) {
-                    return DataColumn(
-                      label: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 1, vertical: 4),
+                  ...(displayedPeriods.map<DataColumn>((period) {
+                        return DataColumn(
+                          label: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 2),
                             child: SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Text(
@@ -310,116 +293,116 @@ class _CijenePoVremenskomPerioduScreenState
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    );
-                  }).toList() ??
-                  []),
-            ],
-            rows: groupedResults.entries.map<DataRow>((entry) {
-              int voziloId = entry.key;
-              List<CijenePoVremenskomPeriodu> cijene = entry.value;
-
-              Vozilo? vozilo = vozilaResult?.result
-                  .firstWhere((vozilo) => vozilo.voziloId == voziloId);
-
-              return DataRow(
-                color: WidgetStateProperty.resolveWith<Color?>(
-                  (Set<WidgetState> states) {
-                    if (states.contains(WidgetState.selected)) {
-                      return Theme.of(context)
-                          .colorScheme
-                          .primary
-                          .withOpacity(0.08);
-                    }
-                    return null;
-                  },
-                ),
-                cells: [
-                  DataCell(
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: SizedBox(
-                        width: 90,
-                        height: 60,
-                        child: vozilo != null && vozilo.slika != null
-                            ? Image.memory(
-                                base64Decode(vozilo.slika!),
-                                fit: BoxFit.contain,
-                              )
-                            : Text(voziloId.toString()),
-                      ),
-                    ),
-                  ),
-                  DataCell(
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Text(
-                        vozilo?.model ?? "",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                          shadows: [
-                            Shadow(
-                              offset: const Offset(2.0, 2.0),
-                              blurRadius: 3.0,
-                              color: Colors.grey.withOpacity(0.5),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  DataCell(
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Text(
-                        vozilo?.marka ?? "",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                          shadows: [
-                            Shadow(
-                              offset: const Offset(2.0, 2.0),
-                              blurRadius: 3.0,
-                              color: Colors.grey.withOpacity(0.5),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  ...(displayedPeriods.map<DataCell>((period) {
-                        CijenePoVremenskomPeriodu? cijenaZaPeriod =
-                            cijene.firstWhereOrNull(
-                          (cijena) => cijena.periodId == period.periodId,
-                        );
-                        return DataCell(
-                          Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Text(
-                                    cijenaZaPeriod?.cijena?.toString() ?? "/",
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
                         );
                       }).toList() ??
                       []),
                 ],
-              );
-            }).toList(),
-          ),
-        ),
-      ),
-    );
+                rows: groupedResults.entries.map<DataRow>((entry) {
+                  int voziloId = entry.key;
+                  List<CijenePoVremenskomPeriodu> cijene = entry.value;
+
+                  Vozilo? vozilo = vozilaResult?.result
+                      .firstWhere((vozilo) => vozilo.voziloId == voziloId);
+
+                  return DataRow(
+                    color: WidgetStateProperty.resolveWith<Color?>(
+                      (Set<WidgetState> states) {
+                        if (states.contains(WidgetState.selected)) {
+                          return Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.08);
+                        }
+                        return null;
+                      },
+                    ),
+                    cells: [
+                      DataCell(
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: SizedBox(
+                            width: 90,
+                            height: 50,
+                            child: vozilo != null && vozilo.slika != null
+                                ? Image.memory(
+                                    base64Decode(vozilo.slika!),
+                                    fit: BoxFit.contain,
+                                  )
+                                : Text(voziloId.toString()),
+                          ),
+                        ),
+                      ),
+                      DataCell(
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Text(
+                            vozilo?.model ?? "",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              shadows: [
+                                Shadow(
+                                  offset: const Offset(1.0, 1.0),
+                                  blurRadius: 2.0,
+                                  color: Colors.grey.withOpacity(0.5),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      DataCell(
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Text(
+                            vozilo?.marka ?? "",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              shadows: [
+                                Shadow(
+                                  offset: const Offset(1.0, 1.0),
+                                  blurRadius: 2.0,
+                                  color: Colors.grey.withOpacity(0.5),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      ...(displayedPeriods.map<DataCell>((period) {
+                            CijenePoVremenskomPeriodu? cijenaZaPeriod =
+                                cijene.firstWhereOrNull(
+                              (cijena) => cijena.periodId == period.periodId,
+                            );
+                            return DataCell(
+                              Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Text(
+                                        cijenaZaPeriod?.cijena?.toString() ??
+                                            "/",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }).toList() ??
+                          []),
+                    ],
+                  );
+                }).toList(),
+              ),
+            )));
   }
 
   void _moveNext() {

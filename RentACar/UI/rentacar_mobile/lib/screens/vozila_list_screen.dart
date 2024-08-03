@@ -18,6 +18,7 @@ class VozilaListScreen extends StatefulWidget {
   static const String routeName = "/vozila";
 
   Vozilo? vozilo;
+
   VozilaListScreen({super.key, this.vozilo});
 
   @override
@@ -40,6 +41,7 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
   late ScaffoldMessengerState _scaffoldMessengerState;
 
   final TextEditingController _ftsController = TextEditingController();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -63,7 +65,6 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
     setState(() {
       isLoading = false;
     });
-
   }
 
   @override
@@ -89,7 +90,7 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.only(top:30.0),
+          padding: const EdgeInsets.only(top: 30.0),
           child: Column(
             children: [_buildSearch(), _buildDataListView()],
           ),
@@ -223,8 +224,8 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
                                         Icons.miscellaneous_services,
                                         color: Color.fromARGB(255, 77, 255, 83),
                                         size: 15,
-                                      ),                                      const SizedBox(width: 5),
-
+                                      ),
+                                      const SizedBox(width: 5),
                                       Expanded(
                                         child: Text(
                                           '${(e.motor)}',
@@ -253,7 +254,11 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
                                       const SizedBox(width: 5),
                                       Expanded(
                                         child: Text(
-                                          gorivoResult?.result.firstWhere((g) => g.gorivoId == e.gorivoId).tip ?? "",
+                                          gorivoResult?.result
+                                                  .firstWhere((g) =>
+                                                      g.gorivoId == e.gorivoId)
+                                                  .tip ??
+                                              "",
                                           style: const TextStyle(
                                               color: Colors.white,
                                               fontStyle: FontStyle.italic,
@@ -332,13 +337,14 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
                                       ),
                                     ),
                                     style: ElevatedButton.styleFrom(
-
                                       backgroundColor: Colors.blueAccent,
                                     ),
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 2,)
+                              SizedBox(
+                                height: 2,
+                              )
                             ]),
                       ),
                     ),

@@ -141,17 +141,14 @@ class _KontaktScreenState extends State<KontaktScreen> {
                     borderSide: const BorderSide(color: Colors.white),
                   ),
                 ),
-                onChanged: (value) {
-                  setState(() {
-                    _autoValidate = true;
-                  });
-                },
+
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Polje je obavezno';
                   }
                   return null;
-                },
+                },                autovalidateMode: AutovalidateMode.onUserInteraction,
+
               ),
               const SizedBox(height: 20),
               FormBuilderTextField(
@@ -174,11 +171,7 @@ class _KontaktScreenState extends State<KontaktScreen> {
                     borderSide: const BorderSide(color: Colors.white),
                   ),
                 ),
-                onChanged: (value) {
-                  setState(() {
-                    _autoValidate = true;
-                  });
-                },
+
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Polje je obavezno';
@@ -189,6 +182,7 @@ class _KontaktScreenState extends State<KontaktScreen> {
                   }
                   return null;
                 },
+                autovalidateMode: AutovalidateMode.onUserInteraction,
 
 
               ),
@@ -211,22 +205,54 @@ class _KontaktScreenState extends State<KontaktScreen> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: const BorderSide(color: Colors.white),
-                  ),
+                  ),                  errorMaxLines: 4,
+
                 ),
-                onChanged: (value) {
-                  setState(() {
-                    _autoValidate = true;
-                  });
-                },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Polje je obavezno';
-                  } else if (!emailRegex.hasMatch(value)) {
-                    return 'Email mora biti u formatu test@gmail.com ili test@email.com';
+                    return 'Polje ne smije biti prazno!';
                   }
+
+                  String emailFormatExample =
+                      'Primjer ispravnog formata: korisnik@gmail.com ili korisnik.korisnik@gmail.com';
+                  String allowedDomains =
+                      'Dozvoljene domene: gmail.com, hotmail.com, yahoo.com, outlook.com, aol.com, icloud.com';
+
+                  String usernamePart = value.split('@').first;
+
+                  if (RegExp(r'\.\s*[@]').hasMatch(value)) {
+                    return 'Između tačke i znaka \'@\' mora biti neka riječ!';
+                  }
+
+                  if (usernamePart.contains(RegExp(r'[^a-zA-Z0-9šđčćž.]'))) {
+                    return '$emailFormatExample\nKoristi se nedozvoljen znak. Dozvoljena je samo tačka i slova š, đ, č, ć, ž!';
+                  }
+                  if (usernamePart.split('.').length > 2) {
+                    return 'Unijeli ste dvije tačke prije "@", pogrešan format!';
+                  }
+
+                  if (value.contains('@')) {
+                    String domainPart = value.split('@').last;
+                    List<String> allowedDomainsList = [
+                      'gmail.com',
+                      'hotmail.com',
+                      'yahoo.com',
+                      'outlook.com',
+                      'aol.com',
+                      'icloud.com'
+                    ];
+                    if (!domainPart.contains('.') ||
+                        !allowedDomainsList
+                            .any((domain) => domainPart.endsWith(domain))) {
+                      return '$emailFormatExample\n$allowedDomains';
+                    }
+                  } else {
+                    return emailFormatExample;
+                  }
+
                   return null;
                 },
-
+                autovalidateMode: AutovalidateMode.onUserInteraction,
               ),
               const SizedBox(height: 20),
               FormBuilderTextField(
@@ -250,17 +276,14 @@ class _KontaktScreenState extends State<KontaktScreen> {
                     borderSide: const BorderSide(color: Colors.white),
                   ),
                 ),
-                onChanged: (value) {
-                  setState(() {
-                    _autoValidate = true;
-                  });
-                },
+
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Polje je obavezno';
                   }
                   return null;
-                },
+                },                autovalidateMode: AutovalidateMode.onUserInteraction,
+
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -295,7 +318,7 @@ class _KontaktScreenState extends State<KontaktScreen> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Kontakt je uspješno sačuvan!'),
+            content: Text('Kontakt je uspješno sačuvan!'), backgroundColor: Colors.green,
           ),
         );
 

@@ -13,7 +13,7 @@ import 'package:rentacar_admin/providers/gorivo_provider.dart';
 import 'package:rentacar_admin/providers/rezervacija_provider.dart';
 import 'package:rentacar_admin/providers/tip_vozila_provider.dart';
 import 'package:rentacar_admin/providers/vozila_provider.dart';
-import 'package:rentacar_admin/screens/recommended_reservations.dart';
+import 'package:rentacar_admin/screens/recommended_reservations_screen.dart';
 import 'package:rentacar_admin/screens/vozilo_pregled_screen.dart';
 import 'package:rentacar_admin/widgets/master_screen.dart';
 
@@ -143,8 +143,14 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
 
       if (voziloId != null) {
         final reservations = await rezervacijaProvider.recommend(voziloId);
+
+        final activeVehicles = await _vozilaProvider.getActiveVehicles();
+        final activeVehicleIds = activeVehicles.result.map((v) => v.voziloId).toSet();
+
+        final filteredReservations = reservations.where((r) => activeVehicleIds.contains(r.voziloId)).toList();
+
         setState(() {
-          recommendedReservations = reservations;
+          recommendedReservations = filteredReservations;
           _loadingRecommendedReservations = false;
         });
       }
@@ -152,6 +158,7 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
       print('Error loading recommended reservations: $e');
     }
   }
+
   Widget _buildImagePreview() {
     if (widget.vozilo != null && widget.vozilo!.slika != null) {
       return Align(

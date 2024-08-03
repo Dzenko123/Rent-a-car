@@ -227,30 +227,49 @@ class _KomentariScreenState extends State<KomentariScreen> {
   }
 
   void _editComment(Komentari komentar) {
+    final _formKey = GlobalKey<FormState>();
+    final _editCommentController =
+        TextEditingController(text: komentar.komentar);
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Uredi komentar'),
-          content: TextField(
-            controller: TextEditingController(text: komentar.komentar),
-            onChanged: (value) {
-              komentar.komentar = value;
-            },
+          content: Form(
+            key: _formKey,
+            child: TextFormField(
+              controller: _editCommentController,
+              decoration: const InputDecoration(
+                hintText: 'Unesite komentar...',
+              ),
+              maxLines: null,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Komentar ne smije biti prazan.';
+                }
+                return null;
+              },
+              onChanged: (value) {
+                _formKey.currentState?.validate();
+              },
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () async {
-                try {
-                  await _komentariProvider.update(komentar.komentarId!, {
-                    'korisnikId': komentar.korisnikId,
-                    'voziloId': komentar.voziloId,
-                    'komentar': komentar.komentar,
-                  });
-                  await _refreshComments();
-                  Navigator.of(context).pop();
-                } catch (e) {
-                  print('Greška pri ažuriranju komentara: $e');
+                if (_formKey.currentState?.validate() ?? false) {
+                  try {
+                    await _komentariProvider.update(komentar.komentarId!, {
+                      'korisnikId': komentar.korisnikId,
+                      'voziloId': komentar.voziloId,
+                      'komentar': _editCommentController.text,
+                    });
+                    await _refreshComments();
+                    Navigator.of(context).pop();
+                  } catch (e) {
+                    print('Greška pri ažuriranju komentara: $e');
+                  }
                 }
               },
               child: const Text('Spremi'),
@@ -291,5 +310,6 @@ class _KomentariScreenState extends State<KomentariScreen> {
         .getCommentsForVehicle(widget.vozilo?.voziloId ?? 0);
     if (mounted) {
       setState(() {});
-    }  }
+    }
+  }
 }

@@ -29,6 +29,7 @@ class ProfilScreen extends StatefulWidget {
   Vozilo? vozilo;
   Grad? grad;
   DodatnaUsluga? dodatnaUsluga;
+
   ProfilScreen({super.key, this.korisnik});
 
   @override
@@ -59,6 +60,12 @@ class _ProfilScreenState extends State<ProfilScreen> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   final TextEditingController _oldPasswordController = TextEditingController();
+  final _changePasswordFormKey = GlobalKey<FormState>();
+  bool _isChangePasswordButtonPressed = false;
+  bool _isOldPasswordVisible = false;
+  bool _isNewPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
+  final phoneRegex = RegExp(r'^[0-9]+$');
 
   @override
   void initState() {
@@ -73,8 +80,9 @@ class _ProfilScreenState extends State<ProfilScreen> {
     _rezervacijaProvider = context.read<RezervacijaProvider>();
     _vozilaProvider = context.read<VozilaProvider>();
     _gradProvider = context.read<GradProvider>();
-    _dodatnaUslugaProvider=context.read<DodatnaUslugaProvider>();
-    _rezervacijaDodatnaUslugaProvider=context.read<RezervacijaDodatnaUslugaProvider>();
+    _dodatnaUslugaProvider = context.read<DodatnaUslugaProvider>();
+    _rezervacijaDodatnaUslugaProvider =
+        context.read<RezervacijaDodatnaUslugaProvider>();
     getUlogovaniKorisnikId();
     initForm();
   }
@@ -111,8 +119,9 @@ class _ProfilScreenState extends State<ProfilScreen> {
     korisniciResult = await _korisniciProvider.get();
     voziloResult = await _vozilaProvider.get();
     gradResult = await _gradProvider.get();
-    dodatnaUslugaResult=await _dodatnaUslugaProvider.get();
-    rezervacijaDodatnaUslugaResult=await _rezervacijaDodatnaUslugaProvider.get();
+    dodatnaUslugaResult = await _dodatnaUslugaProvider.get();
+    rezervacijaDodatnaUslugaResult =
+        await _rezervacijaDodatnaUslugaProvider.get();
     await getUlogovaniKorisnikId();
     if (ulogovaniKorisnikId != null) {
       await _loadRezervacije();
@@ -173,6 +182,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
         FormBuilder(
           key: _formKey,
           initialValue: _initialValue,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             children: [
               FormBuilderTextField(
@@ -201,6 +211,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   }
                   return null;
                 },
+                autovalidateMode: AutovalidateMode.onUserInteraction,
               ),
               const SizedBox(height: 10),
               FormBuilderTextField(
@@ -229,6 +240,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   }
                   return null;
                 },
+                autovalidateMode: AutovalidateMode.onUserInteraction,
               ),
               const SizedBox(height: 10),
               FormBuilderTextField(
@@ -250,13 +262,53 @@ class _ProfilScreenState extends State<ProfilScreen> {
                     borderRadius: BorderRadius.circular(10),
                     borderSide: const BorderSide(color: Colors.black),
                   ),
+                  errorMaxLines: 4,
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Polje je obavezno';
+                    return 'Polje ne smije biti prazno!';
                   }
+
+                  String emailFormatExample =
+                      'Primjer ispravnog formata: korisnik@gmail.com ili korisnik.korisnik@gmail.com';
+                  String allowedDomains =
+                      'Dozvoljene domene: gmail.com, hotmail.com, yahoo.com, outlook.com, aol.com, icloud.com';
+
+                  String usernamePart = value.split('@').first;
+
+                  if (RegExp(r'\.\s*[@]').hasMatch(value)) {
+                    return 'Između tačke i znaka \'@\' mora biti neka riječ!';
+                  }
+
+                  if (usernamePart.contains(RegExp(r'[^a-zA-Z0-9šđčćž.]'))) {
+                    return '$emailFormatExample\nKoristi se nedozvoljen znak. Dozvoljena je samo tačka i slova š, đ, č, ć, ž!';
+                  }
+                  if (usernamePart.split('.').length > 2) {
+                    return 'Unijeli ste dvije tačke prije "@", pogrešan format!';
+                  }
+
+                  if (value.contains('@')) {
+                    String domainPart = value.split('@').last;
+                    List<String> allowedDomainsList = [
+                      'gmail.com',
+                      'hotmail.com',
+                      'yahoo.com',
+                      'outlook.com',
+                      'aol.com',
+                      'icloud.com'
+                    ];
+                    if (!domainPart.contains('.') ||
+                        !allowedDomainsList
+                            .any((domain) => domainPart.endsWith(domain))) {
+                      return '$emailFormatExample\n$allowedDomains';
+                    }
+                  } else {
+                    return emailFormatExample;
+                  }
+
                   return null;
                 },
+                autovalidateMode: AutovalidateMode.onUserInteraction,
               ),
               const SizedBox(height: 10),
               FormBuilderTextField(
@@ -282,9 +334,14 @@ class _ProfilScreenState extends State<ProfilScreen> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Polje je obavezno';
+                  } else if (!phoneRegex.hasMatch(value)) {
+                    return 'Broj telefona mora sadržavati samo brojeve';
+                  } else if (value.length < 9) {
+                    return 'Broj telefona mora imati minimalno 9 cifara';
                   }
                   return null;
                 },
+                autovalidateMode: AutovalidateMode.onUserInteraction,
               ),
               const SizedBox(height: 20),
               Row(
@@ -330,7 +387,9 @@ class _ProfilScreenState extends State<ProfilScreen> {
       ] else ...[
         const CircularProgressIndicator(),
       ],
-      if (widget.rezervacija != null && widget.rezervacija!.isNotEmpty) ...[
+      if (!isEditing &&
+          widget.rezervacija != null &&
+          widget.rezervacija!.isNotEmpty) ...[
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -342,7 +401,11 @@ class _ProfilScreenState extends State<ProfilScreen> {
               ),
             ),
             const SizedBox(height: 10),
-            ...widget.rezervacija!.map((rezervacija) {
+            ...widget.rezervacija!
+                .where((rezervacija) =>
+                    rezervacija.pocetniDatum!.isAfter(DateTime.now()) ||
+                    rezervacija.pocetniDatum!.isAtSameMomentAs(DateTime.now()))
+                .map((rezervacija) {
               return Card(
                 margin: const EdgeInsets.symmetric(vertical: 10),
                 elevation: 8,
@@ -364,20 +427,25 @@ class _ProfilScreenState extends State<ProfilScreen> {
                                 } else if (snapshot.hasError) {
                                   return const Text(
                                       'Greška prilikom dohvaćanja podataka o vozilu');
-                                } else if (snapshot.hasData && snapshot.data != null) {
+                                } else if (snapshot.hasData &&
+                                    snapshot.data != null) {
                                   var vozilo = snapshot.data as Vozilo;
-                                  return Image.memory(
-                                    base64Decode(vozilo.slika!),
-                                    fit: BoxFit.cover,
-                                  );
+                                  return vozilo.slika != null
+                                      ? Image.memory(
+                                          base64Decode(vozilo.slika!),
+                                          fit: BoxFit.cover,
+                                        )
+                                      : const Text('Nema slike za prikaz');
                                 } else {
-                                  return const Text('Nema dostupnih informacija o vozilu');
+                                  return const Text(
+                                      'Nema dostupnih informacija o vozilu');
                                 }
                               },
                             ),
                             const SizedBox(height: 10),
                             FutureBuilder(
-                              future: _gradProvider.getById(rezervacija.gradId!),
+                              future:
+                                  _gradProvider.getById(rezervacija.gradId!),
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting) {
@@ -385,29 +453,38 @@ class _ProfilScreenState extends State<ProfilScreen> {
                                 } else if (snapshot.hasError) {
                                   return const Text(
                                       'Greška prilikom dohvaćanja podataka o gradu');
-                                } else if (snapshot.hasData && snapshot.data != null) {
+                                } else if (snapshot.hasData &&
+                                    snapshot.data != null) {
                                   var grad = snapshot.data as Grad;
                                   return Text(
                                     'Grad: ${grad.naziv}',
-                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
                                   );
                                 } else {
-                                  return const Text('Nema dostupnih informacija o gradu');
+                                  return const Text(
+                                      'Nema dostupnih informacija o gradu');
                                 }
                               },
                             ),
                             const SizedBox(height: 10),
                             Text(
                               'Datum početka: ${DateFormat('dd.MM.yyyy').format(rezervacija.pocetniDatum!)}',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             Text(
                               'Datum završetka: ${DateFormat('dd.MM.yyyy').format(rezervacija.zavrsniDatum!)}',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 10),
                             FutureBuilder(
-                              future: getNaziviDodatnihUsluga(rezervacija.dodatnaUsluga!.map((usluga) => RezervacijaDodatnaUsluga(dodatnaUslugaId: usluga.dodatnaUslugaId)).toList()),
+                              future: getNaziviDodatnihUsluga(rezervacija
+                                  .dodatnaUsluga!
+                                  .map((usluga) => RezervacijaDodatnaUsluga(
+                                      dodatnaUslugaId: usluga.dodatnaUslugaId))
+                                  .toList()),
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting) {
@@ -418,48 +495,56 @@ class _ProfilScreenState extends State<ProfilScreen> {
                                 } else if (snapshot.hasData) {
                                   var nazivi = snapshot.data as List<String>;
                                   return Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       const Text(
                                         'Dodatne usluge:',
-                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
                                       ),
                                       for (var naziv in nazivi)
                                         Text(
                                           '- $naziv',
-                                          style: const TextStyle(fontWeight: FontWeight.bold),
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold),
                                         ),
                                     ],
                                   );
                                 } else {
-                                  return const Text('Nema dostupnih dodatnih usluga');
+                                  return const Text(
+                                      'Nema dostupnih dodatnih usluga');
                                 }
                               },
                             ),
                             const SizedBox(height: 10),
                             Text(
                               'Ukupna cijena: ${formatNumber(rezervacija.totalPrice)}',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 10),
                             rezervacija.zahtjev!
                                 ? const Text(
-                              'Zahtjev za otkazivanje na čekanju.',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red,
-                                fontSize: 18
-                              ),
-                            )
+                                    'Zahtjev za otkazivanje na čekanju.',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red,
+                                        fontSize: 18),
+                                  )
                                 : ElevatedButton(
-                              onPressed: () {
-                                _showCancelConfirmationDialog(rezervacija.rezervacijaId);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                              ),
-                              child: const Text('Poništi rezervaciju', style: TextStyle(color:Colors.white),),
-                            ),
+                                    onPressed: () {
+                                      _showCancelConfirmationDialog(
+                                          rezervacija.rezervacijaId);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                    ),
+                                    child: const Text(
+                                      'Poništi rezervaciju',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
                           ],
                         ),
                       ),
@@ -471,28 +556,27 @@ class _ProfilScreenState extends State<ProfilScreen> {
           ],
         ),
       ],
-
-
     ]);
   }
 
-  void _cancelReservation(int rezervacijaId) async{
-    try{
+  void _cancelReservation(int rezervacijaId) async {
+    try {
       await _rezervacijaProvider.cancelReservation(rezervacijaId);
       await _loadRezervacije();
       _showSuccessDialog();
-    }
-    catch(e){
+    } catch (e) {
       print('Greška prilikom otkazivanja rezervacije: $e');
     }
   }
+
   void _showCancelConfirmationDialog(int? rezervacijaId) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Potvrda'),
-          content: const Text('Da li sigurno želite poništiti ovu rezervaciju?'),
+          content:
+              const Text('Da li sigurno želite poništiti ovu rezervaciju?'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -512,13 +596,15 @@ class _ProfilScreenState extends State<ProfilScreen> {
       },
     );
   }
+
   void _showSuccessDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Uspješno'),
-          content: const Text('Zahtjev za poništavanje je poslan administraciji. Uskoro ćete biti obaviješteni.'),
+          content: const Text(
+              'Zahtjev za poništavanje je poslan administraciji. Uskoro ćete biti obaviješteni.'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -532,7 +618,8 @@ class _ProfilScreenState extends State<ProfilScreen> {
     );
   }
 
-  Future<List<String>> getNaziviDodatnihUsluga(List<RezervacijaDodatnaUsluga> dodatneUsluge) async {
+  Future<List<String>> getNaziviDodatnihUsluga(
+      List<RezervacijaDodatnaUsluga> dodatneUsluge) async {
     List<String> nazivi = [];
     if (dodatneUsluge.isEmpty) {
       nazivi.add('Nije odabrana nijedna dodatna usluga!');
@@ -540,10 +627,10 @@ class _ProfilScreenState extends State<ProfilScreen> {
     }
     for (var dodatnaUsluga in dodatneUsluge) {
       try {
-        var usluga = await _dodatnaUslugaProvider.getById(dodatnaUsluga.dodatnaUslugaId!);
+        var usluga = await _dodatnaUslugaProvider
+            .getById(dodatnaUsluga.dodatnaUslugaId!);
         if (usluga != null) {
           nazivi.add(usluga.naziv!);
-
         }
       } catch (e) {
         print('Greška prilikom dobijanja naziva dodatne usluge: $e');
@@ -568,7 +655,10 @@ class _ProfilScreenState extends State<ProfilScreen> {
         await _korisniciProvider.update(ulogovaniKorisnikId!, request);
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Podaci korisnika su uspješno ažurirani')),
+          const SnackBar(
+            content: Text('Podaci korisnika su uspješno ažurirani'),
+            backgroundColor: Colors.green,
+          ),
         );
         await getKorisnikData(ulogovaniKorisnikId!);
 
@@ -578,7 +668,8 @@ class _ProfilScreenState extends State<ProfilScreen> {
       } catch (e) {
         print('Greška prilikom ažuriranja podataka korisnika: $e');
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Došlo je do greške prilikom ažuriranja')),
+          const SnackBar(
+              content: Text('Došlo je do greške prilikom ažuriranja')),
         );
       }
     }
@@ -635,13 +726,27 @@ class _ProfilScreenState extends State<ProfilScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            IconButton(
-              onPressed: () {
-                _showSettingsMenu(context);
-              },
-              icon: const Icon(Icons.settings),
-              tooltip: 'Postavke',
-                iconSize: 25
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  onPressed: () {
+                    _showSettingsMenu(context);
+                  },
+                  icon: const Icon(Icons.settings),
+                  iconSize: 25,
+                ),
+                const Padding(
+                  padding: const EdgeInsets.only(bottom: 5),
+                  child: const Text(
+                    'Postavke',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -673,101 +778,157 @@ class _ProfilScreenState extends State<ProfilScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        _usernameController.text = Authorization.username ?? '';
-
-        return AlertDialog(
-          title: const Text('Promijenite lozinku'),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  controller: _oldPasswordController,
-                  decoration: const InputDecoration(
-                    labelText: 'Trenutna lozinka',
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: const Text(
+                'Promijenite vaše pristupne podatke',
+                style: TextStyle(fontSize: 14),
+              ),
+              content: Form(
+                key: _changePasswordFormKey,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextFormField(
+                        controller: _usernameController,
+                        decoration: InputDecoration(
+                          labelText: 'Korisničko ime (opcionalno)',
+                        ),
+                        onChanged: (value) {
+                          _changePasswordFormKey.currentState?.validate();
+                        },
+                      ),
+                      TextFormField(
+                        controller: _oldPasswordController,
+                        decoration: InputDecoration(
+                          labelText: 'Trenutna lozinka',
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isOldPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isOldPasswordVisible = !_isOldPasswordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                        obscureText: !_isOldPasswordVisible,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Polje ne smije biti prazno';
+                          }
+                          if (_isChangePasswordButtonPressed &&
+                              value != Authorization.password) {
+                            return 'Trenutna lozinka nije ispravna';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            _isChangePasswordButtonPressed = false;
+                          });
+                          _changePasswordFormKey.currentState?.validate();
+                        },
+                      ),
+                      TextFormField(
+                        controller: _passwordController,
+                        decoration: InputDecoration(
+                          labelText: 'Nova lozinka',
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isNewPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isNewPasswordVisible = !_isNewPasswordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                        obscureText: !_isNewPasswordVisible,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Polje ne smije biti prazno';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          _changePasswordFormKey.currentState?.validate();
+                        },
+                      ),
+                      TextFormField(
+                        controller: _confirmPasswordController,
+                        decoration: InputDecoration(
+                          labelText: 'Ponovo unesite novu lozinku',
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isConfirmPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isConfirmPasswordVisible =
+                                    !_isConfirmPasswordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                        obscureText: !_isConfirmPasswordVisible,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Polje ne smije biti prazno';
+                          }
+                          if (value != _passwordController.text) {
+                            return 'Lozinke se ne podudaraju';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          _changePasswordFormKey.currentState?.validate();
+                        },
+                      ),
+                    ],
                   ),
-                  obscureText: true,
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    _oldPasswordController.clear();
+                    _passwordController.clear();
+                    _confirmPasswordController.clear();
+                    _usernameController.clear();
+                    setState(() {
+                      _isChangePasswordButtonPressed = false;
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Odustani'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _isChangePasswordButtonPressed = true;
+                    });
+                    if (_changePasswordFormKey.currentState?.validate() ??
+                        false) {
+                      _changePassword();
+                    }
+                  },
+                  child: const Text('Promijenite podatke'),
                 ),
               ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Odustani'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                _verifyCurrentPassword(context);
-              },
-              child: const Text('Dalje'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _verifyCurrentPassword(BuildContext context) async {
-    try {
-      if (_oldPasswordController.text != Authorization.password) {
-        throw Exception('Trenutna lozinka nije ispravna');
-      }
-      await _showChangePasswordFields(context);
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('$e')),
-      );
-    }
-  }
-
-  Future<void> _showChangePasswordFields(BuildContext context) async {
-    Navigator.of(context).pop();
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Promijenite lozinku'),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  controller: _usernameController,
-                  decoration: const InputDecoration(labelText: 'Korisničko ime'),
-                ),
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: const InputDecoration(labelText: 'Nova lozinka'),
-                  obscureText: true,
-                ),
-                TextFormField(
-                  controller: _confirmPasswordController,
-                  decoration: const InputDecoration(labelText: 'Potvrdite lozinku'),
-                  obscureText: true,
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Odustani'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                _changePassword();
-                Navigator.of(context).pop();
-              },
-              child: const Text('Promijeni lozinku'),
-            ),
-          ],
+            );
+          },
         );
       },
     );
@@ -775,36 +936,12 @@ class _ProfilScreenState extends State<ProfilScreen> {
 
   Future<void> _changePassword() async {
     try {
-      if (_oldPasswordController.text != Authorization.password) {
-        throw Exception('Trenutni password nije ispravan');
-      }
-
-      if (_passwordController.text == _oldPasswordController.text) {
-        throw Exception('Nova lozinka mora biti različita od trenutne!');
-      }
-
-      if (_passwordController.text != _confirmPasswordController.text) {
-        throw Exception('Lozinke se ne podudaraju');
-      }
-
-      if (_passwordController.text.isEmpty) {
-        throw Exception('Lozinka ne smije biti prazna');
-      }
-
-      if (_usernameController.text.isEmpty) {
-        throw Exception('Korisničko ime ne smije biti prazno');
-      }
-
       await _korisniciProvider.updatePasswordAndUsername(
         ulogovaniKorisnikId!,
         _oldPasswordController.text,
         _usernameController.text,
         _passwordController.text,
         _confirmPasswordController.text,
-      );
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Lozinka uspješno promijenjena')),
       );
       showDialog(
         context: context,
@@ -819,7 +956,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   Navigator.of(context).pop();
                   Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => const LoginPage()),
-                        (Route<dynamic> route) => false,
+                    (Route<dynamic> route) => false,
                   );
                 },
                 child: const Text('Uredu'),
@@ -830,11 +967,13 @@ class _ProfilScreenState extends State<ProfilScreen> {
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Greška prilikom promjene lozinke: $e')),
+        SnackBar(
+          content: Text('Greška prilikom promjene podataka: $e'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
-
 
   void _showLogoutConfirmationDialog(BuildContext context) {
     showDialog(
@@ -842,7 +981,8 @@ class _ProfilScreenState extends State<ProfilScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Želite se odjaviti?'),
-          content: const Text('Jeste li sigurni da želite napustiti aplikaciju?'),
+          content:
+              const Text('Jeste li sigurni da želite napustiti aplikaciju?'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -884,12 +1024,12 @@ class _ProfilScreenState extends State<ProfilScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.key),
-                title: const Text('Promijenite lozinku'),
+                title: const Text('Promijenite pristupne podatke'),
                 onTap: () {
                   Navigator.pop(context);
-                  setState(() {
+
                     _showChangePasswordDialog(context);
-                  });
+
                 },
               ),
               ListTile(

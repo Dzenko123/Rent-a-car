@@ -8,7 +8,7 @@ import 'package:rentacar_admin/models/tip_vozila.dart';
 import 'package:rentacar_admin/providers/gorivo_provider.dart';
 import 'package:rentacar_admin/providers/tip_vozila_provider.dart';
 import 'package:rentacar_admin/providers/vozila_provider.dart';
-import 'package:rentacar_admin/utils/util.dart';
+import 'package:rentacar_admin/screens/vozila_detail_screen.dart';
 
 class RecommendedReservationsWidget extends StatelessWidget {
   final List<Rezervacija> recommendedReservations;
@@ -77,6 +77,29 @@ class RecommendedReservationsWidget extends StatelessWidget {
                                   ],
                                 ),
                               ),
+                              SizedBox(height: 10),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => VozilaDetailScreen(vozilo: vozilo),
+                                    ),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Color(0xFF480707),
+                                  side: BorderSide(color: Colors.white, width: 1),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Detalji vozila',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              )
+
                             ],
                           ),
                         );
