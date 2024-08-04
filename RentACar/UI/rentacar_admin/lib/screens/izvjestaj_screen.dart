@@ -215,6 +215,16 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
     List<Korisnici> filteredUsers = getFilteredUsers();
     List<Grad> gradovi = _gradovi;
     List<Grad> filteredGradovi = getFilteredGradovi();
+ Set<int> yearsWithReservations = _rezervacije
+        .where((rezervacija) =>
+            _selectedKorisnik == 'Svi korisnici' ||
+            rezervacija.korisnikId.toString() == _selectedKorisnik)
+        .map((rezervacija) => rezervacija.pocetniDatum?.year)
+        .whereType<int>()
+        .toSet(); // Remove duplicates
+
+    // Convert set to list, sort the list
+    List<int> sortedYears = yearsWithReservations.toList()..sort((a, b) => a.compareTo(b));
 
     return MasterScreenWidget(
       title: 'Izvještaji',
@@ -329,16 +339,7 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
-                          ..._rezervacije
-                              .where((rezervacija) =>
-                                  _selectedKorisnik == 'Svi korisnici' ||
-                                  rezervacija.korisnikId.toString() ==
-                                      _selectedKorisnik)
-                              .map((rezervacija) =>
-                                  rezervacija.pocetniDatum?.year)
-                              .toSet()
-                              .toList()
-                              .map((year) {
+                          ...sortedYears.map((year) {
                             bool hasReservations =
                                 _rezervacije.any(
                                     (rezervacija) =>

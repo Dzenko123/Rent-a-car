@@ -217,14 +217,14 @@ namespace RentACar.Services
         private void SeedVoziloPregled(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<VoziloPregled>().HasData(
-                new VoziloPregled { VoziloPregledId = 1, VoziloId = 1, Datum = DateTime.Now.AddDays(+1) },
-                new VoziloPregled { VoziloPregledId = 2, VoziloId = 1, Datum = DateTime.Now.AddDays(+2) },
-                new VoziloPregled { VoziloPregledId = 3, VoziloId = 2, Datum = DateTime.Now.AddDays(+2) },
-                new VoziloPregled { VoziloPregledId = 4, VoziloId = 2, Datum = DateTime.Now.AddDays(+3) },
-                new VoziloPregled { VoziloPregledId = 5, VoziloId = 3, Datum = DateTime.Now.AddDays(+1) },
-                new VoziloPregled { VoziloPregledId = 6, VoziloId = 3, Datum = DateTime.Now.AddDays(+2) },
-                new VoziloPregled { VoziloPregledId = 7, VoziloId = 4, Datum = DateTime.Now.AddDays(+2) },
-                new VoziloPregled { VoziloPregledId = 8, VoziloId = 4, Datum = DateTime.Now.AddDays(+3) }
+                new VoziloPregled { VoziloPregledId = 1, VoziloId = 1, Datum = DateTime.Now.AddDays(+5) },
+                new VoziloPregled { VoziloPregledId = 2, VoziloId = 1, Datum = DateTime.Now.AddDays(+10) },
+                new VoziloPregled { VoziloPregledId = 3, VoziloId = 2, Datum = DateTime.Now.AddDays(+10) },
+                new VoziloPregled { VoziloPregledId = 4, VoziloId = 2, Datum = DateTime.Now.AddDays(+15) },
+                new VoziloPregled { VoziloPregledId = 5, VoziloId = 3, Datum = DateTime.Now.AddDays(+5) },
+                new VoziloPregled { VoziloPregledId = 6, VoziloId = 3, Datum = DateTime.Now.AddDays(+10) },
+                new VoziloPregled { VoziloPregledId = 7, VoziloId = 4, Datum = DateTime.Now.AddDays(+10) },
+                new VoziloPregled { VoziloPregledId = 8, VoziloId = 4, Datum = DateTime.Now.AddDays(+15) }
             );
         }
 
@@ -664,37 +664,6 @@ namespace RentACar.Services
                     VoziloId = 7,
                     PeriodId = 5,
                     Cijena = 410
-                }, new CijenePoVremenskomPeriodu
-                {
-                    CijenePoVremenskomPerioduId = 36,
-                    VoziloId = 8,
-                    PeriodId = 1,
-                    Cijena = 170
-                },
-                new CijenePoVremenskomPeriodu
-                {
-                    CijenePoVremenskomPerioduId = 37,
-                    VoziloId = 8,
-                    PeriodId = 2,
-                    Cijena = 270
-                }, new CijenePoVremenskomPeriodu
-                {
-                    CijenePoVremenskomPerioduId = 38,
-                    VoziloId = 8,
-                    PeriodId = 3,
-                    Cijena = 320
-                }, new CijenePoVremenskomPeriodu
-                {
-                    CijenePoVremenskomPerioduId = 39,
-                    VoziloId = 8,
-                    PeriodId = 4,
-                    Cijena = 370
-                }, new CijenePoVremenskomPeriodu
-                {
-                    CijenePoVremenskomPerioduId = 40,
-                    VoziloId = 8,
-                    PeriodId = 5,
-                    Cijena = 420
                 }
                 );
         }
@@ -805,7 +774,7 @@ namespace RentACar.Services
                     PocetniDatum = DateTime.Now.AddDays(+1).AddMonths(+1),
                     ZavrsniDatum = DateTime.Now.AddDays(+2).AddMonths(+1),
                     TotalPrice = 150.0m,
-                    Zahtjev = false
+                    Zahtjev = true
                 },
                 new Rezervacija
                 {
@@ -838,7 +807,7 @@ namespace RentACar.Services
                     PocetniDatum = DateTime.Now.AddDays(+1).AddMonths(+1),
                     ZavrsniDatum = DateTime.Now.AddDays(+2).AddMonths(+1),
                     TotalPrice = 150.0m,
-                    Zahtjev = false
+                    Zahtjev = true
                 },
                 new Rezervacija
                 {
@@ -849,7 +818,7 @@ namespace RentACar.Services
                     PocetniDatum = _dateTime,
                     ZavrsniDatum = _dateTime2,
                     TotalPrice = 150.0m,
-                    Zahtjev = false
+                    Zahtjev = true
                 },
                 new Rezervacija
                 {
@@ -904,6 +873,50 @@ namespace RentACar.Services
                     PocetniDatum = DateTime.Now.AddDays(+7).AddMonths(+1),
                     ZavrsniDatum = DateTime.Now.AddDays(+8).AddMonths(+1),
                     TotalPrice = 150.0m,
+                    Zahtjev = false
+                },
+                new Rezervacija
+                {
+                    RezervacijaId = 13,
+                    KorisnikId = 2,
+                    VoziloId = 1,
+                    GradId = 3,
+                    PocetniDatum = new DateTime(2023, 8, 7),
+                    ZavrsniDatum = new DateTime(2023, 8, 8),
+                    TotalPrice = 200.0m,
+                    Zahtjev = false
+                },
+                new Rezervacija
+                {
+                    RezervacijaId = 14,
+                    KorisnikId = 3,
+                    VoziloId = 3,
+                    GradId = 1,
+                    PocetniDatum = new DateTime(2023, 10, 15),
+                    ZavrsniDatum = new DateTime(2023, 10, 20),
+                    TotalPrice = 350.0m,
+                    Zahtjev = false
+                },
+                new Rezervacija
+                {
+                    RezervacijaId = 15,
+                    KorisnikId = 2,
+                    VoziloId = 2,
+                    GradId = 2,
+                    PocetniDatum = new DateTime(2025, 4, 4),
+                    ZavrsniDatum = new DateTime(2025, 4, 7),
+                    TotalPrice = 120.0m,
+                    Zahtjev = false
+                },
+                new Rezervacija
+                {
+                    RezervacijaId = 16,
+                    KorisnikId = 3,
+                    VoziloId = 5,
+                    GradId = 4,
+                    PocetniDatum = new DateTime(2025, 3, 12),
+                    ZavrsniDatum = new DateTime(2025, 3, 18),
+                    TotalPrice = 340.0m,
                     Zahtjev = false
                 });
         }

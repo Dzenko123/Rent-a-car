@@ -8,7 +8,7 @@ import '../models/search_result.dart';
 
 class VozilaProvider extends BaseProvider<Vozilo> {
   static const String _baseUrl =
-      String.fromEnvironment("baseUrl", defaultValue: "https://10.0.2.2:7284/");
+      String.fromEnvironment("baseUrl", defaultValue: "http://10.0.2.2:7284/");
 
   static const String _endpoint = "Vozila";
 

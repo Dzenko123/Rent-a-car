@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 class RezervacijaProvider extends BaseProvider<Rezervacija> {
    static const String _baseUrl = String.fromEnvironment("baseUrl",
-      defaultValue: "https://localhost:7284/");
+      defaultValue: "http://localhost:7284/");
   static const String _endpoint = "Rezervacija";
   RezervacijaProvider() : super("Rezervacija");
 

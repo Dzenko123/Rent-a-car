@@ -57,15 +57,16 @@ class _KontaktScreenState extends State<KontaktScreen> {
     );
   }
 
-  Future<void> initForm() async {
-    kontaktResult = await _kontaktProvider.get();
-    korisniciResult = await _korisniciProvider.get();
-    var data = await _kontaktProvider.get(filter: {'fts': _ftsController.text});
-    setState(() {
-      kontaktResult = data;
-      isLoading = false;
-    });
-  }
+Future<void> initForm() async {
+  kontaktResult = await _kontaktProvider.get();
+  korisniciResult = await _korisniciProvider.get();
+  var data = await _kontaktProvider.get(filter: {'fts': _ftsController.text});
+  setState(() {
+    kontaktResult = data;
+    isLoading = false;
+  });
+}
+
 
   @override
   void didChangeDependencies() {
@@ -73,171 +74,166 @@ class _KontaktScreenState extends State<KontaktScreen> {
     super.didChangeDependencies();
   }
 
-  Widget _buildSearch() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Flexible(
-            child: TextField(
-              decoration: const InputDecoration(
-                labelText: "Pretraga po korisničkom imenu:",
-                labelStyle: TextStyle(color: Colors.white),
-              ),
-              controller: _ftsController,
-              style: TextStyle(color: Colors.white),
+ Widget _buildSearch() {
+  return Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Flexible(
+          child: TextField(
+            decoration: const InputDecoration(
+              labelText: "Pretraga po imenu i prezimenu:",
+              labelStyle: TextStyle(color: Colors.white),
             ),
+            controller: _ftsController,
+            style: TextStyle(color: Colors.white),
           ),
-          const SizedBox(width: 8),
-          Flexible(
-            child: ElevatedButton(
-              onPressed: () async {
-                await initForm();
-                setState(() {});
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              ),
-              child: const Text("Pretraga"),
+        ),
+        const SizedBox(width: 8),
+        Flexible(
+          child: ElevatedButton(
+            onPressed: () async {
+              await initForm();
+              setState(() {});
+            },
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
             ),
+            child: const Text("Pretraga"),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 
-  Widget _buildDataListView() {
-    List<Kontakt> filteredResults = kontaktResult?.result
-            .where((k) =>
-                k.korisnikId != null &&
-                korisniciResult!.result
-                    .firstWhere(
-                        (korisnik) => korisnik.korisnikId == k.korisnikId,
-                        orElse: () => Korisnici.fromJson({}))
-                    .ime!
-                    .toLowerCase()
-                    .contains(_ftsController.text.toLowerCase()))
-            .toList() ??
-        [];
+ Widget _buildDataListView() {
+  List<Kontakt> filteredResults = kontaktResult?.result
+          .where((k) =>
+              k.imePrezime != null &&
+              k.imePrezime!.toLowerCase().contains(_ftsController.text.toLowerCase()))
+          .toList() ??
+      [];
 
-    return Expanded(
-        child: SingleChildScrollView(
-            child: DataTable(
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color(0xFF000000),
-                      Color.fromARGB(255, 54, 54, 54),
-                      Color.fromARGB(255, 82, 81, 81),
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                  borderRadius: BorderRadius.circular(15.0),
-                  border: Border.all(color: Colors.white, width: 2),
+  return Expanded(
+      child: SingleChildScrollView(
+          child: DataTable(
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [
+                    Color(0xFF000000),
+                    Color.fromARGB(255, 54, 54, 54),
+                    Color.fromARGB(255, 82, 81, 81),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
-                columns: const [
-                  DataColumn(
-                      label: Expanded(
-                          child: Text(
-                    'Ime i prezime korisnika',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.white),
-                  ))),
-                  DataColumn(
-                      label: Expanded(
-                          child: Text(
-                    'Poruka',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.white),
-                  ))),
-                  DataColumn(
-                      label: Expanded(
-                          child: Text(
-                    'Telefon korisnika',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.white),
-                  ))),
-                  DataColumn(
-                      label: Expanded(
-                          child: Text(
-                    'Email korisnika',
-                    style: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.white),
-                  ))),
-                  DataColumn(
+                borderRadius: BorderRadius.circular(15.0),
+                border: Border.all(color: Colors.white, width: 2),
+              ),
+              columns: const [
+                DataColumn(
                     label: Expanded(
-                      child: Text(
-                        'Ukloni kontakt',
-                        style: TextStyle(
-                            fontStyle: FontStyle.italic, color: Colors.white),
-                      ),
+                        child: Text(
+                  'Ime i prezime korisnika',
+                  style: TextStyle(
+                      fontStyle: FontStyle.italic, color: Colors.white),
+                ))),
+                DataColumn(
+                    label: Expanded(
+                        child: Text(
+                  'Poruka',
+                  style: TextStyle(
+                      fontStyle: FontStyle.italic, color: Colors.white),
+                ))),
+                DataColumn(
+                    label: Expanded(
+                        child: Text(
+                  'Telefon korisnika',
+                  style: TextStyle(
+                      fontStyle: FontStyle.italic, color: Colors.white),
+                ))),
+                DataColumn(
+                    label: Expanded(
+                        child: Text(
+                  'Email korisnika',
+                  style: TextStyle(
+                      fontStyle: FontStyle.italic, color: Colors.white),
+                ))),
+                DataColumn(
+                  label: Expanded(
+                    child: Text(
+                      'Ukloni kontakt',
+                      style: TextStyle(
+                          fontStyle: FontStyle.italic, color: Colors.white),
                     ),
                   ),
-                ],
-                rows: filteredResults
-                        .map(
-                          (Kontakt k) => DataRow(
-                            cells: [
-                              DataCell(Text(k.imePrezime ?? "",
-                                  style: const TextStyle(color: Colors.white))),
-                              DataCell(Text(k.poruka ?? "",
-                                  style: const TextStyle(color: Colors.white))),
-                              DataCell(Text(k.telefon ?? "",
-                                  style: const TextStyle(color: Colors.white))),
-                              DataCell(Text(k.email ?? "",
-                                  style: const TextStyle(color: Colors.white))),
-                              DataCell(
-                                IconButton(
-                                  icon: const Icon(
-                                    Icons.delete,
-                                    color: Colors.red,
-                                  ),
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: const Text("Potvrda"),
-                                          content: const Text(
-                                            "Jeste li sigurni da želite izbrisati ovaj kontakt?",
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text("Odustani"),
-                                            ),
-                                            TextButton(
-                                              onPressed: () async {
-                                                Navigator.of(context).pop();
-                                                try {
-                                                  await _kontaktProvider
-                                                      .delete(k.kontaktId!);
-                                                  await initForm();
-                                                  _showDeleteConfirmationSnackBar();
-                                                } catch (e) {
-                                                  print(
-                                                      "Error deleting contact: $e");
-                                                }
-                                              },
-                                              child: const Text("Izbriši"),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
+                ),
+              ],
+              rows: filteredResults
+                      .map(
+                        (Kontakt k) => DataRow(
+                          cells: [
+                            DataCell(Text(k.imePrezime ?? "",
+                                style: const TextStyle(color: Colors.white))),
+                            DataCell(Text(k.poruka ?? "",
+                                style: const TextStyle(color: Colors.white))),
+                            DataCell(Text(k.telefon ?? "",
+                                style: const TextStyle(color: Colors.white))),
+                            DataCell(Text(k.email ?? "",
+                                style: const TextStyle(color: Colors.white))),
+                            DataCell(
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
                                 ),
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("Potvrda"),
+                                        content: const Text(
+                                          "Jeste li sigurni da želite izbrisati ovaj kontakt?",
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text("Odustani"),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              Navigator.of(context).pop();
+                                              try {
+                                                await _kontaktProvider
+                                                    .delete(k.kontaktId!);
+                                                await initForm();
+                                                _showDeleteConfirmationSnackBar();
+                                              } catch (e) {
+                                                print(
+                                                    "Error deleting contact: $e");
+                                              }
+                                            },
+                                            child: const Text("Izbriši"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
                               ),
-                            ],
-                          ),
-                        )
-                        .toList() ??
-                    [])));
-  }
+                            ),
+                          ],
+                        ),
+                      )
+                      .toList() ??
+                  [])));
+}
+
 
   void _showDeleteConfirmationSnackBar() {
     final snackBar = SnackBar(

@@ -7,7 +7,7 @@ import 'package:rentacar_admin/providers/base_provider.dart';
 
 class VozilaProvider extends BaseProvider<Vozilo> {
   static const String _baseUrl = String.fromEnvironment("baseUrl",
-      defaultValue: "https://localhost:7284/");
+      defaultValue: "http://localhost:7284/");
   static const String _endpoint = "Vozila";
 
   VozilaProvider() : super(_endpoint);
@@ -39,7 +39,7 @@ bool isValidResponse(Response response) {
   } else if (response.statusCode == 401) {
     throw Exception("Unauthorized");
   } else if (response.statusCode == 500) {
-    throw Exception("Došlo je do greške u spremanju podataka! (status:${response.statusCode})");
+    throw Exception("Vozilo se koristi u nekoj od rezervacija!");
   } else if (response.statusCode == 400) {
     throw Exception("Podaci nisu spašeni, vozilo mora biti u draft stanju da biste mogli urediti podatke!");
   } else {

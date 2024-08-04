@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 class DodatnaUslugaProvider extends BaseProvider<DodatnaUsluga>{
   static const String _baseUrl =
-  String.fromEnvironment("baseUrl", defaultValue: "https://localhost:7284/");
+  String.fromEnvironment("baseUrl", defaultValue: "http://localhost:7284/");
 
   static const String _endpoint = "DodatnaUsluga";
   DodatnaUslugaProvider() : super("DodatnaUsluga");

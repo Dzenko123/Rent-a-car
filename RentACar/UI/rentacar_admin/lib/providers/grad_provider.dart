@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 class GradProvider extends BaseProvider<Grad> {
   static const String _baseUrl =
-      String.fromEnvironment("baseUrl", defaultValue: "https://localhost:7284/");
+      String.fromEnvironment("baseUrl", defaultValue: "http://localhost:7284/");
 
   static const String _endpoint = "Grad";
   GradProvider() : super("Grad");
