@@ -85,6 +85,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
         context.read<RezervacijaDodatnaUslugaProvider>();
     getUlogovaniKorisnikId();
     initForm();
+
   }
 
   Future<void> getUlogovaniKorisnikId() async {
@@ -604,7 +605,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
         return AlertDialog(
           title: const Text('Uspješno'),
           content: const Text(
-              'Zahtjev za poništavanje je poslan administraciji. Uskoro ćete biti obaviješteni.'),
+              'Zahtjev za poništavanje je poslan administraciji.'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
