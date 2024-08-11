@@ -146,7 +146,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
 
   Future<Vozilo?> getVoziloData(int voziloId) async {
     try {
-      var vozilo = await _vozilaProvider.getById(voziloId);
+      var vozilo = await _vozilaProvider.getByVoziloId(voziloId);
       return vozilo;
     } catch (e) {
       print('Greška prilikom dobijanja podataka o vozilu: $e');

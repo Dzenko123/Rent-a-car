@@ -1188,6 +1188,8 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
             .toList();
 
         if (futurePregledi.isNotEmpty) {
+          var count = futurePregledi.length;
+
           var uniqueDates = futurePregledi
               .map((pregled) =>
                   pregled.datum!.toLocal().toString().split(' ')[0])
@@ -1195,7 +1197,6 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
               .toList()
             ..sort();
 
-          var count = uniqueDates.length;
           var dates = uniqueDates.join(', ');
           return '$count\n$dates';
         } else {
@@ -1212,6 +1213,8 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
             .toList();
 
         if (futurePregledi.isNotEmpty) {
+          var count = futurePregledi.length;
+
           var uniqueDates = futurePregledi
               .map((pregled) =>
                   pregled.datum!.toLocal().toString().split(' ')[0])
@@ -1219,7 +1222,6 @@ class _VoziloPregledScreenState extends State<VoziloPregledScreen> {
               .toList()
             ..sort();
 
-          var count = uniqueDates.length;
           var dates = uniqueDates.join(', ');
           return '$count\n$dates';
         } else {

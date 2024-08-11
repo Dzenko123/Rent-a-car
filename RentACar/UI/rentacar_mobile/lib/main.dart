@@ -448,19 +448,67 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                         ),
                                         labelStyle: const TextStyle(color: Colors.white),
                                         contentPadding: const EdgeInsets.symmetric(vertical: 5),
-                                        errorText: _emailController.text.isNotEmpty &&
-                                            !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                                                .hasMatch(_emailController.text)
-                                            ? 'Neispravan format email adrese'
-                                            : null,
                                         errorStyle: const TextStyle(color: Colors.white),
+                                        errorMaxLines: 6,
+                                          errorText:
+                                          _emailController.text.isEmpty
+                                              ? 'Polje ne smije biti prazno'
+                                              : null,
+
                                       ),
                                       style: const TextStyle(color: Colors.white),
+
                                       controller: _emailController,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Polje ne smije biti prazno!';
+                                        }
+
+                                        String emailFormatExample =
+                                            'Primjer ispravnog formata: korisnik@gmail.com ili korisnik.korisnik@gmail.com';
+                                        String allowedDomains =
+                                            'Dozvoljene domene: gmail.com, hotmail.com, yahoo.com, outlook.com, aol.com, icloud.com';
+
+                                        String usernamePart = value.split('@').first;
+
+                                        if (RegExp(r'\.\s*[@]').hasMatch(value)) {
+                                          return 'Između tačke i znaka \'@\' mora biti neka riječ!';
+                                        }
+
+                                        if (usernamePart.contains(RegExp(r'[^a-zA-Z0-9šđčćž.]'))) {
+                                          return '$emailFormatExample\nKoristi se nedozvoljen znak. Dozvoljena je samo tačka i slova š, đ, č, ć, ž!';
+                                        }
+                                        if (usernamePart.split('.').length > 2) {
+                                          return 'Unijeli ste dvije tačke prije "@", pogrešan format!';
+                                        }
+
+                                        if (value.contains('@')) {
+                                          String domainPart = value.split('@').last;
+                                          List<String> allowedDomainsList = [
+                                            'gmail.com',
+                                            'hotmail.com',
+                                            'yahoo.com',
+                                            'outlook.com',
+                                            'aol.com',
+                                            'icloud.com'
+                                          ];
+                                          if (!domainPart.contains('.') ||
+                                              !allowedDomainsList
+                                                  .any((domain) => domainPart.endsWith(domain))) {
+                                            return '$emailFormatExample\n$allowedDomains';
+                                          }
+                                        } else {
+                                          return emailFormatExample;
+                                        }
+
+                                        return null;
+                                      },
+                                      autovalidateMode: AutovalidateMode.onUserInteraction,
                                       onChanged: (_) {
                                         setState(() {});
                                       },
                                     ),
+
 
                                     const SizedBox(
                                       height: 8,
@@ -476,18 +524,30 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                         ),
                                         labelStyle: const TextStyle(color: Colors.white),
                                         contentPadding: const EdgeInsets.symmetric(vertical: 5),
-                                        errorText: _telefonController.text.isNotEmpty &&
-                                            !RegExp(r'^[0-9]+$').hasMatch(_telefonController.text)
-                                            ? 'Unesite samo brojeve'
-                                            : null,
                                         errorStyle: const TextStyle(color: Colors.white),
+                                        errorText:
+                                        _telefonController.text.isEmpty
+                                            ? 'Polje ne smije biti prazno'
+                                            : null,
                                       ),
                                       style: const TextStyle(color: Colors.white),
                                       controller: _telefonController,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Polje je obavezno';
+                                        } else if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                                          return 'Broj telefona mora sadržavati samo brojeve';
+                                        } else if (value.length < 9) {
+                                          return 'Broj telefona mora imati minimalno 9 cifara';
+                                        }
+                                        return null;
+                                      },
+                                      autovalidateMode: AutovalidateMode.onUserInteraction,
                                       onChanged: (_) {
                                         setState(() {});
                                       },
                                     ),
+
 
                                     const SizedBox(
                                       height: 30,
@@ -617,6 +677,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               if (_isSignUpMode)
                 GestureDetector(
                   onTap: () {
+                    _imeController.clear();
+                    _prezimeController.clear();
+                    _emailController.clear();
+                    _telefonController.clear();
+                    _korisnickoImeController.clear();
+                    _noviPasswordController.clear();
+                    _passwordPotvrdaController.clear();
                     setState(() {
                       _isSignUpMode = false;
                     });
