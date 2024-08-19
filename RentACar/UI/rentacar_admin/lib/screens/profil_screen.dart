@@ -190,6 +190,8 @@ class _ProfilScreenState extends State<ProfilScreen> {
                 style: const TextStyle(color: Colors.black),
                 decoration: InputDecoration(
                   labelText: 'Email',
+                  hintText:
+                      "korisnik@gmail.com ili korisnik.korisnik@gmail.com",
                   labelStyle: const TextStyle(color: Colors.black),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -223,6 +225,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   if (usernamePart.contains(RegExp(r'[^a-zA-Z0-9šđčćž.]'))) {
                     return '$emailFormatExample\nKoristi se nedozvoljen znak. Dozvoljena je samo tačka i slova š, đ, č, ć, ž!';
                   }
+
                   if (usernamePart.split('.').length > 2) {
                     return 'Unijeli ste dvije tačke, pogrešan format!';
                   }
@@ -231,15 +234,19 @@ class _ProfilScreenState extends State<ProfilScreen> {
                     String domainPart = value.split('@').last;
                     List<String> allowedDomainsList = [
                       'gmail.com',
-                      'hotmail.com'
-                          'yahoo.com',
+                      'hotmail.com',
+                      'yahoo.com',
                       'outlook.com',
                       'aol.com',
                       'icloud.com'
                     ];
-                    if (!domainPart.contains('.') ||
-                        !allowedDomainsList
-                            .any((domain) => domainPart.endsWith(domain))) {
+
+                    if (!domainPart.contains('.')) {
+                      return '$emailFormatExample\n$allowedDomains';
+                    }
+
+                    if (!allowedDomainsList
+                        .any((domain) => domainPart.endsWith(domain))) {
                       return '$emailFormatExample\n$allowedDomains';
                     }
                   } else {
@@ -260,6 +267,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                 style: const TextStyle(color: Colors.black),
                 decoration: InputDecoration(
                   labelText: 'Telefon',
+                  hintText: "+387 62 740 788 ili +387 60 740 7888",
                   labelStyle: const TextStyle(color: Colors.black),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -278,9 +286,10 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   if (value == null || value.isEmpty) {
                     return 'Polje je obavezno';
                   }
-                  final phoneRegex = RegExp(r'^\d{9,}$');
-                  if (!phoneRegex.hasMatch(value)) {
-                    return 'Unesite ispravan telefon (minimum 9 cifara, samo brojevi)';
+                  final regex = RegExp(
+                      r'^\+387\s?(62\s?\d{3}\s?\d{3}|61\s?\d{3}\s?\d{3}|60\s?\d{3}\s?\d{4})$');
+                  if (!regex.hasMatch(value)) {
+                    return 'Unesite ispravan broj telefona u formatu +387 62 740 788 ili +387 60 740 7888';
                   }
                   return null;
                 },

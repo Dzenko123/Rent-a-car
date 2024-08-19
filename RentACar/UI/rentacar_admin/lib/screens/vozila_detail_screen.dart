@@ -14,6 +14,7 @@ import 'package:rentacar_admin/providers/tip_vozila_provider.dart';
 import 'package:rentacar_admin/providers/vozila_provider.dart';
 import 'package:rentacar_admin/screens/gorivo_screen.dart';
 import 'package:rentacar_admin/screens/tip_opis_screen.dart';
+import 'package:rentacar_admin/screens/vozila_list_screen.dart';
 import 'package:rentacar_admin/widgets/master_screen.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 
@@ -91,28 +92,49 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isReadOnly = widget.vozilo?.stateMachine == 'active';
+
     return MasterScreenWidget(
       title: widget.vozilo != null
           ? 'Uređujete model i marku: ${widget.vozilo?.model}, ${widget.vozilo?.marka}'
           : "Dodajte novo vozilo",
       child: Padding(
         padding: const EdgeInsets.all(10),
-        child: Row(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    isLoading ? Container() : _buildForm(),
-                    const SizedBox(height: 20),
-                  ],
+            if (isReadOnly)
+              const Padding(
+                padding: EdgeInsets.only(bottom: 20, top:20),
+                child: Text(
+                  'Podaci se ne mogu mijenjati jer je vozilo u active stanju!',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
                 ),
               ),
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          isLoading ? Container() : _buildForm(isReadOnly),
+                          const SizedBox(height: 20),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  _buildImagePreview(),
+                ],
+              ),
             ),
-            const SizedBox(width: 20),
-            _buildImagePreview(),
           ],
         ),
       ),
@@ -151,7 +173,7 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
     }
   }
 
-  FormBuilder _buildForm() {
+  FormBuilder _buildForm(bool isReadOnly) {
     return FormBuilder(
       key: _formKey,
       initialValue: _initialValue,
@@ -198,6 +220,7 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                   ),
                   style: const TextStyle(fontSize: 16.0),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
+                  readOnly: isReadOnly,
                   validator: FormBuilderValidators.compose([
                     FormBuilderValidators.required(
                       errorText: 'Ovo polje je obavezno.',
@@ -247,6 +270,7 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                   ),
                   style: const TextStyle(fontSize: 16.0),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
+                  readOnly: isReadOnly,
                   validator: FormBuilderValidators.compose([
                     FormBuilderValidators.required(
                       errorText: 'Ovo polje je obavezno.',
@@ -256,6 +280,13 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                       errorText:
                           'Format mora biti npr. "1.9" ili "2.0" i slično.',
                     ),
+                    FormBuilderValidators.numeric(
+                      errorText: 'Unesite ispravan broj za snagu motora.',
+                    ),
+                    FormBuilderValidators.min(0.8,
+                        errorText: 'Minimalna snaga motora mora biti 0.8L.'),
+                    FormBuilderValidators.max(8.0,
+                        errorText: 'Maksimalna snaga motora mora biti 8.0L.'),
                   ]),
                 ),
               ),
@@ -293,6 +324,7 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                   ),
                   style: const TextStyle(fontSize: 16.0),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
+                  readOnly: isReadOnly,
                   validator: FormBuilderValidators.required(
                     errorText: 'Ovo polje je obavezno.',
                   ),
@@ -328,6 +360,7 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                   ),
                   style: const TextStyle(fontSize: 16.0),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
+                  readOnly: isReadOnly,
                   validator: FormBuilderValidators.required(
                     errorText: 'Ovo polje je obavezno.',
                   ),
@@ -369,6 +402,7 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                   ),
                   style: const TextStyle(fontSize: 16.0),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
+                  readOnly: isReadOnly,
                   validator: FormBuilderValidators.compose([
                     FormBuilderValidators.required(
                       errorText: 'Ovo polje je obavezno.',
@@ -386,16 +420,19 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
               const SizedBox(width: 10),
               Expanded(
                 child: PopupMenuButton<String>(
-                  tooltip: 'Prikaže dostupne vrste goriva',
+                  tooltip: isReadOnly ? '' : 'Prikaže dostupne vrste goriva',
                   initialValue: _lastSelectedGorivoId,
-                  onSelected: (newValue) {
-                    setState(() {
-                      _lastSelectedGorivoId = newValue;
-                      _isGorivoSelected = true;
-                      _formKey.currentState?.fields['gorivoId']
-                          ?.didChange(newValue);
-                    });
-                  },
+                  enabled: !isReadOnly,
+                  onSelected: isReadOnly
+                      ? null
+                      : (newValue) {
+                          setState(() {
+                            _lastSelectedGorivoId = newValue;
+                            _isGorivoSelected = true;
+                            _formKey.currentState?.fields['gorivoId']
+                                ?.didChange(newValue);
+                          });
+                        },
                   itemBuilder: (BuildContext context) {
                     return gorivoResult?.result.map((item) {
                           return PopupMenuItem<String>(
@@ -406,19 +443,28 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                                   child: Text(item.tip ?? ""),
                                 ),
                                 IconButton(
-                                  icon: Icon(Icons.edit, color: Colors.blue),
-                                  onPressed: () {
-                                    _editGorivo(
-                                        item, context, _lastSelectedGorivoId);
-                                  },
+                                  icon: Icon(Icons.edit,
+                                      color: isReadOnly
+                                          ? Colors.grey
+                                          : Colors.blue),
+                                  onPressed: isReadOnly
+                                      ? null
+                                      : () {
+                                          _editGorivo(item, context,
+                                              _lastSelectedGorivoId);
+                                        },
                                 ),
                                 IconButton(
                                   icon: Icon(Icons.delete_forever_sharp,
-                                      color: Colors.red),
-                                  onPressed: () {
-                                    _deleteGorivo(
-                                        item, context, _lastSelectedGorivoId);
-                                  },
+                                      color: isReadOnly
+                                          ? Colors.grey
+                                          : Colors.red),
+                                  onPressed: isReadOnly
+                                      ? null
+                                      : () {
+                                          _deleteGorivo(item, context,
+                                              _lastSelectedGorivoId);
+                                        },
                                 ),
                               ],
                             ),
@@ -456,17 +502,20 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                         fillColor: Colors.grey[200],
                         hintText: 'Odaberi tip goriva',
                         hintStyle: const TextStyle(color: Colors.grey),
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.clear, color: Colors.grey),
-                          onPressed: () {
-                            setState(() {
-                              _lastSelectedGorivoId = null;
-                              _formKey.currentState?.fields['gorivoId']
-                                  ?.didChange(null);
-                              _isGorivoSelected = false;
-                            });
-                          },
-                        ),
+                        suffixIcon: isReadOnly
+                            ? null
+                            : IconButton(
+                                icon:
+                                    const Icon(Icons.clear, color: Colors.grey),
+                                onPressed: () {
+                                  setState(() {
+                                    _lastSelectedGorivoId = null;
+                                    _formKey.currentState?.fields['gorivoId']
+                                        ?.didChange(null);
+                                    _isGorivoSelected = false;
+                                  });
+                                },
+                              ),
                         errorText: _isGorivoSelected ? null : field.errorText,
                       ),
                       child: _lastSelectedGorivoId != null
@@ -494,22 +543,26 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
             children: [
               Expanded(
                 child: PopupMenuButton<String>(
-                  tooltip: 'Prikaže dostupne tipove vozila',
+                  tooltip: isReadOnly ? '' : 'Prikaže dostupne tipove vozila',
                   initialValue: _lastSelectedTipVozilaId,
-                  onSelected: (newValue) {
-                    setState(() {
-                      var selectedTip = tipVozilaResult?.result.firstWhere(
-                        (tip) => tip.tipVozilaId.toString() == newValue,
-                        orElse: () => TipVozila(null, null, null),
-                      );
-                      _formKey.currentState?.fields['tipVozilaId']
-                          ?.didChange(newValue);
-                      _formKey.currentState?.fields['opis']
-                          ?.didChange(selectedTip?.opis ?? '');
-                      _lastSelectedTipVozilaId = newValue;
-                      _isTipVozilaSelected = true;
-                    });
-                  },
+                  enabled: !isReadOnly,
+                  onSelected: isReadOnly
+                      ? null
+                      : (newValue) {
+                          setState(() {
+                            var selectedTip =
+                                tipVozilaResult?.result.firstWhere(
+                              (tip) => tip.tipVozilaId.toString() == newValue,
+                              orElse: () => TipVozila(null, null, null),
+                            );
+                            _formKey.currentState?.fields['tipVozilaId']
+                                ?.didChange(newValue);
+                            _formKey.currentState?.fields['opis']
+                                ?.didChange(selectedTip?.opis ?? '');
+                            _lastSelectedTipVozilaId = newValue;
+                            _isTipVozilaSelected = true;
+                          });
+                        },
                   itemBuilder: (BuildContext context) {
                     return tipVozilaResult?.result.map((tip) {
                           return PopupMenuItem<String>(
@@ -524,18 +577,27 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                                         _formKey.currentState
                                             ?.fields['tipVozilaId']?.value) ...[
                                   IconButton(
-                                    icon: Icon(Icons.edit, color: Colors.blue),
-                                    onPressed: () {
-                                      _editTipVozila(tip, context);
-                                    },
+                                    icon: Icon(Icons.edit,
+                                        color: isReadOnly
+                                            ? Colors.grey
+                                            : Colors.blue),
+                                    onPressed: isReadOnly
+                                        ? null
+                                        : () {
+                                            _editTipVozila(tip, context);
+                                          },
                                   ),
                                   IconButton(
                                     icon: Icon(Icons.delete_forever_sharp,
-                                        color: Colors.red),
-                                    onPressed: () {
-                                      _deleteTipVozila(tip, context,
-                                          _lastSelectedTipVozilaId);
-                                    },
+                                        color: isReadOnly
+                                            ? Colors.grey
+                                            : Colors.red),
+                                    onPressed: isReadOnly
+                                        ? null
+                                        : () {
+                                            _deleteTipVozila(tip, context,
+                                                _lastSelectedTipVozilaId);
+                                          },
                                   ),
                                 ],
                               ],
@@ -571,19 +633,22 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                         fillColor: Colors.grey[200],
                         hintText: 'Odaberi tip vozila',
                         hintStyle: const TextStyle(color: Colors.grey),
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.clear, color: Colors.grey),
-                          onPressed: () {
-                            setState(() {
-                              _lastSelectedTipVozilaId = null;
-                              _formKey.currentState?.fields['tipVozilaId']
-                                  ?.didChange(null);
-                              _formKey.currentState?.fields['opis']
-                                  ?.didChange('');
-                              _isTipVozilaSelected = false;
-                            });
-                          },
-                        ),
+                        suffixIcon: isReadOnly
+                            ? null
+                            : IconButton(
+                                icon:
+                                    const Icon(Icons.clear, color: Colors.grey),
+                                onPressed: () {
+                                  setState(() {
+                                    _lastSelectedTipVozilaId = null;
+                                    _formKey.currentState?.fields['tipVozilaId']
+                                        ?.didChange(null);
+                                    _formKey.currentState?.fields['opis']
+                                        ?.didChange('');
+                                    _isTipVozilaSelected = false;
+                                  });
+                                },
+                              ),
                         errorText: _lastSelectedTipVozilaId != null
                             ? null
                             : field.errorText,
@@ -657,26 +722,29 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               ElevatedButton(
-                onPressed: () async {
-                  final result = await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          const TipOpisScreen(tipVozila: null),
-                    ),
-                  );
+                onPressed: isReadOnly
+                    ? null
+                    : () async {
+                        final result = await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const TipOpisScreen(tipVozila: null),
+                          ),
+                        );
 
-                  if (result != null && result is TipVozila) {
-                    setState(() {
-                      int index = tipVozilaResult!.result.indexWhere(
-                          (item) => item.tipVozilaId == result.tipVozilaId);
-                      if (index != -1) {
-                        tipVozilaResult!.result[index] = result;
-                      } else {
-                        tipVozilaResult!.result.add(result);
-                      }
-                    });
-                  }
-                },
+                        if (result != null && result is TipVozila) {
+                          setState(() {
+                            int index = tipVozilaResult!.result.indexWhere(
+                                (item) =>
+                                    item.tipVozilaId == result.tipVozilaId);
+                            if (index != -1) {
+                              tipVozilaResult!.result[index] = result;
+                            } else {
+                              tipVozilaResult!.result.add(result);
+                            }
+                          });
+                        }
+                      },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 ),
@@ -684,25 +752,28 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
               ),
               const SizedBox(width: 10),
               ElevatedButton(
-                onPressed: () async {
-                  final result = await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const GorivoScreen(gorivo: null),
-                    ),
-                  );
+                onPressed: isReadOnly
+                    ? null
+                    : () async {
+                        final result = await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const GorivoScreen(gorivo: null),
+                          ),
+                        );
 
-                  if (result != null && result is Gorivo) {
-                    setState(() {
-                      int index = gorivoResult!.result.indexWhere(
-                          (item) => item.gorivoId == result.gorivoId);
-                      if (index != -1) {
-                        gorivoResult!.result[index] = result;
-                      } else {
-                        gorivoResult!.result.add(result);
-                      }
-                    });
-                  }
-                },
+                        if (result != null && result is Gorivo) {
+                          setState(() {
+                            int index = gorivoResult!.result.indexWhere(
+                                (item) => item.gorivoId == result.gorivoId);
+                            if (index != -1) {
+                              gorivoResult!.result[index] = result;
+                            } else {
+                              gorivoResult!.result.add(result);
+                            }
+                          });
+                        }
+                      },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 ),
@@ -725,6 +796,10 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                     return null;
                   },
                   builder: (field) {
+                    final bool isReadOnly =
+                        widget.vozilo?.stateMachine == 'active' &&
+                            widget.vozilo != null;
+
                     return InputDecorator(
                       decoration: InputDecoration(
                         labelText: 'Odaberite novu sliku',
@@ -758,13 +833,15 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.close),
-                                  onPressed: () {
-                                    setState(() {
-                                      _image = null;
-                                      _base64Image = null;
-                                      _isSlikaSelected = false;
-                                    });
-                                  },
+                                  onPressed: isReadOnly
+                                      ? null
+                                      : () {
+                                          setState(() {
+                                            _image = null;
+                                            _base64Image = null;
+                                            _isSlikaSelected = false;
+                                          });
+                                        },
                                 ),
                               ],
                             )
@@ -772,7 +849,7 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
                               leading: const Icon(Icons.photo),
                               title: const Text("Odaberi sliku"),
                               trailing: const Icon(Icons.file_upload),
-                              onTap: getImage,
+                              onTap: isReadOnly ? null : getImage,
                             ),
                     );
                   },
@@ -785,81 +862,86 @@ class _VozilaDetailScreenState extends State<VozilaDetailScreen> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState?.validate() ?? false) {
-                    _formKey.currentState?.save();
-                    var request = Map.from(_formKey.currentState!.value);
-                    request['opis'] = _formKey.currentState!.value['opis'];
+                onPressed: isReadOnly
+                    ? null
+                    : () async {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          _formKey.currentState?.save();
+                          var request = Map.from(_formKey.currentState!.value);
+                          request['opis'] =
+                              _formKey.currentState!.value['opis'];
 
-                    if (_base64Image != null) {
-                      request['slika'] = _base64Image;
-                    } else {
-                      request['slika'] = widget.vozilo?.slika;
-                    }
+                          if (_base64Image != null) {
+                            request['slika'] = _base64Image;
+                          } else {
+                            request['slika'] = widget.vozilo?.slika;
+                          }
 
-                    request['model'] = _formKey.currentState!.value['model'];
-                    request['gorivoId'] = _lastSelectedGorivoId;
-                    request['tipVozilaId'] = _lastSelectedTipVozilaId;
+                          request['model'] =
+                              _formKey.currentState!.value['model'];
+                          request['gorivoId'] = _lastSelectedGorivoId;
+                          request['tipVozilaId'] = _lastSelectedTipVozilaId;
 
-                    try {
-                      if (widget.vozilo == null) {
-                        await _vozilaProvider.insert(request);
-                      } else {
-                        await _vozilaProvider.update(
-                            widget.vozilo!.voziloId!, request);
-                      }
-                      if (_base64Image != null) {
-                        setState(() {
-                          widget.vozilo?.slika = _base64Image;
-                        });
-                      }
-                      if (widget.vozilo == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            backgroundColor: Colors.green,
-                            content: Text('Podaci su uspješno sačuvani!'),
-                          ),
-                        );
-                        initForm();
-                        setState(() {
-                          _lastSelectedGorivoId = null;
-                          _lastSelectedTipVozilaId = null;
-                          _image = null;
-                        });
-                      } else if (widget.vozilo != null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            backgroundColor: Colors.green,
-                            content: Text('Podaci su uspješno sačuvani!'),
-                          ),
-                        );
-                      }
-                    } on Exception catch (e) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) => AlertDialog(
-                          title: const Text("Greška"),
-                          content: Text(e.toString()),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text("OK"),
+                          try {
+                            if (widget.vozilo == null) {
+                              await _vozilaProvider.insert(request);
+                            } else {
+                              await _vozilaProvider.update(
+                                  widget.vozilo!.voziloId!, request);
+                            }
+                            if (_base64Image != null) {
+                              setState(() {
+                                widget.vozilo?.slika = _base64Image;
+                              });
+                            }
+                            if (widget.vozilo == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  backgroundColor: Colors.green,
+                                  content: Text('Podaci su uspješno sačuvani!'),
+                                ),
+                              );
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => VozilaListScreen(),
+                                ),
+                              );
+                            } else if (widget.vozilo != null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  backgroundColor: Colors.green,
+                                  content: Text('Podaci su uspješno sačuvani!'),
+                                ),
+                              );
+                            }
+                          } on Exception catch (e) {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                title: const Text("Greška"),
+                                content: Text(e.toString()),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text("OK"),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              backgroundColor: Colors.red,
+                              content: Text('Podaci nisu ispravno uneseni!'),
                             ),
-                          ],
-                        ),
-                      );
-                    }
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        backgroundColor: Colors.red,
-                        content: Text('Podaci nisu ispravno uneseni!'),
-                      ),
-                    );
-                  }
-                },
+                          );
+                        }
+                      },
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.zero,
+                  backgroundColor: isReadOnly ? Colors.grey : null,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),

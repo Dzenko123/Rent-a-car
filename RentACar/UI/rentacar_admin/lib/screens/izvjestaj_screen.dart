@@ -221,9 +221,8 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
             rezervacija.korisnikId.toString() == _selectedKorisnik)
         .map((rezervacija) => rezervacija.pocetniDatum?.year)
         .whereType<int>()
-        .toSet(); // Remove duplicates
+        .toSet();
 
-    // Convert set to list, sort the list
     List<int> sortedYears = yearsWithReservations.toList()..sort((a, b) => a.compareTo(b));
 
     return MasterScreenWidget(
@@ -630,205 +629,190 @@ class _IzvjestajiPageState extends State<IzvjestajiPage> {
     );
 
     pdf.addPage(
-      pw.Page(
-        build: (pw.Context context) {
-          final filteredReservations = getFilteredReservations();
-          final months = getMonthsWithReservations();
-          final groupedByUser = groupByUser(filteredReservations);
+  pw.Page(
+    build: (pw.Context context) {
+      final filteredReservations = getFilteredReservations();
+      final months = getMonthsWithReservations();
+      final groupedByUser = groupByUser(filteredReservations);
 
-          final columnHeaders = <String>['Korisnik'];
-          if (selectedMonth != 'Svi mjeseci') {
-            final year = selectedYear != null
-                ? int.tryParse(selectedYear!)
-                : DateTime.now().year;
+      final columnHeaders = <String>['User'];
+      if (selectedMonth != 'Svi mjeseci') {
+        final year = selectedYear != null
+            ? int.tryParse(selectedYear!)
+            : DateTime.now().year;
 
-            if (year != null) {
-              columnHeaders.addAll(List.generate(
-                  DateTime(year, int.parse(selectedMonth!), 0).day,
-                  (index) => (index + 1).toString()));
-            } else {
-              columnHeaders
-                  .addAll(List.generate(31, (index) => (index + 1).toString()));
-            }
-          } else {
-            columnHeaders.addAll([
-              'Jan',
-              'Feb',
-              'Mar',
-              'Apr',
-              'May',
-              'Jun',
-              'Jul',
-              'Aug',
-              'Sep',
-              'Oct',
-              'Nov',
-              'Dec'
-            ]);
-          }
-          columnHeaders.add('Ukupno');
+        if (year != null) {
+          final daysInMonth = DateTime(year, int.parse(selectedMonth!) + 1, 0).day;
+          columnHeaders.addAll(List.generate(daysInMonth, (index) => (index + 1).toString()));
+        } else {
+          columnHeaders.addAll(List.generate(31, (index) => (index + 1).toString()));
+        }
+      } else {
+        columnHeaders.addAll([
+          'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ]);
+      }
+      columnHeaders.add('Total');
 
-          final rows = groupedByUser.entries.map((entry) {
-            final korisnik = entry.key;
-            final rezervacije = entry.value;
+      final rows = groupedByUser.entries.map((entry) {
+        final korisnik = entry.key;
+        final rezervacije = entry.value;
 
-            List<String> row = [
-              '${replaceSpecialChars(korisnik.ime ?? '')}\n${replaceSpecialChars(korisnik.prezime ?? '')}'
-            ];
+        List<String> row = [
+          '${replaceSpecialChars(korisnik.ime ?? '')}\n${replaceSpecialChars(korisnik.prezime ?? '')}'
+        ];
 
-            if (selectedMonth != 'Svi mjeseci') {
-              final year = selectedYear != 'Sve godine'
-                  ? int.tryParse(selectedYear!)
-                  : DateTime.now().year;
+        if (selectedMonth != 'Svi mjeseci') {
+          final year = selectedYear != 'Sve godine'
+              ? int.tryParse(selectedYear!)
+              : DateTime.now().year;
 
-              if (year != null) {
-                final daysInMonth = List.generate(
-                  DateTime(year, int.parse(selectedMonth!), 0).day,
-                  (index) => index + 1,
-                );
-                final dailyPrices = daysInMonth.map((day) {
-                  final dailyTotal = rezervacije
-                      .where(
-                          (rezervacija) => rezervacija.pocetniDatum?.day == day)
-                      .map((rezervacija) => rezervacija.totalPrice ?? 0)
-                      .fold(0.0, (prev, curr) => prev + curr);
-                  return dailyTotal.toStringAsFixed(
-                      dailyTotal.truncateToDouble() == dailyTotal ? 0 : 1);
-                }).toList();
-
-                final total = dailyPrices
-                    .map(double.parse)
-                    .fold(0.0, (prev, curr) => prev + curr);
-                row.addAll(dailyPrices);
-
-                if (dailyPrices.length < 31) {
-                  row.addAll(
-                      List.generate(31 - dailyPrices.length, (_) => '0'));
-                }
-
-                row.add(total.toStringAsFixed(
-                    total.truncateToDouble() == total ? 0 : 1));
-              } else {
-                row.addAll(List.generate(31, (_) => '0'));
-                row.add('0');
-              }
-            } else {
-              final monthlyPrices = List.generate(12, (month) {
-                final monthlyTotal = rezervacije
-                    .where((rezervacija) =>
-                        rezervacija.pocetniDatum?.month == (month + 1))
-                    .map((rezervacija) => rezervacija.totalPrice ?? 0)
-                    .fold(0.0, (prev, curr) => prev + curr);
-                return monthlyTotal.toStringAsFixed(
-                    monthlyTotal.truncateToDouble() == monthlyTotal ? 0 : 1);
-              });
-              final total = monthlyPrices
-                  .map(double.parse)
+          if (year != null) {
+            final daysInMonth = DateTime(year, int.parse(selectedMonth!) + 1, 0).day;
+            final dailyPrices = List.generate(daysInMonth, (day) {
+              final dailyTotal = rezervacije
+                  .where((rezervacija) => rezervacija.pocetniDatum?.day == day + 1)
+                  .map((rezervacija) => rezervacija.totalPrice ?? 0)
                   .fold(0.0, (prev, curr) => prev + curr);
-              row.addAll(monthlyPrices);
-              row.add(total
-                  .toStringAsFixed(total.truncateToDouble() == total ? 0 : 1));
+              return dailyTotal.toStringAsFixed(
+                  dailyTotal.truncateToDouble() == dailyTotal ? 0 : 1);
+            });
+
+            final total = dailyPrices
+                .map(double.parse)
+                .fold(0.0, (prev, curr) => prev + curr);
+            row.addAll(dailyPrices);
+
+            if (dailyPrices.length < 31) {
+              row.addAll(List.generate(31 - dailyPrices.length, (_) => '0'));
             }
 
-            final fontSize = selectedMonth == 'Svi mjeseci' ? 10.0 : 7.5;
+            row.add('${total.toStringAsFixed(total.truncateToDouble() == total ? 0 : 1)}\nBAM');
 
-            return pw.TableRow(
-              children: row.asMap().entries.map((entry) {
-                final index = entry.key;
-                final cell = entry.value;
+          } else {
+            row.addAll(List.generate(31, (_) => '0'));
+            row.add('0\nBAM');
+          }
+        } else {
+          final monthlyPrices = List.generate(12, (month) {
+            final monthlyTotal = rezervacije
+                .where((rezervacija) =>
+                    rezervacija.pocetniDatum?.month == (month + 1))
+                .map((rezervacija) => rezervacija.totalPrice ?? 0)
+                .fold(0.0, (prev, curr) => prev + curr);
+            return monthlyTotal.toStringAsFixed(
+                monthlyTotal.truncateToDouble() == monthlyTotal ? 0 : 1);
+          });
+          final total = monthlyPrices
+              .map(double.parse)
+              .fold(0.0, (prev, curr) => prev + curr);
+          row.addAll(monthlyPrices);
+          row.add('${total.toStringAsFixed(total.truncateToDouble() == total ? 0 : 1)}\nBAM');
+        }
 
-                return pw.Container(
-                  color: index == 0
-                      ? PdfColors.grey300
-                      : index == row.length - 1
-                          ? PdfColors.grey200
-                          : PdfColors.cyan100,
-                  child: pw.Padding(
-                    padding: const pw.EdgeInsets.all(2),
-                    child: pw.Text(
-                      cell,
-                      style: pw.TextStyle(fontSize: fontSize),
-                      textAlign: pw.TextAlign.center,
-                    ),
-                  ),
-                );
-              }).toList(),
+        final fontSize = selectedMonth == 'Svi mjeseci' ? 10.0 : 7.5;
+
+        return pw.TableRow(
+          children: row.asMap().entries.map((entry) {
+            final index = entry.key;
+            final cell = entry.value;
+
+            return pw.Container(
+              color: index == 0
+                  ? PdfColors.grey300
+                  : index == row.length - 1
+                      ? PdfColors.grey200
+                      : PdfColors.cyan100,
+              child: pw.Padding(
+                padding: const pw.EdgeInsets.all(2),
+                child: pw.Text(
+                  cell,
+                  style: pw.TextStyle(fontSize: fontSize),
+                  textAlign: pw.TextAlign.center,
+                  overflow: pw.TextOverflow.clip,
+                ),
+              ),
             );
-          }).toList();
+          }).toList(),
+        );
+      }).toList();
 
-          final fontSizeHeader = selectedMonth == 'Svi mjeseci' ? 10.0 : 8.0;
-          final columnWidth = selectedMonth != 'Svi mjeseci' ? 25.0 : 35.0;
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              if (selectedMonth != 'Svi mjeseci')
-                pw.Table(
-                  border: pw.TableBorder.all(),
-                  columnWidths: {
-                    0: pw.FixedColumnWidth(43),
-                    for (int i = 1; i <= 31; i++)
-                      i: pw.FixedColumnWidth(columnWidth),
-                  },
+      final fontSizeHeader = selectedMonth == 'Svi mjeseci' ? 10.0 : 8.0;
+      final columnWidth = selectedMonth != 'Svi mjeseci' ? 25.0 : 35.0;
+      return pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          if (selectedMonth != 'Svi mjeseci')
+            pw.Table(
+              border: pw.TableBorder.all(),
+              columnWidths: {
+                0: pw.FixedColumnWidth(43),
+                for (int i = 1; i <= 31; i++)
+                  i: pw.FixedColumnWidth(columnWidth),
+              },
+              children: [
+                pw.TableRow(
                   children: [
-                    pw.TableRow(
-                      children: [
-                        pw.Container(
-                          alignment: pw.Alignment.center,
-                          color: PdfColors.grey300,
-                          child: pw.Padding(
-                            padding: const pw.EdgeInsets.all(4),
-                            child: pw.Text(
-                              'Dani u mjesecu po brojevima',
-                              style: pw.TextStyle(
-                                  fontWeight: pw.FontWeight.bold,
-                                  fontSize: fontSizeHeader),
-                              textAlign: pw.TextAlign.center,
-                            ),
-                          ),
+                    pw.Container(
+                      alignment: pw.Alignment.center,
+                      color: PdfColors.grey300,
+                      child: pw.Padding(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text(
+                          'Dani u mjesecu po brojevima',
+                          style: pw.TextStyle(
+                              fontWeight: pw.FontWeight.bold,
+                              fontSize: fontSizeHeader),
+                          textAlign: pw.TextAlign.center,
                         ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
-              pw.Table(
-                border: pw.TableBorder.all(),
-                columnWidths: {
-                  0: pw.FixedColumnWidth(35),
-                  columnHeaders.length - 1: pw.FixedColumnWidth(35),
-                },
-                children: [
-                  pw.TableRow(
-                    children: columnHeaders.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final header = entry.value;
+              ],
+            ),
+          pw.Table(
+            border: pw.TableBorder.all(),
+            columnWidths: {
+              0: pw.FixedColumnWidth(75),
+              for (int i = 1; i < columnHeaders.length; i++)
+                i: pw.FixedColumnWidth(columnWidth),
+              columnHeaders.length - 1: pw.FixedColumnWidth(75),
+            },
+            children: [
+              pw.TableRow(
+                children: columnHeaders.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final header = entry.value;
 
-                      return pw.Container(
-                        color: index == 0
-                            ? PdfColors.grey300
-                            : index == columnHeaders.length - 1
-                                ? PdfColors.grey200
-                                : PdfColors.grey300,
-                        child: pw.Padding(
-                          padding: const pw.EdgeInsets.all(1.5),
-                          child: pw.Text(
-                            header,
-                            style: pw.TextStyle(
-                                fontWeight: pw.FontWeight.bold,
-                                fontSize: fontSizeHeader),
-                            textAlign: pw.TextAlign.center,
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  ...rows,
-                ],
+                  return pw.Container(
+                    color: index == 0
+                        ? PdfColors.grey300
+                        : index == columnHeaders.length - 1
+                            ? PdfColors.grey200
+                            : PdfColors.grey300,
+                    child: pw.Padding(
+                      padding: const pw.EdgeInsets.all(1.5),
+                      child: pw.Text(
+                        header,
+                        style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: fontSizeHeader),
+                        textAlign: pw.TextAlign.center,
+                      ),
+                    ),
+                  );
+                }).toList(),
               ),
+              ...rows,
             ],
-          );
-        },
-      ),
-    );
+          ),
+        ],
+      );
+    },
+  ),
+);
+
 
     final result = await FilePicker.platform.saveFile(
       dialogTitle: 'Odaberite mjesto za spremanje PDF-a',

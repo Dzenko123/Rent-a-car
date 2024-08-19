@@ -157,6 +157,8 @@ class _KontaktScreenState extends State<KontaktScreen> {
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   labelText: 'Telefon',
+                  hintText: "+387 62 740 788 ili +387 60 740 7888",
+hintStyle: const TextStyle(color: Colors.grey),
                   labelStyle: const TextStyle(color: Colors.white),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -175,10 +177,11 @@ class _KontaktScreenState extends State<KontaktScreen> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Polje je obavezno';
-                  } else if (!phoneRegex.hasMatch(value)) {
-                    return 'Broj telefona mora sadržavati samo brojeve';
-                  } else if (value.length < 9) {
-                    return 'Broj telefona mora imati minimalno 9 cifara';
+                  }
+                  final regex = RegExp(
+                      r'^\+387\s?(62\s?\d{3}\s?\d{3}|61\s?\d{3}\s?\d{3}|60\s?\d{3}\s?\d{4})$');
+                  if (!regex.hasMatch(value)) {
+                    return 'Unesite ispravan broj telefona u formatu +387 62 740 788 ili +387 60 740 7888';
                   }
                   return null;
                 },
@@ -193,6 +196,9 @@ class _KontaktScreenState extends State<KontaktScreen> {
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   labelText: 'Email',
+                  hintText: "korisnik@gmail.com",
+                  hintStyle: const TextStyle(color: Colors.grey),
+
                   labelStyle: const TextStyle(color: Colors.white),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),

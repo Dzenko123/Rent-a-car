@@ -130,7 +130,7 @@ namespace RentACar.Services
                     KorisnikId = 2,
                     ImePrezime = "Test Test1",
                     Poruka = "test1",
-                    Telefon = "060000000",
+                    Telefon = "+38761000000",
                     Email = "test1@mail.com"
                 },
                  new Kontakt
@@ -139,7 +139,7 @@ namespace RentACar.Services
                      KorisnikId = 2,
                      ImePrezime = "Test Test2",
                      Poruka = "test2",
-                     Telefon = "060000001",
+                     Telefon = "+38761000001",
                      Email = "test2@mail.com"
                  },
                   new Kontakt
@@ -148,7 +148,7 @@ namespace RentACar.Services
                       KorisnikId = 3,
                       ImePrezime = "Test Test3",
                       Poruka = "test3",
-                      Telefon = "060000002",
+                      Telefon = "+38761000002",
                       Email = "test3@mail.com"
                   },
                    new Kontakt

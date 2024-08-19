@@ -249,7 +249,8 @@ class _ProfilScreenState extends State<ProfilScreen> {
                 initialValue: widget.korisnik?.email,
                 style: const TextStyle(color: Colors.black),
                 decoration: InputDecoration(
-                  labelText: 'Email',
+                  labelText: 'Email',hintText:
+                "korisnik@gmail.com",
                   labelStyle: const TextStyle(color: Colors.black),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -317,7 +318,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                 initialValue: widget.korisnik?.telefon,
                 style: const TextStyle(color: Colors.black),
                 decoration: InputDecoration(
-                  labelText: 'Telefon',
+                  labelText: 'Telefon', hintText: "+387 62 740 788 ili +387 60 740 7888",
                   labelStyle: const TextStyle(color: Colors.black),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -330,15 +331,16 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: const BorderSide(color: Colors.black),
-                  ),
+                  ), errorMaxLines: 2,
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Polje je obavezno';
-                  } else if (!phoneRegex.hasMatch(value)) {
-                    return 'Broj telefona mora sadržavati samo brojeve';
-                  } else if (value.length < 9) {
-                    return 'Broj telefona mora imati minimalno 9 cifara';
+                  }
+                  final regex = RegExp(
+                      r'^\+387\s?(62\s?\d{3}\s?\d{3}|61\s?\d{3}\s?\d{3}|60\s?\d{3}\s?\d{4})$');
+                  if (!regex.hasMatch(value)) {
+                    return 'Unesite ispravan broj telefona u formatu +387 62 740 788 ili +387 60 740 7888';
                   }
                   return null;
                 },

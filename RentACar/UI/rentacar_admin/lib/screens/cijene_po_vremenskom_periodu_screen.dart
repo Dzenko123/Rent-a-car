@@ -155,6 +155,18 @@ class _CijenePoVremenskomPerioduScreenState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        isLoading
+                            ? Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: _buildDataListView(),
+                              )
+                            : Container(),
+
+                        const SizedBox(height: 20),
+
                         if (canMovePrevious || canMoveNext)
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -164,9 +176,9 @@ class _CijenePoVremenskomPerioduScreenState
                                   decoration: BoxDecoration(
                                       gradient: const LinearGradient(
                                         colors: [
-                                          Color.fromARGB(130, 247, 2, 2),
-                                          Color.fromARGB(130, 131, 47, 47),
-                                          Color.fromARGB(130, 34, 34, 34),
+                                          Color.fromARGB(255, 247, 2, 2),
+                                          Color.fromARGB(255, 131, 47, 47),
+                                          Color.fromARGB(255, 34, 34, 34),
                                         ],
                                         begin: Alignment.centerLeft,
                                         end: Alignment.centerRight,
@@ -200,9 +212,9 @@ class _CijenePoVremenskomPerioduScreenState
                                   decoration: BoxDecoration(
                                       gradient: const LinearGradient(
                                         colors: [
-                                          Color.fromARGB(130, 34, 34, 34),
-                                          Color.fromARGB(130, 47, 131, 51),
-                                          Color.fromARGB(130, 10, 247, 2),
+                                          Color.fromARGB(255, 34, 34, 34),
+                                          Color.fromARGB(255, 47, 131, 51),
+                                          Color.fromARGB(255, 10, 247, 2),
                                         ],
                                         begin: Alignment.centerLeft,
                                         end: Alignment.centerRight,
@@ -230,19 +242,8 @@ class _CijenePoVremenskomPerioduScreenState
                                 ),
                             ],
                           ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        isLoading
-                            ? Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[200],
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: _buildDataListView(),
-                              )
-                            : Container(),
-                        const SizedBox(height: 20),
+
+                        const SizedBox(height: 10),
                       ],
                     ),
                   ),

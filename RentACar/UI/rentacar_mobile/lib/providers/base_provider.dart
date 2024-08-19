@@ -102,7 +102,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
     if (response.statusCode < 299) {
       return true;
     } else if (response.statusCode == 401) {
-      throw Exception("Korisnički račun ne postoji!");
+      throw Exception("Neispravan username ili password!");
     } else {
       throw Exception("Unexpected status code: ${response.statusCode}");
     }
