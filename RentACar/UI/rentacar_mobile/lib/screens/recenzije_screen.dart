@@ -490,6 +490,7 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                                         255, 5, 102, 182)
                                                     : const Color.fromARGB(
                                                         210, 0, 0, 0),
+                                                size: 18,
                                               ),
                                               label: Text(
                                                 'Like',
@@ -510,6 +511,7 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                                           255, 5, 102, 182)
                                                       : const Color.fromARGB(
                                                           210, 0, 0, 0),
+                                                  fontSize: 13,
                                                 ),
                                               ),
                                               style: ButtonStyle(
@@ -554,6 +556,7 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                                         255, 182, 5, 5)
                                                     : const Color.fromARGB(
                                                         210, 0, 0, 0),
+                                                size: 18,
                                               ),
                                               label: Text(
                                                 'Dislike',
@@ -573,6 +576,7 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                                           255, 182, 5, 5)
                                                       : const Color.fromARGB(
                                                           210, 0, 0, 0),
+                                                  fontSize: 13,
                                                 ),
                                               ),
                                               style: ButtonStyle(
@@ -582,37 +586,33 @@ class _RecenzijeScreenState extends State<RecenzijeScreen> {
                                                 ),
                                               ),
                                             ),
-                                            const SizedBox(width: 5),
+                                            const SizedBox(width: 2),
                                             TextButton.icon(
                                               onPressed: () {
                                                 Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        KomentariScreen(
-                                                            vozilo: e),
+                                                    builder: (context) => KomentariScreen(vozilo: e),
                                                   ),
                                                 );
                                               },
                                               icon: const Icon(
                                                 Icons.messenger_outline_rounded,
-                                                color: Color.fromARGB(
-                                                    210, 0, 0, 0),
+                                                color: Color.fromARGB(210, 0, 0, 0),
+                                                size: 18,
                                               ),
                                               label: const Text(
                                                 'Komentar',
                                                 style: TextStyle(
-                                                  color: Color.fromARGB(
-                                                      210, 0, 0, 0),
+                                                  color: Color.fromARGB(210, 0, 0, 0),
+                                                  fontSize: 13,
                                                 ),
                                               ),
                                               style: ButtonStyle(
-                                                backgroundColor:
-                                                    WidgetStateProperty.all(
-                                                  Colors.transparent,
-                                                ),
+                                                backgroundColor: MaterialStateProperty.all(Colors.transparent),
                                               ),
                                             ),
+
                                           ],
                                         ),
                                       ),

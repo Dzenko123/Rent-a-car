@@ -290,7 +290,7 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
                                 flex: 1,
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 20.0),
+                                      horizontal: 13.0),
                                   child: ElevatedButton(
                                     onPressed: () {
                                       Navigator.of(context).push(

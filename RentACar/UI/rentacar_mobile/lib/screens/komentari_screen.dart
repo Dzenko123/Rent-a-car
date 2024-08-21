@@ -72,7 +72,7 @@ class _KomentariScreenState extends State<KomentariScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ostavite svoj komentar.'),
+        title: Text('Ostavite svoj komentar'),
       ),
       body: Column(
         children: [

@@ -16,34 +16,31 @@ class KorisniciListScreen extends StatefulWidget {
 class _KorisniciListScreenState extends State<KorisniciListScreen> {
   SearchResult<Korisnici>? korisniciResult;
   late KorisniciProvider _korisniciProvider;
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _ftsController = TextEditingController();
+  bool isLoading = true;
+  bool isUlogeIncluded = false;
+
   String _selectedDropdownValue = "Ne prikazuj uloge";
 
   @override
   void initState() {
     super.initState();
     _korisniciProvider = KorisniciProvider();
-    _firstNameController.addListener(_fetchKorisnici);
-    _lastNameController.addListener(_fetchKorisnici);
     initForm();
   }
 
   Future<void> initForm() async {
     await _fetchKorisnici();
+    setState(() {
+      isLoading = false;
+    });
   }
 
   Future<void> _fetchKorisnici() async {
     Map<String, dynamic>? filter = {
-      'isUlogeIncluded': _selectedDropdownValue == "Prikaži uloge",
+      'isUlogeIncluded': isUlogeIncluded, // Koristite varijablu isUlogeIncluded
+      'fts': _ftsController.text,
     };
-    if (_firstNameController.text.isNotEmpty) {
-      filter['FirstName'] = _firstNameController.text;
-    }
-    if (_lastNameController.text.isNotEmpty) {
-      filter['LastName'] = _lastNameController.text;
-    }
-
     var data = await _korisniciProvider.get(filter: filter);
     setState(() {
       korisniciResult = data;
@@ -84,40 +81,28 @@ class _KorisniciListScreenState extends State<KorisniciListScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Pretražite korisnike po imenu, prezimenu, ili oboje.',
-            style: TextStyle(color: Colors.white, fontStyle: FontStyle.italic),
-          ),
-          const SizedBox(height: 10),
           Row(
             children: [
-              SizedBox(
-                width: 140,
-                height: 40,
+              Flexible(
                 child: TextField(
-                  controller: _firstNameController,
                   decoration: const InputDecoration(
-                    hintText: 'Ime',
-                    hintStyle: TextStyle(color: Colors.white54),
-                    fillColor: Colors.white30,
-                    filled: true,
+                    labelText: "Pretraga po imenu i prezimenu:",
+                    labelStyle: TextStyle(color: Colors.white),
                   ),
-                  style: const TextStyle(color: Colors.white),
+                  controller: _ftsController,
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
-              const SizedBox(width: 10),
-              SizedBox(
-                width: 140,
-                height: 40,
-                child: TextField(
-                  controller: _lastNameController,
-                  decoration: const InputDecoration(
-                    hintText: 'Prezime',
-                    hintStyle: TextStyle(color: Colors.white54),
-                    fillColor: Colors.white30,
-                    filled: true,
+              const SizedBox(width: 8),
+              Flexible(
+                child: ElevatedButton(
+                  onPressed: () async {
+                    await initForm();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   ),
-                  style: const TextStyle(color: Colors.white),
+                  child: const Text("Pretraga"),
                 ),
               ),
               const SizedBox(width: 10),
@@ -141,6 +126,7 @@ class _KorisniciListScreenState extends State<KorisniciListScreen> {
                 onChanged: (String? newValue) async {
                   setState(() {
                     _selectedDropdownValue = newValue!;
+                    isUlogeIncluded = _selectedDropdownValue == "Prikaži uloge";
                   });
                   await _fetchKorisnici();
                 },
@@ -170,6 +156,24 @@ class _KorisniciListScreenState extends State<KorisniciListScreen> {
   }
 
   Widget _buildDataListView() {
+    String searchQuery = _ftsController.text.toLowerCase();
+    List<Korisnici> filteredResults = korisniciResult?.result.where((k) {
+          List<String> queryParts = searchQuery.split(' ');
+          String imeLower = k.ime?.toLowerCase() ?? '';
+          String prezimeLower = k.prezime?.toLowerCase() ?? '';
+
+          bool matches = queryParts.length == 2
+              ? (imeLower.contains(queryParts[0]) &&
+                      prezimeLower.contains(queryParts[1])) ||
+                  (imeLower.contains(queryParts[1]) &&
+                      prezimeLower.contains(queryParts[0]))
+              : (imeLower.contains(queryParts[0]) ||
+                  prezimeLower.contains(queryParts[0]));
+
+          return matches;
+        }).toList() ??
+        [];
+
     return Expanded(
       child: SingleChildScrollView(
         child: DataTable(
@@ -233,7 +237,7 @@ class _KorisniciListScreenState extends State<KorisniciListScreen> {
               ),
             ),
           ],
-          rows: korisniciResult?.result
+          rows: filteredResults
                   .map(
                     (Korisnici k) => DataRow(
                       cells: [

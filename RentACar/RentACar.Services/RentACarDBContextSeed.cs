@@ -50,7 +50,7 @@ namespace RentACar.Services
                     Ime = "admin",
                     Prezime = "admin",
                     Email = "adminadmin@gmail.com",
-                    Telefon = "060000000",
+                    Telefon = "+38761000000",
                     KorisnickoIme = "admin",
                     LozinkaHash = "JfJzsL3ngGWki+Dn67C+8WLy73I=",
                     LozinkaSalt = "7TUJfmgkkDvcY3PB/M4fhg==",
@@ -61,7 +61,7 @@ namespace RentACar.Services
                     Ime = "user1",
                     Prezime = "user1",
                     Email = "user1@gmail.com",
-                    Telefon = "060000001",
+                    Telefon = "+38761000001",
                     KorisnickoIme = "test1",
                     LozinkaHash = "PEPuXC0FRTDz8Ep3LtkrCzwN0Kw=", //Plain text: test
                     LozinkaSalt = "1wQEjdSFeZttx6dlvEDjOg==",
@@ -72,7 +72,7 @@ namespace RentACar.Services
                     Ime = "user2",
                     Prezime = "user2",
                     Email = "user2@gmail.com",
-                    Telefon = "060000002",
+                    Telefon = "+38761000002",
                     KorisnickoIme = "test2",
                     LozinkaHash = "PEPuXC0FRTDz8Ep3LtkrCzwN0Kw=", //Plain text: test
                     LozinkaSalt = "1wQEjdSFeZttx6dlvEDjOg==",
@@ -130,8 +130,8 @@ namespace RentACar.Services
                     KorisnikId = 2,
                     ImePrezime = "Test Test1",
                     Poruka = "test1",
-                    Telefon = "+38761000000",
-                    Email = "test1@mail.com"
+                    Telefon = "+38761000001",
+                    Email = "user1@gmail.com"
                 },
                  new Kontakt
                  {
@@ -140,7 +140,7 @@ namespace RentACar.Services
                      ImePrezime = "Test Test2",
                      Poruka = "test2",
                      Telefon = "+38761000001",
-                     Email = "test2@mail.com"
+                     Email = "user1@gmail.com"
                  },
                   new Kontakt
                   {
@@ -149,7 +149,7 @@ namespace RentACar.Services
                       ImePrezime = "Test Test3",
                       Poruka = "test3",
                       Telefon = "+38761000002",
-                      Email = "test3@mail.com"
+                      Email = "user2@gmail.com"
                   },
                    new Kontakt
                    {
@@ -157,8 +157,8 @@ namespace RentACar.Services
                        KorisnikId = 3,
                        ImePrezime = "Test Test4",
                        Poruka = "test4",
-                       Telefon = "060000003",
-                       Email = "test4@mail.com"
+                       Telefon = "+38761000002",
+                       Email = "user2@gmail.com"
                    });
         }
         private void SeedTipVozila(ModelBuilder modelBuilder)

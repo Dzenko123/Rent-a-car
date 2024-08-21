@@ -275,7 +275,7 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
               ),
               IconButton(
                 icon: const Icon(Icons.info),
-                color: Colors.red,
+                color: Colors.grey,
                 onPressed: () {
                   setState(() {
                     isInfoVisible = !isInfoVisible;
@@ -290,7 +290,7 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
                     'Vaše podatke možete urediti na stavci "Profil"!',
                     style: TextStyle(
                       fontStyle: FontStyle.italic,
-                      color: Colors.red,
+                      color: Colors.black,
                     ),
                   ),
                 ),

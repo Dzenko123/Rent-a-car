@@ -14,7 +14,8 @@ import 'package:rentacar_admin/providers/korisnici_provider.dart';
 import 'package:rentacar_admin/providers/rezervacija_dodatna_usluga_provider.dart';
 import 'package:rentacar_admin/providers/rezervacija_provider.dart';
 import 'package:rentacar_admin/providers/vozila_provider.dart';
-import 'package:rentacar_admin/screens/grad_dodatneUsluge_screen.dart';
+import 'package:rentacar_admin/screens/dodatneUsluge_screen.dart';
+import 'package:rentacar_admin/screens/grad_screen.dart';
 import 'package:rentacar_admin/utils/util.dart';
 import 'package:rentacar_admin/widgets/master_screen.dart';
 
@@ -140,21 +141,7 @@ class _RezervacijaScreenState extends State<RezervacijaScreen> {
           SizedBox(
             width: 30,
           ),
-          Flexible(
-            child: ElevatedButton(
-              onPressed: () async {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => GradDodatneUslugeScreen(),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              ),
-              child: const Text("Upravljaj gradovima i dodatnim uslugama"),
-            ),
-          ),
+         
         ],
       ),
     );

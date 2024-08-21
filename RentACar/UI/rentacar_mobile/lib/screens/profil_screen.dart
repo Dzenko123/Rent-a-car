@@ -729,20 +729,45 @@ class _ProfilScreenState extends State<ProfilScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 15),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      _showSettingsMenu(context);
+                    },
+                    icon: const Icon(Icons.settings),
+                    iconSize: 25,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 5),
+                    child: Text(
+                      'Postavke',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
                   onPressed: () {
-                    _showSettingsMenu(context);
+                    _showLogoutConfirmationDialog(context);
                   },
-                  icon: const Icon(Icons.settings),
+                  icon: const Icon(Icons.logout),
                   iconSize: 25,
                 ),
                 const Padding(
-                  padding: const EdgeInsets.only(bottom: 5),
-                  child: const Text(
-                    'Postavke',
+                  padding: EdgeInsets.only(bottom: 5),
+                  child: Text(
+                    'Odjava',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.black,
@@ -753,6 +778,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
             ),
           ],
         ),
+        const SizedBox(height: 20),
         CircleAvatar(
           backgroundColor: Colors.blue,
           radius: 50,
@@ -776,6 +802,8 @@ class _ProfilScreenState extends State<ProfilScreen> {
       ],
     );
   }
+
+
 
   void _showChangePasswordDialog(BuildContext context) {
     showDialog(
@@ -1035,14 +1063,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
 
                 },
               ),
-              ListTile(
-                leading: const Icon(Icons.logout),
-                title: const Text('Odjava'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _showLogoutConfirmationDialog(context);
-                },
-              ),
+
             ],
           ),
         );

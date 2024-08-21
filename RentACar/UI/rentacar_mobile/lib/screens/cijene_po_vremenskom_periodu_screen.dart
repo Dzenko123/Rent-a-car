@@ -98,106 +98,107 @@ class _CijenePoVremenskomPerioduScreenState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(
-                height: 80,
-              ),
-              if (canMovePrevious || canMoveNext)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    if (canMovePrevious)
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color.fromARGB(176, 247, 2, 2),
-                              Color.fromARGB(176, 131, 47, 47),
-                              Color.fromARGB(176, 34, 34, 34),
-                            ],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ),
-                          borderRadius: BorderRadius.circular(20.0),
-                          border: Border.all(color: Colors.white),
-                        ),
-                        child: IconButton(
-                          onPressed: () {
-                            _movePrevious();
-                          },
-                          icon: const Row(
-                            children: [
-                              Icon(
-                                Icons.arrow_back,
-                                color: Colors.white,
-                              ),
-                              SizedBox(width: 5),
-                              Text(
-                                "Prethodna stranica",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    if (canMoveNext)
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color.fromARGB(176, 34, 34, 34),
-                              Color.fromARGB(176, 47, 131, 51),
-                              Color.fromARGB(176, 10, 247, 2),
-                            ],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ),
-                          borderRadius: BorderRadius.circular(20.0),
-                          border: Border.all(color: Colors.white),
-                        ),
-                        child: IconButton(
-                          onPressed: () {
-                            _moveNext();
-                          },
-                          icon: const Row(
-                            children: [
-                              Text(
-                                "Sljedeća stranica",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              SizedBox(width: 5),
-                              Icon(
-                                Icons.arrow_forward,
-                                color: Colors.white,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
+              const SizedBox(height: 80),
+
               isLoading
                   ? Padding(
-                      padding:
-                          const EdgeInsets.only(left: 10.0, top: 20, right: 10),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: _buildDataListView(),
-                      ),
-                    )
+                padding: const EdgeInsets.only(left: 10.0, top: 20, right: 10),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: _buildDataListView(),
+                ),
+              )
                   : Container(),
               const SizedBox(height: 10),
+              if (canMovePrevious || canMoveNext)
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      if (canMovePrevious)
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [
+                                Color.fromARGB(176, 247, 2, 2),
+                                Color.fromARGB(176, 131, 47, 47),
+                                Color.fromARGB(176, 34, 34, 34),
+                              ],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ),
+                            borderRadius: BorderRadius.circular(20.0),
+                            border: Border.all(color: Colors.white),
+                          ),
+                          child: IconButton(
+                            onPressed: () {
+                              _movePrevious();
+                            },
+                            icon: const Row(
+                              children: [
+                                Icon(
+                                  Icons.arrow_back,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(width: 5),
+                                Text(
+                                  "Prethodna stranica",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      const SizedBox(width: 20),
+                      if (canMoveNext)
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [
+                                Color.fromARGB(176, 34, 34, 34),
+                                Color.fromARGB(176, 47, 131, 51),
+                                Color.fromARGB(176, 10, 247, 2),
+                              ],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ),
+                            borderRadius: BorderRadius.circular(20.0),
+                            border: Border.all(color: Colors.white),
+                          ),
+                          child: IconButton(
+                            onPressed: () {
+                              _moveNext();
+                            },
+                            icon: const Row(
+                              children: [
+                                Text(
+                                  "Sljedeća stranica",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                SizedBox(width: 5),
+                                Icon(
+                                  Icons.arrow_forward,
+                                  color: Colors.white,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              const SizedBox(height: 20),
             ],
           ),
         ),
       ),
     );
   }
+
 
   int calculateDayDifference(String periodString) {
     List<String> parts = periodString.split(' ');

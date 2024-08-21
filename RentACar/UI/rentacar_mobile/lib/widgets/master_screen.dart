@@ -80,7 +80,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
             NavigationDestination(
               selectedIcon: Icon(Icons.contact_phone,color: Colors.blue),
               icon: Icon(Icons.contact_phone_outlined,color: Colors.black),
-              label: 'Kontakt',
+              label: 'Upiti',
             ),
             NavigationDestination(
               selectedIcon: Icon(Icons.person,color: Colors.blue),

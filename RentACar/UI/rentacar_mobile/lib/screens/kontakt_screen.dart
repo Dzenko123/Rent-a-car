@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 import 'package:rentacar_admin/models/kontakt.dart';
 import 'package:rentacar_admin/models/korisnici.dart';
 import 'package:rentacar_admin/models/search_result.dart';
 import 'package:rentacar_admin/providers/kontakt_provider.dart';
 import 'package:rentacar_admin/providers/korisnici_provider.dart';
+import 'package:rentacar_admin/screens/vozila_list_screen.dart';
 import 'package:rentacar_admin/utils/util.dart';
 import 'package:rentacar_admin/widgets/master_screen.dart';
 
@@ -171,7 +174,7 @@ hintStyle: const TextStyle(color: Colors.grey),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: const BorderSide(color: Colors.white),
-                  ),
+                  ), errorMaxLines: 2,
                 ),
 
                 validator: (value) {
@@ -302,7 +305,7 @@ hintStyle: const TextStyle(color: Colors.grey),
                   ),
                 ),
                 child: const Text(
-                  'Dodaj kontakt',
+                  'Pošalji upit',
                   style: TextStyle(color: Colors.black),
                 ),
               ),
@@ -314,17 +317,35 @@ hintStyle: const TextStyle(color: Colors.grey),
   }
 
   void _saveForm() async {
-    if (_formKey.currentState != null &&
-        _formKey.currentState!.saveAndValidate()) {
+    if (_formKey.currentState != null && _formKey.currentState!.saveAndValidate()) {
       var request = Map.from(_formKey.currentState!.value);
       request['korisnikId'] = ulogovaniKorisnikId;
 
       try {
         await _kontaktProvider.insert(request);
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Kontakt je uspješno sačuvan!'), backgroundColor: Colors.green,
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text("Uspješno"),
+            content: const Text(
+              'Vaš upit je uspješno poslan. Potruditi ćemo se da u što skorije vrijeme pregledamo i odgovorimo na Vaše pitanje. Odgovor ćete dobiti na Vašu e-mail adresu.',
+              style: TextStyle(color: Colors.black),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Get.find<NavigationController>().selectedIndex.value = 0;
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => VozilaListScreen(),
+                    ),
+                  );
+                },
+                child: const Text("OK"),
+              ),
+            ],
           ),
         );
 
@@ -346,4 +367,7 @@ hintStyle: const TextStyle(color: Colors.grey),
       }
     }
   }
+
+
+
 }

@@ -21,3 +21,14 @@ Stripe:
 stripePublishableKey: pk_test_51PMVHpRrJwr9yxSmwklss7mgn2fcVKJRhsFY5jDJ6aowlBuvfHIathT3Je3EL9pRuer9y2bK16BvhFy3U4M2cJLc00GZ7FLudv
 
 secretKey: sk_test_51PMVHpRrJwr9yxSmTmLhu9D6rFknT703NS22C6gJ45NJ3iwOfwWCtuSpGgT3WvmwUKKsCSkLA1MoR3ZkZsywN40P00G3FljD5O
+
+
+Podaci za Stripe plaćanje:
+
+Card number: 4242 4242 4242 4242
+
+Date: Bilo koji datum u budućnosti
+
+CVC: Bilo koje 3 cifre
+
+ZIP Code: Bilo kojih 5 cifara

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rentacar_admin/main.dart';
 import 'package:rentacar_admin/screens/cijene_po_vremenskom_periodu_screen.dart';
-import 'package:rentacar_admin/screens/grad_dodatneUsluge_screen.dart';
+import 'package:rentacar_admin/screens/dodatneUsluge_screen.dart';
+import 'package:rentacar_admin/screens/grad_screen.dart';
 import 'package:rentacar_admin/screens/izvjestaj_screen.dart';
 import 'package:rentacar_admin/screens/kontakt_screen.dart';
 import 'package:rentacar_admin/screens/korisnici_screen.dart';
@@ -88,6 +89,26 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => RezervacijaScreen(),
+                  ),
+                );
+              },
+            ),
+             ListTile(
+              title: const Text("Gradovi"),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => GradScreen(),
+                  ),
+                );
+              },
+            ),
+             ListTile(
+              title: const Text("Dodatne usluge"),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => DodatneUslugeScreen(),
                   ),
                 );
               },
