@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rentacar_admin/main.dart';
@@ -985,6 +987,8 @@ class _ProfilScreenState extends State<ProfilScreen> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
+                  Get.find<NavigationController>().selectedIndex.value = 0;
+
                   Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => const LoginPage()),
                     (Route<dynamic> route) => false,

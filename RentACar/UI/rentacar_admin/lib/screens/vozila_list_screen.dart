@@ -380,8 +380,7 @@ class _VozilaListScreenState extends State<VozilaListScreen> {
                                                       ),
                                                     );
                                                   } catch (e) {
-                                                    print(
-                                                        "Error deleting vehicle: $e");
+                                                   
                                                     _scaffoldMessengerState
                                                         .showSnackBar(
                                                       SnackBar(
