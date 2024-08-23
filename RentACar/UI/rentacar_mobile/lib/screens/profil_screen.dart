@@ -661,7 +661,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Podaci korisnika su uspješno ažurirani'),
+            content: Text('Podaci su uspješno ažurirani'),
             backgroundColor: Colors.green,
           ),
         );

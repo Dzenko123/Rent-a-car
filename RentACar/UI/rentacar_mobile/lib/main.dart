@@ -132,8 +132,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   final TextEditingController _noviPasswordController = TextEditingController();
   final TextEditingController _passwordPotvrdaController =
       TextEditingController();
-
+  bool _isNewPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
   late KorisniciProvider _korisniciProvider;
+  final _changePasswordFormKey = GlobalKey<FormState>();
 
   late VozilaProvider _vozilaProvider;
   late AnimationController _animationController;
@@ -340,319 +342,361 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     ),
                   ),
                 ] else ...[
-                  Container(
-                    constraints:
-                        const BoxConstraints(maxHeight: 350, maxWidth: 320),
-                    child: FlutterMaterial.Card(
-                      elevation: 5,
-                      color: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                        side: const BorderSide(
-                          color: Colors.white,
-                          width: 1.5,
-                        ),
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFF000000),
-                              Color(0xFF333333),
-                              Color(0xFF555555),
-                            ],
-                            begin: Alignment.topRight,
-                            end: Alignment.bottomLeft,
-                          ),
+                  Form(
+                    key: _changePasswordFormKey,
+
+                    child: Container(
+                      constraints:
+                          const BoxConstraints(maxHeight: 350, maxWidth: 320),
+                      child: FlutterMaterial.Card(
+                        elevation: 5,
+                        color: Colors.transparent,
+                        shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        child: ScrollbarTheme(
-                          data: ScrollbarThemeData(
-                            thumbColor:
-                                WidgetStateProperty.all<Color>(Colors.white),
+                          side: const BorderSide(
+                            color: Colors.white,
+                            width: 1.5,
                           ),
-                          child: Scrollbar(
-                            controller: _scrollController,
-                            thumbVisibility: true,
-                            trackVisibility: true,
-                            thickness: 9,
-                            radius: const Radius.circular(50),
-                            interactive: true,
-                            child: Padding(
-                              padding: const EdgeInsets.all(25.0),
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    TextFormField(
-                                      cursorColor: Colors.white,
-                                      decoration: InputDecoration(
-                                          labelText: "Ime",
-                                          prefixIcon: const Icon(
-                                            Icons.person,
-                                            color: Colors.white,
-                                          ),
-                                          labelStyle:
-                                              const TextStyle(color: Colors.white),
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(vertical: 5),
-                                          errorText: _imeController.text.isEmpty
-                                              ? 'Polje ne smije biti prazno'
-                                              : null,
-                                          errorStyle:
-                                              const TextStyle(color: Colors.white)),
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                      controller: _imeController,
-                                      onChanged: (_) {
-                                        setState(() {});
-                                      },
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    TextFormField(
-                                      cursorColor: Colors.white,
-                                      decoration: InputDecoration(
-                                          labelText: "Prezime",
-                                          prefixIcon: const Icon(
-                                            Icons.person,
-                                            color: Colors.white,
-                                          ),
-                                          labelStyle:
-                                              const TextStyle(color: Colors.white),
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(vertical: 5),
-                                          errorText:
-                                              _prezimeController.text.isEmpty
-                                                  ? 'Polje ne smije biti prazno'
-                                                  : null,
-                                          errorStyle:
-                                              const TextStyle(color: Colors.white)),
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                      controller: _prezimeController,
-                                      onChanged: (_) {
-                                        setState(() {});
-                                      },
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    TextFormField(
-                                      cursorColor: Colors.white,
-                                      decoration: InputDecoration(
-                                        labelText: "Email",
-                                        prefixIcon: const Icon(
-                                          Icons.email,
-                                          color: Colors.white,
-                                        ),
-                                        labelStyle: const TextStyle(color: Colors.white),
-                                        contentPadding: const EdgeInsets.symmetric(vertical: 5),
-                                        errorStyle: const TextStyle(color: Colors.white),
-                                        errorMaxLines: 6,
-                                          errorText:
-                                          _emailController.text.isEmpty
-                                              ? 'Polje ne smije biti prazno'
-                                              : null,
-
-                                      ),
-                                      style: const TextStyle(color: Colors.white),
-
-                                      controller: _emailController,
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Polje ne smije biti prazno!';
-                                        }
-
-                                        String emailFormatExample =
-                                            'Primjer ispravnog formata: korisnik@gmail.com ili korisnik.korisnik@gmail.com';
-                                        String allowedDomains =
-                                            'Dozvoljene domene: gmail.com, hotmail.com, yahoo.com, outlook.com, aol.com, icloud.com';
-
-                                        String usernamePart = value.split('@').first;
-
-                                        if (RegExp(r'\.\s*[@]').hasMatch(value)) {
-                                          return 'Između tačke i znaka \'@\' mora biti neka riječ!';
-                                        }
-
-                                        if (usernamePart.contains(RegExp(r'[^a-zA-Z0-9šđčćž.]'))) {
-                                          return '$emailFormatExample\nKoristi se nedozvoljen znak. Dozvoljena je samo tačka i slova š, đ, č, ć, ž!';
-                                        }
-                                        if (usernamePart.split('.').length > 2) {
-                                          return 'Unijeli ste dvije tačke prije "@", pogrešan format!';
-                                        }
-
-                                        if (value.contains('@')) {
-                                          String domainPart = value.split('@').last;
-                                          List<String> allowedDomainsList = [
-                                            'gmail.com',
-                                            'hotmail.com',
-                                            'yahoo.com',
-                                            'outlook.com',
-                                            'aol.com',
-                                            'icloud.com'
-                                          ];
-                                          if (!domainPart.contains('.') ||
-                                              !allowedDomainsList
-                                                  .any((domain) => domainPart.endsWith(domain))) {
-                                            return '$emailFormatExample\n$allowedDomains';
-                                          }
-                                        } else {
-                                          return emailFormatExample;
-                                        }
-
-                                        return null;
-                                      },
-                                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                                      onChanged: (_) {
-                                        setState(() {});
-                                      },
-                                    ),
-
-
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-
-                                    TextFormField(
-                                      cursorColor: Colors.white,
-                                      decoration: InputDecoration(
-                                        labelText: "Telefon",
-                                        prefixIcon: const Icon(
-                                          Icons.phone,
-                                          color: Colors.white,
-                                        ),
-                                        labelStyle: const TextStyle(color: Colors.white),
-                                        contentPadding: const EdgeInsets.symmetric(vertical: 5),
-                                        errorStyle: const TextStyle(color: Colors.white),
-                                        errorText:
-                                        _telefonController.text.isEmpty
-                                            ? 'Polje ne smije biti prazno'
-                                            : null,
-                                      ),
-                                      style: const TextStyle(color: Colors.white),
-                                      controller: _telefonController,
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Polje je obavezno';
-                                        } else if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
-                                          return 'Broj telefona mora sadržavati samo brojeve';
-                                        } else if (value.length < 9) {
-                                          return 'Broj telefona mora imati minimalno 9 cifara';
-                                        }
-                                        return null;
-                                      },
-                                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                                      onChanged: (_) {
-                                        setState(() {});
-                                      },
-                                    ),
-
-
-                                    const SizedBox(
-                                      height: 30,
-                                    ),
-                                    const Divider(
-                                      color: Colors.white,
-                                      height: 1,
-                                      thickness: 5,
-                                    ),
-                                    TextField(
-                                      cursorColor: Colors.white,
-                                      decoration: InputDecoration(
-                                          labelText: "Korisnicko ime",
-                                          prefixIcon: const Icon(
-                                            Icons.person,
-                                            color: Colors.white,
-                                          ),
-                                          labelStyle:
-                                              const TextStyle(color: Colors.white),
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(vertical: 5),
-                                          errorText: _korisnickoImeController
-                                                  .text.isEmpty
-                                              ? 'Polje ne smije biti prazno'
-                                              : null,
-                                          errorStyle:
-                                              const TextStyle(color: Colors.white)),
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                      controller: _korisnickoImeController,
-                                      onChanged: (_) {
-                                        setState(() {});
-                                      },
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    TextField(
-                                      cursorColor: Colors.white,
-                                      decoration: InputDecoration(
-                                        labelText: "Password",
-                                        prefixIcon: const Icon(
-                                          Icons.password_sharp,
-                                          color: Colors.white,
-                                        ),
-                                        labelStyle:
-                                            const TextStyle(color: Colors.white),
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(vertical: 5),
-                                        errorText:
-                                            _noviPasswordController.text.isEmpty
+                        ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [
+                                Color(0xFF000000),
+                                Color(0xFF333333),
+                                Color(0xFF555555),
+                              ],
+                              begin: Alignment.topRight,
+                              end: Alignment.bottomLeft,
+                            ),
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          child: ScrollbarTheme(
+                            data: ScrollbarThemeData(
+                              thumbColor:
+                                  WidgetStateProperty.all<Color>(Colors.white),
+                            ),
+                            child: Scrollbar(
+                              controller: _scrollController,
+                              thumbVisibility: true,
+                              trackVisibility: true,
+                              thickness: 9,
+                              radius: const Radius.circular(50),
+                              interactive: true,
+                              child: Padding(
+                                padding: const EdgeInsets.all(25.0),
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    children: [
+                                      TextFormField(
+                                        cursorColor: Colors.white,
+                                        decoration: InputDecoration(
+                                            labelText: "Ime",
+                                            prefixIcon: const Icon(
+                                              Icons.person,
+                                              color: Colors.white,
+                                            ),
+                                            labelStyle:
+                                                const TextStyle(color: Colors.white),
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(vertical: 5),
+                                            errorText: _imeController.text.isEmpty
                                                 ? 'Polje ne smije biti prazno'
                                                 : null,
-                                        errorStyle:
+                                            errorStyle:
+                                                const TextStyle(color: Colors.white)),
+                                        style:
                                             const TextStyle(color: Colors.white),
+                                        controller: _imeController,
+                                        onChanged: (_) {
+                                          setState(() {});
+                                        },
                                       ),
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                      controller: _noviPasswordController,
-                                      onChanged: (_) {
-                                        setState(() {});
-                                      },
-                                      obscureText: true,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    TextField(
-                                      cursorColor: Colors.white,
-                                      decoration: InputDecoration(
-                                        labelText: "Password potvrda",
-                                        prefixIcon: const Icon(
-                                          Icons.password_sharp,
-                                          color: Colors.white,
+                                      const SizedBox(
+                                        height: 8,
+                                      ),
+                                      TextFormField(
+                                        cursorColor: Colors.white,
+                                        decoration: InputDecoration(
+                                            labelText: "Prezime",
+                                            prefixIcon: const Icon(
+                                              Icons.person,
+                                              color: Colors.white,
+                                            ),
+                                            labelStyle:
+                                                const TextStyle(color: Colors.white),
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(vertical: 5),
+                                            errorText:
+                                                _prezimeController.text.isEmpty
+                                                    ? 'Polje ne smije biti prazno'
+                                                    : null,
+                                            errorStyle:
+                                                const TextStyle(color: Colors.white)),
+                                        style:
+                                            const TextStyle(color: Colors.white),
+                                        controller: _prezimeController,
+                                        onChanged: (_) {
+                                          setState(() {});
+                                        },
+                                      ),
+                                      const SizedBox(
+                                        height: 8,
+                                      ),
+                                      TextFormField(
+                                        cursorColor: Colors.white,
+                                        decoration: InputDecoration(
+                                          labelText: "Email",
+                                          prefixIcon: const Icon(
+                                            Icons.email,
+                                            color: Colors.white,
+                                          ),
+                                          labelStyle: const TextStyle(color: Colors.white),
+                                          contentPadding: const EdgeInsets.symmetric(vertical: 5),
+                                          errorStyle: const TextStyle(color: Colors.white),
+                                          errorMaxLines: 6,
+                                            errorText:
+                                            _emailController.text.isEmpty
+                                                ? 'Polje ne smije biti prazno'
+                                                : null,
+
                                         ),
-                                        labelStyle:
-                                            const TextStyle(color: Colors.white),
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(vertical: 5),
-                                        errorText: _passwordPotvrdaController
-                                                .text.isEmpty
-                                            ? 'Polje ne smije biti prazno'
-                                            : null,
-                                        errorStyle:
-                                            const TextStyle(color: Colors.white),
+                                        style: const TextStyle(color: Colors.white),
+
+                                        controller: _emailController,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Polje ne smije biti prazno!';
+                                          }
+
+                                          String emailFormatExample =
+                                              'Primjer ispravnog formata: korisnik@gmail.com ili korisnik.korisnik@gmail.com';
+                                          String allowedDomains =
+                                              'Dozvoljene domene: gmail.com, hotmail.com, yahoo.com, outlook.com, aol.com, icloud.com';
+
+                                          String usernamePart = value.split('@').first;
+
+                                          if (RegExp(r'\.\s*[@]').hasMatch(value)) {
+                                            return 'Između tačke i znaka \'@\' mora biti neka riječ!';
+                                          }
+
+                                          if (usernamePart.contains(RegExp(r'[^a-zA-Z0-9šđčćž.]'))) {
+                                            return '$emailFormatExample\nKoristi se nedozvoljen znak. Dozvoljena je samo tačka i slova š, đ, č, ć, ž!';
+                                          }
+                                          if (usernamePart.split('.').length > 2) {
+                                            return 'Unijeli ste dvije tačke prije "@", pogrešan format!';
+                                          }
+
+                                          if (value.contains('@')) {
+                                            String domainPart = value.split('@').last;
+                                            List<String> allowedDomainsList = [
+                                              'gmail.com',
+                                              'hotmail.com',
+                                              'yahoo.com',
+                                              'outlook.com',
+                                              'aol.com',
+                                              'icloud.com'
+                                            ];
+                                            if (!domainPart.contains('.') ||
+                                                !allowedDomainsList
+                                                    .any((domain) => domainPart.endsWith(domain))) {
+                                              return '$emailFormatExample\n$allowedDomains';
+                                            }
+                                          } else {
+                                            return emailFormatExample;
+                                          }
+
+                                          return null;
+                                        },
+                                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                                        onChanged: (_) {
+                                          setState(() {});
+                                        },
                                       ),
-                                      style:
+
+
+                                      const SizedBox(
+                                        height: 8,
+                                      ),
+
+                                      TextFormField(
+                                        cursorColor: Colors.white,
+                                        decoration: InputDecoration(
+                                          labelText: "Telefon",
+                                          prefixIcon: const Icon(
+                                            Icons.phone,
+                                            color: Colors.white,
+                                          ),
+                                          labelStyle: const TextStyle(color: Colors.white),
+                                          contentPadding: const EdgeInsets.symmetric(vertical: 5),
+                                          errorStyle: const TextStyle(color: Colors.white),
+                                          errorText: _telefonController.text.isEmpty
+                                              ? 'Polje ne smije biti prazno'
+                                              : null,
+                                          errorMaxLines: 2,
+                                        ),
+                                        style: const TextStyle(color: Colors.white),
+                                        controller: _telefonController,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Polje je obavezno';
+                                          }
+                                          final regex = RegExp(
+                                              r'^\+387\s?(62\s?\d{3}\s?\d{3}|61\s?\d{3}\s?\d{3}|60\s?\d{3}\s?\d{4})$');
+                                          if (!regex.hasMatch(value)) {
+                                            return 'Unesite ispravan broj telefona u formatu +387 62 740 788 ili +387 60 740 7888';
+                                          }
+                                          return null;
+                                        },
+                                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                                        onChanged: (_) {
+                                          setState(() {});
+                                        },
+                                      ),
+
+
+
+                                      const SizedBox(
+                                        height: 30,
+                                      ),
+                                      const Divider(
+                                        color: Colors.white,
+                                        height: 1,
+                                        thickness: 5,
+                                      ),
+                                      TextField(
+                                        cursorColor: Colors.white,
+                                        decoration: InputDecoration(
+                                            labelText: "Korisnicko ime",
+                                            prefixIcon: const Icon(
+                                              Icons.person,
+                                              color: Colors.white,
+                                            ),
+                                            labelStyle:
+                                                const TextStyle(color: Colors.white),
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(vertical: 5),
+                                            errorText: _korisnickoImeController
+                                                    .text.isEmpty
+                                                ? 'Polje ne smije biti prazno'
+                                                : null,
+                                            errorStyle:
+                                                const TextStyle(color: Colors.white)),
+                                        style:
+                                            const TextStyle(color: Colors.white),
+                                        controller: _korisnickoImeController,
+                                        onChanged: (_) {
+                                          setState(() {});
+                                        },
+                                      ),
+                                      const SizedBox(
+                                        height: 8,
+                                      ),
+                                      TextFormField(
+                                        controller: _noviPasswordController,
+                                        decoration: InputDecoration(
+                                          labelText: "Password",
+                                          prefixIcon: const Icon(
+                                            Icons.password_sharp,
+                                            color: Colors.white,
+                                          ),
+                                          suffixIcon: IconButton(
+                                            icon: Icon(
+                                              _isNewPasswordVisible
+                                                  ? Icons.visibility
+                                                  : Icons.visibility_off,
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                _isNewPasswordVisible = !_isNewPasswordVisible;
+                                              });
+                                            },
+                                            color: Colors.white,
+                                          ),
+                                          labelStyle:
                                           const TextStyle(color: Colors.white),
-                                      controller: _passwordPotvrdaController,
-                                      onChanged: (_) {
-                                        setState(() {});
-                                      },
-                                      obscureText: true,
-                                    ),
-                                    const SizedBox(
-                                      height: 40,
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: registerUser,
-                                      child: const Text(
-                                        "Register",
-                                        style: TextStyle(color: Colors.black),
+                                          contentPadding:
+                                          const EdgeInsets.symmetric(vertical: 5),
+
+                                        ),
+                                        obscureText: !_isNewPasswordVisible,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Polje ne smije biti prazno';
+                                          }
+                                          return null;
+                                        },
+                                        cursorColor: Colors.white,
+
+                                        style:
+                                            const TextStyle(color: Colors.white),
+                                        onChanged: (_) {
+                                          _changePasswordFormKey.currentState?.validate();
+                                        },
+
+
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(
+                                        height: 8,
+                                      ),
+                                      TextFormField(
+                                        controller: _passwordPotvrdaController,
+
+                                        cursorColor: Colors.white,
+                                        decoration: InputDecoration(
+                                          labelText: "Password potvrda",
+                                          prefixIcon: const Icon(
+                                            Icons.password_sharp,
+                                            color: Colors.white,
+                                          ),
+                                          suffixIcon: IconButton(
+                                            icon: Icon(
+                                              _isConfirmPasswordVisible
+                                                  ? Icons.visibility
+                                                  : Icons.visibility_off,
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                _isConfirmPasswordVisible  = !_isConfirmPasswordVisible ;
+                                              });
+                                            },
+                                            color: Colors.white,
+                                          ),
+                                          labelStyle:
+                                              const TextStyle(color: Colors.white),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(vertical: 5),
+
+                                        ),
+                                        style:
+                                            const TextStyle(color: Colors.white),
+                                        onChanged: (_) {
+                                          _changePasswordFormKey.currentState?.validate();
+
+                                        },
+                                        obscureText: !_isConfirmPasswordVisible ,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Polje ne smije biti prazno';
+                                          }
+                                          if (value != _noviPasswordController.text) {
+                                            return 'Lozinke se ne podudaraju';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                      const SizedBox(
+                                        height: 40,
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: registerUser,
+                                        child: const Text(
+                                          "Register",
+                                          style: TextStyle(color: Colors.black),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -730,6 +774,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   void registerUser() async {
+    if (!_changePasswordFormKey.currentState!.validate()) {
+      return;
+    }
+
     if (_imeController.text.isEmpty ||
         _prezimeController.text.isEmpty ||
         _emailController.text.isEmpty ||
@@ -742,24 +790,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         builder: (BuildContext context) => AlertDialog(
           title: const Text("Greška"),
           content: const Text("Molimo popunite sva polja."),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
-            ),
-          ],
-        ),
-      );
-      return;
-    }
-
-    if (_noviPasswordController.text != _passwordPotvrdaController.text) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text("Greška"),
-          content: const Text(
-              "Polja 'Password' i 'Password potvrda' se ne poklapaju."),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -838,23 +868,39 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         },
       );
     } catch (e) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text("Greška"),
-          content:
-              const Text("Korisnik sa istim korisničkim imenom već postoji."),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
-            ),
-          ],
-        ),
-      );
-      print('Greška prilikom dodavanja korisnika: $e');
+      if (e.toString().contains('Korisnik sa istim korisničkim imenom već postoji')) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text("Greška"),
+            content: const Text("Došlo je do greške pri registraciji. Pokušajte ponovno."),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+        );
+
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text("Greška"),
+            content: const Text("Korisnik sa istim korisničkim imenom već postoji."),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+        );
+      }
     }
   }
+
 
 }
 
