@@ -21,6 +21,7 @@ namespace RentACar.Services
         public DbSet<Period> Period { get; set; }
         public DbSet<VoziloPregled> VoziloPregled { get; set; }
         public DbSet<RezervacijaDodatnaUsluga> RezervacijaDodatnaUsluga { get; set; }
+        public DbSet<ToDo4924> ToDo4924 { get; set; }
 
         public RentACarDBContext(DbContextOptions<RentACarDBContext> options) : base(options)
         {

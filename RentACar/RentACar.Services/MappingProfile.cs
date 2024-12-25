@@ -56,6 +56,14 @@ namespace RentACar.Services
             CreateMap<Model.Requests.KontaktUpdateRequest, Database.Kontakt>();
             CreateMap<Model.Requests.KontaktDeleteRequest, Database.Kontakt>();
 
+            CreateMap<Database.ToDo4924, ToDo4924>();
+            CreateMap<Model.Requests.ToDo4924InsertRequest, Database.ToDo4924>();
+            CreateMap<Model.Requests.ToDo4924UpdateRequest, Database.ToDo4924>();
+            CreateMap<Model.Requests.ToDo4924DeleteRequest, Database.ToDo4924>();
+
+            CreateMap<Database.ToDo4924, ToDo4924>()
+    .ForMember(dest => dest.Korisnik, opt => opt.MapFrom(src => src.Korisnik));
+
             CreateMap<Database.KorisniciUloge, KorisniciUloge>();
             CreateMap<Database.Uloge, Uloge>();
 

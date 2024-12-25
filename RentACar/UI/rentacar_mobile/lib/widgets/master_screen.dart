@@ -6,6 +6,8 @@ import 'package:rentacar_admin/screens/profil_screen.dart';
 import 'package:rentacar_admin/screens/recenzije_screen.dart';
 import 'package:rentacar_admin/screens/vozila_list_screen.dart';
 
+import '../screens/to_do_4924_screen.dart';
+
 class MasterScreenWidget extends StatefulWidget {  final NavigationController navigationController = Get.put(NavigationController());
 
 Widget? child;
@@ -56,6 +58,9 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               case 4:
                 Get.toNamed(ProfilScreen.routeName);
                 break;
+              case 5:
+                Get.toNamed(ToDo4924ListScreen.routeName);
+                break;
 
             }
           },
@@ -86,6 +91,11 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               selectedIcon: Icon(Icons.person,color: Colors.blue),
               icon: Icon(Icons.person_outline,color: Colors.black),
               label: 'Profil',
+            ),
+            NavigationDestination(
+              selectedIcon: Icon(Icons.work,color: Colors.blue),
+              icon: Icon(Icons.work,color: Colors.black),
+              label: 'ToDo4924',
             ),
           ],
         ),

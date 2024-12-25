@@ -39,6 +39,7 @@ namespace RentACar.Services
             SeedRezervacija(modelBuilder);
             SeedPeriod(modelBuilder);
             SeedRezervacijaDodatnaUsluga(modelBuilder);
+            SeedToDo4924(modelBuilder);
         }
 
         private void SeedKorisnici(ModelBuilder modelBuilder)
@@ -941,6 +942,47 @@ namespace RentACar.Services
                     RezervacijaId = 2,
                     DodatnaUslugaId = 2
                 });
+        }
+
+        private void SeedToDo4924(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ToDo4924>().HasData(
+                new ToDo4924
+                {
+                    ToDo4924Id = 1,
+                    NazivAktivnosti = "test1",
+                    OpisAktivnosti= "test1",
+                    DatumIzvrsenja=DateTime.Now.AddMonths(-2),
+                    Status="U toku",
+                    KorisnikId=2
+                },
+                new ToDo4924
+                {
+                    ToDo4924Id = 2,
+                    NazivAktivnosti = "test2",
+                    OpisAktivnosti = "test2",
+                    DatumIzvrsenja = DateTime.Now.AddMonths(-3),
+                    Status = "Realizovana",
+                    KorisnikId = 2
+                },
+                new ToDo4924
+                {
+                    ToDo4924Id = 3,
+                    NazivAktivnosti = "test3",
+                    OpisAktivnosti = "test3",
+                    DatumIzvrsenja = DateTime.Now.AddMonths(-4),
+                    Status = "Istekla",
+                    KorisnikId = 3
+                },
+                 new ToDo4924
+                 {
+                     ToDo4924Id = 4,
+                     NazivAktivnosti = "test4",
+                     OpisAktivnosti = "test4",
+                     DatumIzvrsenja = DateTime.Now.AddMonths(-5),
+                     Status = "U toku",
+                     KorisnikId = 3
+                 });
         }
     }
 }

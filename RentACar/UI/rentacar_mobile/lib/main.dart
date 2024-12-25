@@ -15,12 +15,14 @@ import 'package:rentacar_admin/providers/recenzije_provider.dart';
 import 'package:rentacar_admin/providers/rezervacija_dodatna_usluga_provider.dart';
 import 'package:rentacar_admin/providers/rezervacija_provider.dart';
 import 'package:rentacar_admin/providers/tip_vozila_provider.dart';
+import 'package:rentacar_admin/providers/to_do_4924_provider.dart';
 import 'package:rentacar_admin/providers/vozila_provider.dart';
 import 'package:rentacar_admin/providers/vozilo_pregled_provider.dart';
 import 'package:rentacar_admin/screens/cijene_po_vremenskom_periodu_screen.dart';
 import 'package:rentacar_admin/screens/kontakt_screen.dart';
 import 'package:rentacar_admin/screens/profil_screen.dart';
 import 'package:rentacar_admin/screens/recenzije_screen.dart';
+import 'package:rentacar_admin/screens/to_do_4924_screen.dart';
 import 'package:rentacar_admin/utils/util.dart';
 import './screens/vozila_list_screen.dart';
 import 'package:flutter/material.dart' as FlutterMaterial;
@@ -48,6 +50,7 @@ void main() async {
     ChangeNotifierProvider(create: (_) => GradProvider()),
     ChangeNotifierProvider(create: (_) => DodatnaUslugaProvider()),
     ChangeNotifierProvider(create: (_) => RezervacijaDodatnaUslugaProvider()),
+    ChangeNotifierProvider(create: (_) => ToDo4924ModelProvider()),
   ], child: const MyMaterialApp()));
 }
 
@@ -93,6 +96,15 @@ class MyMaterialApp extends StatelessWidget {
             return GetPageRoute(
               settings: settings,
               page: () => ProfilScreen(),
+            );
+          }
+
+        }
+        else if (settings.name == ToDo4924ListScreen.routeName) {
+          if (!Get.isDialogOpen!) {
+            return GetPageRoute(
+              settings: settings,
+              page: () => ToDo4924ListScreen(),
             );
           }
         }
