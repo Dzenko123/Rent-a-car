@@ -849,7 +849,7 @@ Stranica **Recenzije** omogućava korisnicima pregled i interakciju sa povratnim
 
 ---
 
-## 19. Upiti
+## 9. Upiti
 ![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/52.png?raw=true)
 
 Stranica **Upiti** omogućava korisnicima slanje upita administratoru putem forme. Ova funkcionalnost osigurava direktnu komunikaciju između korisnika i administratorskog tima.
@@ -879,7 +879,7 @@ Stranica **Upiti** omogućava korisnicima slanje upita administratoru putem form
 
 ---
 
-## 20. Profil
+## 10. Profil
 ![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/56.png?raw=true)
 
 Stranica **Profil** dostupna je putem navigacijskog menija i prikazuje osnovne informacije o ulogovanom korisniku, aktivne rezervacije i opcije za upravljanje korisničkim računom.
