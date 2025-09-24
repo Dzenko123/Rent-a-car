@@ -34,7 +34,7 @@ U nastavku dokumentacije slijedi **detaljan opis aplikacije** sa svim slikama.
 # Desktop aplikacija (Admin)
 
 ## 1. Login stranica
-![image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/1.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/1.png)
 
 Prva stranica aplikacije je login forma namijenjena administratorima.
 
@@ -54,7 +54,7 @@ Prva stranica aplikacije je login forma namijenjena administratorima.
 ---
 
 ## 2. Meni aplikacije
-![image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/2.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/2.png)
 
 Nakon uspješnog logina, administrator dolazi na glavni meni aplikacije koji se nalazi na lijevoj strani.  
 Meni predstavlja centralnu navigaciju kroz sve funkcionalnosti.
@@ -76,7 +76,7 @@ Meni predstavlja centralnu navigaciju kroz sve funkcionalnosti.
 ---
 
 ## 3. Vozila – prikaz svih vozila
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/3.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/3.png)
 
 Na ovoj stranici administrator ima potpuni pregled svih vozila.
 
@@ -94,7 +94,7 @@ Na ovoj stranici administrator ima potpuni pregled svih vozila.
     - **Activate** – vozilo se prikazuje korisnicima mobilne aplikacije
     - **Hide** – vozilo se sakriva iz pregleda korisnicima
 
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/4.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/4.png)
 
 **Logika stanja**
 Vozila funkcionišu preko state mašine i mogu biti u dva stanja:
@@ -105,7 +105,7 @@ Vozila funkcionišu preko state mašine i mogu biti u dva stanja:
 ---
 
 ## 4. Pregled odabranog vozila
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/5.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/5.png)
 
 Klikom na crvenu ikonu ključa u listi vozila otvara se stranica za upravljanje pregledima tog vozila.
 
@@ -115,7 +115,7 @@ Klikom na crvenu ikonu ključa u listi vozila otvara se stranica za upravljanje 
 - Kalendar:
   - Pregledi se mogu zakazivati samo od narednog dana (ne za isti dan)
   - Svaki dan ima znak „+” (hover tekst: „Dodaj vozilo na pregled”) → klik otvara dijalog za odabir vremena pregleda
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/6.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/6.png)
 
   - Rezervisani dani → označeni su crvenom bojom i na njima nije moguće zakazati pregled
 - Za dane gdje je već zakazan pregled stoji tekst:
@@ -129,7 +129,7 @@ Klikom na crvenu ikonu ključa u listi vozila otvara se stranica za upravljanje 
 ---
 
 ## 5. Uređivanje vozila
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/8.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/8.png)
 
 Na ovu stranicu se dolazi klikom na dugme Detalji pored svakog vozila u gridu.
 
@@ -137,7 +137,7 @@ Na ovu stranicu se dolazi klikom na dugme Detalji pored svakog vozila u gridu.
 - Ako je vozilo u **Active** stanju:
   - U vrhu stranice se pojavljuje crvena poruka:  
     **„Podaci se ne mogu mijenjati jer je vozilo u active stanju!”**
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/7.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/7.png)
   - Sva polja, padajući meniji, upload slike i dugme **Sačuvaj** su onemogućeni.
   - Ovo pravilo sprječava situaciju da admin mijenja podatke dok korisnik istovremeno pravi rezervaciju.
 
@@ -176,21 +176,21 @@ Sva polja su obavezna.
   - Dozvoljen format samo u obliku „broj tačka broj” (npr. 1.9, 2.0)
 
 - **Tip goriva (padajući meni)**
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/9.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/9.png)
   - Svaka stavka ima opcije **Edit** i **Delete**
   - Ako se pokuša obrisati gorivo koje koristi rezervisano vozilo → poruka:  
     **„Došlo je do pogreške. Gorivo se ne može obrisati jer neko od vozila koje ima taj tip goriva je rezervisano.”**
 
 - **Tip vozila (padajući meni)**
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/10.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/10.png)
   - Također ima opcije **Edit** i **Delete**
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/11.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/11.png)
   - Isto pravilo kao i kod goriva – tip vozila se ne može obrisati ako ga koristi rezervisano vozilo
 
 ---
 
 ## 6. Dodavanje novog vozila
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/12.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/12.png)
 
 Na ovu stranicu se dolazi klikom na dugme **Dodaj novo vozilo** na listi svih vozila.
 
@@ -211,14 +211,14 @@ Na ovu stranicu se dolazi klikom na dugme **Dodaj novo vozilo** na listi svih vo
 - **Dugme Sačuvaj** – sprema novo vozilo u sistem
 
 **Validacija**
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/13.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/13.png)
 - Sva polja su obavezna
 - Vozilo se ne može dodati dok sve validacije nisu ispravne
 
 ---
 
 ## 7. Dodavanje tipa vozila i opisa
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/14.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/14.png)
 
 Na ovu stranicu se dolazi klikom na dugme **Dodaj tip vozila i opis**.
 
@@ -233,7 +233,7 @@ Na ovu stranicu se dolazi klikom na dugme **Dodaj tip vozila i opis**.
 ---
 
 ## 8. Dodavanje tipa goriva
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/15.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/15.png)
 
 Na ovu stranicu se dolazi klikom na dugme **Dodaj tip goriva**.
 
@@ -247,7 +247,7 @@ Na ovu stranicu se dolazi klikom na dugme **Dodaj tip goriva**.
 ---
 
 ## 9. Cijene vozila po periodima
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/16.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/16.png)
 
 Ova stranica služi za definisanje i upravljanje cijenama vozila u zavisnosti od trajanja perioda najma.
 
@@ -267,11 +267,11 @@ Ova stranica služi za definisanje i upravljanje cijenama vozila u zavisnosti od
 - **Paginacija perioda:**  
   - Ako postoji više od 3 perioda, ispod tabele se pojavljuje dugme **Sljedeća stranica** (zelene boje)  
   - Kada nema više perioda za prikaz, dugme se mijenja u **Prethodna stranica** (crvene boje), koje vraća na prethodna 3 perioda
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/17.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/17.png)
 - **Hover na naziv perioda** → prikazuje tekst „Uredi period”. Klik otvara dijalog **Uredi trajanje perioda**
 
 **Validacije pri uređivanju perioda**
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/18.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/18.png)
 - Format mora biti tačan: „n-n dana”
 - Prvi dan mora biti manji od drugog
 - Period ne može biti duplikat postojećeg → poruka: „Uneseni period već postoji!”
@@ -284,7 +284,7 @@ Ova stranica služi za definisanje i upravljanje cijenama vozila u zavisnosti od
 - Ispod svake cijene stoji siva ikona kante za brisanje → briše cijenu i zamjenjuje je dugmetom **Unesite cijenu**
 
 **Dodavanje novog vozila u tabelu cijena**
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/19.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/19.png)
 Ova forma se prikazuje na stranici **Cijene vozila po periodima** nakon klika na dugme **Unesite novo vozilo u tabelu**.
 
 **Elementi dijaloga**
@@ -299,7 +299,7 @@ Ova forma se prikazuje na stranici **Cijene vozila po periodima** nakon klika na
 ---
 
 ## 10. Dodavanje novog perioda
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/20.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/20.png)
 
 Na ovu stranicu se dolazi klikom na dugme **Dodaj novi period u tabelu**.
 
@@ -318,7 +318,7 @@ Na ovu stranicu se dolazi klikom na dugme **Dodaj novi period u tabelu**.
 ---
 
 ## 11. Rezervacije
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/21.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/21.png)
 
 Na ovoj stranici se prikazuju sve rezervacije, a u vrhu nalaze se dva polja za pretragu:
 - Korisničko ime
@@ -346,7 +346,7 @@ Desno od njih je dugme **Pretraga** koje pokreće filtriranje rezultata.
 ---
 
 ## 12. Gradovi
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/22.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/22.png)
 
 Stranica za upravljanje gradovima u kojima posluje Rent-a-Car servis.
 
@@ -356,7 +356,7 @@ Stranica za upravljanje gradovima u kojima posluje Rent-a-Car servis.
 **Dugme Dodaj grad** otvara dijalosku formu sa:
 - Poljem za unos naziva grada
 - Dugmadima **Odustani** i **Dodaj**
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/23.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/23.png)
 
 **Validacije**
 - Polje ne smije biti prazno
@@ -370,7 +370,7 @@ Stranica za upravljanje gradovima u kojima posluje Rent-a-Car servis.
 ---
 
 ## 13. Dodatne usluge
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/24.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/24.png)
 
 Ovdje se upravlja dodatnim uslugama (npr. GPS, dječija sjedalica, dodatni vozač).
 
@@ -381,7 +381,7 @@ Ovdje se upravlja dodatnim uslugama (npr. GPS, dječija sjedalica, dodatni voza�
 - Poljem **Naziv**
 - Poljem **Cijena**
 - Dugmadima **Odustani** i **Dodaj**
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/25.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/25.png)
 
 **Validacije**
 - Polja ne smiju biti prazna
@@ -396,7 +396,7 @@ Ovdje se upravlja dodatnim uslugama (npr. GPS, dječija sjedalica, dodatni voza�
 ---
 
 ## 14. Recenzije za vozila
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/26.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/26.png)
 
 Na ovoj stranici prikazane su sve recenzije i reakcije za vozila (lajkovi, dislajkovi, komentari), bez obzira da li se vozila nalaze u active ili draft stanju.
 
@@ -414,12 +414,12 @@ Na ovoj stranici prikazane su sve recenzije i reakcije za vozila (lajkovi, disla
 **Komentari**
 - Klikom na broj komentara otvara se posebna stranica sa listom svih komentara za to vozilo
   - Prikazano je ime i prezime korisnika i ispod njegov komentar
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/27.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/27.png)
 
 ---
 
 ## 15. Pregledi vozila
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/28.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/28.png)
 
 Ova stranica omogućava pregled svih tehničkih pregleda planiranih za vozila.
 
@@ -432,7 +432,7 @@ Ova stranica omogućava pregled svih tehničkih pregleda planiranih za vozila.
    - „Pregled modela: [naziv modela]”
    - „Vrijeme: [vrijeme pregleda]”
  - Ako za isti dan više vozila ima pregled → prikazuje se ikona upitnika (?). Klik otvara dijalog:
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/29.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/29.png)
    - **Naslov:** Svi pregledi na ovaj dan
    - Za svako vozilo posebno prikazano:
      - „Vozilo model: [naziv modela]”
@@ -442,7 +442,7 @@ Ova stranica omogućava pregled svih tehničkih pregleda planiranih za vozila.
 ---
 
 ## 16. Kontakti
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/30.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/30.png)
 
 Stranica omogućava adminu pregled i upravljanje svim porukama koje su korisnici poslali putem kontakt forme.
 
@@ -460,7 +460,7 @@ Stranica omogućava adminu pregled i upravljanje svim porukama koje su korisnici
 ---
 
 ## 17. Korisnici
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/31.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/31.png)
 
 Stranica omogućava adminu uvid u sve korisnike aplikacije i njihove uloge.
 
@@ -482,7 +482,7 @@ Stranica omogućava adminu uvid u sve korisnike aplikacije i njihove uloge.
 ---
 
 ## 18. Izvještaji
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/32.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/32.png)
 
 Stranica **Izvještaji** omogućava administratoru pregled i analizu podataka o zaradi, filtriranje po različitim kriterijima te preuzimanje izvještaja u PDF formatu.
 
@@ -504,12 +504,12 @@ Ispod filtera nalazi se grafički prikaz ukupne zarade. On se dinamički mijenja
   - Ispod naziva mjeseca prikazuje se ukupna zarada za taj mjesec
   - Kvadrati su pozicionirani po visini - što je veća zarada, kvadrat je više pozicioniran
   - Ispod kvadrata nalazi se plava linija koja vizuelno prikazuje odnos zarade po mjesecima
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/33.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/33.png)
 
 - **Određeni mjesec** – prikazuje se pregled po danima tog mjeseca
   - Kolone predstavljaju dane (1–31), a redovi ukupnu zaradu
   - Svaki dan sa zabilježenom zaradom ima tačku na linijskom grafu, pri čemu se plava linija izdiže proporcionalno ostvarenom iznosu
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/34.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/34.png)
 
 
 **Tabelarni prikaz podataka**
@@ -531,7 +531,7 @@ Ako ne postoje podaci za prikaz, umjesto tabele se prikazuje poruka:
 
 **PDF izvještaj**
 Klikom na dugme **Preuzmi PDF** generiše se izvještaj u PDF formatu sa sljedećim sadržajem:
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/35.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/35.png)
 
 - Ilustrativna slika na vrhu
 - Naslov: **Rent a Car Izvjestaj**
@@ -549,7 +549,7 @@ Klikom na dugme **Preuzmi PDF** generiše se izvještaj u PDF formatu sa sljede�
 ---
 
 ## 19. Profil
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/36.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/36.png)
 
 Stranica **Profil** omogućava administratoru pregled i uređivanje vlastitih podataka i pristupnih informacija.
 
@@ -566,7 +566,7 @@ Stranica **Profil** omogućava administratoru pregled i uređivanje vlastitih po
 U gornjem desnom uglu nalazi se ikona postavki. Klikom na ikonu pojavljuju se dvije opcije:
 - Uredite profil
 - Promijenite korisničko ime i lozinku
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/37.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/37.png)
 
 **19.1. Uređivanje profila**
 Omogućava izmjenu osnovnih podataka korisnika.
@@ -582,7 +582,7 @@ Omogućava izmjenu osnovnih podataka korisnika.
 ---
 
 **19.2. Promjena korisničkog imena i lozinke**
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/38.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/38.png)
 
 Klikom na opciju *Promijenite korisničko ime i lozinku* otvara se dijaloška forma.
 
@@ -599,7 +599,7 @@ Klikom na opciju *Promijenite korisničko ime i lozinku* otvara se dijaloška fo
 - **Promijenite podatke** – potvrđuje promjene
 
 **Validacije**
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/39.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/39.png)
 
 - Nijedno polje osim polja za korisničko ime ne smije ostati prazno
 - Trenutna lozinka se provjerava tek pri potvrdi promjene, čime se sprječava nagađanje lozinke
@@ -628,7 +628,7 @@ Siguran izlazak iz aplikacije i prekid sesije.
 # Dokumentacija mobilne aplikacije
 
 ## 1. Login stranica
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/40.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/40.png)
 
 Login stranica predstavlja početnu tačku mobilne aplikacije i omogućava korisnicima siguran pristup sistemu putem Basic autentifikacije.
 
@@ -648,7 +648,7 @@ Login stranica predstavlja početnu tačku mobilne aplikacije i omogućava koris
 ---
 
 ## 2. Kreiranje novog profila
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/41.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/41.png)
 
 Kreiranje profila omogućava novim korisnicima pristup mobilnoj aplikaciji.
 
@@ -665,7 +665,7 @@ Kreiranje profila omogućava novim korisnicima pristup mobilnoj aplikaciji.
 ---
 
 ## 3. Stranica Vozila (defaultna stranica)
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/42.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/42.png)
 
 Nakon uspješne prijave korisnik dolazi na defaultnu stranicu **Vozila**.
 
@@ -690,7 +690,7 @@ Nakon uspješne prijave korisnik dolazi na defaultnu stranicu **Vozila**.
 ---
 
 ## 4. Detalji za vozilo i preporuke
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/43.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/43.png)
 
 Klikom na dugme **Detalji i preporuke** otvara se stranica pod naslovom **Detalji za vozilo i preporuke**.
 
@@ -726,7 +726,7 @@ Klikom na dugme **Detalji i preporuke** otvara se stranica pod naslovom **Detalj
 ---
 
 ## 5. Kalendar rezervacija
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/44.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/44.png)
 
 Klikom na dugme **Pregledaj kalendar rezervacija** otvara se kalendar sa vizualnim prikazom dostupnosti vozila.
 
@@ -742,7 +742,7 @@ Klikom na dugme **Pregledaj kalendar rezervacija** otvara se kalendar sa vizualn
 ---
 
 ## 6. Rezervacija vozila
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/45.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/45.png)
 
 Klikom na dugme **Rezerviši vozilo** otvara se stranica za rezervaciju vozila.
 
@@ -760,18 +760,18 @@ Klikom na dugme **Rezerviši vozilo** otvara se stranica za rezervaciju vozila.
   - Onemogućen je odabir dana kada je vozilo već rezervisano ili se nalazi na popravci
 
 **Validacija raspona**
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/46.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/46.png)
 
 - Ako odabrani datum ne omogućava minimalni broj dana, sistem prikazuje upozorenje:
   "Odabrani datum nije moguć jer nije u odabranom rasponu."
 
 **Završetak rezervacije**
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/47.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/47.png)
 
 - Nakon uspješnog odabira, sistem izračunava ukupnu cijenu koja uključuje trajanje i dodatne usluge
 - Korisnik može mijenjati period i dodatne usluge dok ne završi rezervaciju
 - Klikom na dugme **Dovršite rezervaciju ovdje** otvara se integrisani **Stripe sistem plaćanja**
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/48.png)
+![image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/48.png)
 
 - Ukoliko su podaci ispravni, rezervacija se uspješno završava
 - U slučaju greške korisnik dobija odgovarajuće upozorenje
@@ -779,7 +779,7 @@ Klikom na dugme **Rezerviši vozilo** otvara se stranica za rezervaciju vozila.
 ---
 
 ## 7. Cijene
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/49.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/49.png)
 
 Stranica **Cijene** omogućava pregled cijena najma vozila prema unaprijed definisanim vremenskim periodima. Stranici se pristupa putem navigacijskog menija smještenog na dnu ekrana mobilne aplikacije.
 
@@ -805,7 +805,7 @@ Stranica **Cijene** omogućava pregled cijena najma vozila prema unaprijed defin
 ---
 
 ## 8. Recenzije
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/50.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/50.png)
 
 Stranica **Recenzije** omogućava korisnicima pregled i interakciju sa povratnim informacijama o vozilima i pruža uvid u iskustva prethodnih korisnika.
 
@@ -834,7 +834,7 @@ Stranica **Recenzije** omogućava korisnicima pregled i interakciju sa povratnim
 - Ikona i tekst **Like** – klikom dodaje lajk (ikona postaje plava)
 - Ikona i tekst **Dislike** – klikom dodaje dislajk (ikona postaje crvena)
 - Ikona i tekst **Komentar** – klikom otvara stranicu **Ostavite svoj komentar**
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/51.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/51.png)
 
 **Interakcija i ažuriranje podataka**
 - Klikom na bilo koju od opcija ("Like", "Dislike", "Komentar") podaci se odmah ažuriraju u prikazu vozila
@@ -851,12 +851,12 @@ Stranica **Recenzije** omogućava korisnicima pregled i interakciju sa povratnim
 ---
 
 ## 19. Upiti
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/52.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/52.png)
 
 Stranica **Upiti** omogućava korisnicima slanje upita administratoru putem forme. Ova funkcionalnost osigurava direktnu komunikaciju između korisnika i administratorskog tima.
 
 **Funkcionalnosti**
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/53.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/53.png)
 
 - Forma za unos sadrži sljedeća polja:
   - Ime i prezime
@@ -870,9 +870,9 @@ Stranica **Upiti** omogućava korisnicima slanje upita administratoru putem form
 - Na dnu forme nalazi se dugme **Pošalji upit**
 - Kada su sva polja ispravno popunjena i dugme kliknuto, upit se šalje putem **RabbitMQ** servisa
 - Upit se registruje u odgovarajućem **queue-u (kontakt_notifications)**, što omogućava administratoru da preuzme i obradi zahtjev
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/54.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/54.png)
 
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/55.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/55.png)
 
 
 **Napomena**
@@ -881,7 +881,7 @@ Stranica **Upiti** omogućava korisnicima slanje upita administratoru putem form
 ---
 
 ## 20. Profil
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/56.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/56.png)
 
 Stranica **Profil** dostupna je putem navigacijskog menija i prikazuje osnovne informacije o ulogovanom korisniku, aktivne rezervacije i opcije za upravljanje korisničkim računom.
 
@@ -896,7 +896,7 @@ Stranica **Profil** dostupna je putem navigacijskog menija i prikazuje osnovne i
   - Telefon
 
 **Aktivne rezervacije**
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/57.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/57.png)
 
 - Ispod osnovnih podataka prikazane su sve aktivne rezervacije korisnika (jedna po redu)
 - Svaka rezervacija sadrži:
@@ -912,17 +912,17 @@ Stranica **Profil** dostupna je putem navigacijskog menija i prikazuje osnovne i
   - Dugme se zamjenjuje tekstom: "Zahtjev za otkazivanje na čekanju."
 
 **Postavke**
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/58.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/58.png)
 
 - Klikom na ikonu **Postavke** otvara se meni sa dvije opcije:
   1. **Uredite profil**  
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/59.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/59.png)
 
      - Omogućava izmjenu ličnih podataka (ime, prezime, email, telefon)
      - Sva polja su obavezna i validirana
      - Dugmad: **Spasi** i **Odustani**
   2. **Promijenite pristupne podatke**  
-[image_alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/60.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/60.png)
 
      - Otvara formu sa sljedećim poljima:
        - Korisničko ime (opcionalno)
