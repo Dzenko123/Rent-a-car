@@ -34,7 +34,7 @@ U nastavku dokumentacije slijedi **detaljan opis aplikacije** sa svim slikama.
 # Desktop aplikacija (Admin)
 
 ## 1. Login stranica
-![image alt](https://raw.githubusercontent.com/Dzenko123/Rent-a-car/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/1.png)
+![image alt](https://github.com/Dzenko123/Rent-a-car/blob/098a164dfca787a8a1aba7107eca9d7ac3a35bae/RentACarImg/1.png?raw=true)
 
 Prva stranica aplikacije je login forma namijenjena administratorima.
 
