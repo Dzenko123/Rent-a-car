@@ -5,7 +5,7 @@
 - **Username:** admin  
 - **Password:** admin  
 
-## Mobile aplikacija
+## Mobilna aplikacija
 - **Uloga:** User  
   - **Username:** test1  
   - **Password:** test  
@@ -22,7 +22,6 @@ stripePublishableKey: pk_test_51PMVHpRrJwr9yxSmwklss7mgn2fcVKJRhsFY5jDJ6aowlBuvf
 secretKey: sk_test_51PMVHpRrJwr9yxSmTmLhu9D6rFknT703NS22C6gJ45NJ3iwOfwWCtuSpGgT3WvmwUKKsCSkLA1MoR3ZkZsywN40P00G3FljD5O
 
 - **Podaci za Stripe plaćanje:**
-
 Card number: 4242 4242 4242 4242 <br>
 Date: Bilo koji datum u budućnosti <br>
 CVC: Bilo koje 3 cifre <br>
